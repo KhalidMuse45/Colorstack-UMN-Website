@@ -1,0 +1,39 @@
+/* ColorStack UMN — typography tokens */
+/* iCiel Gotham Bold is the LOGO WORDMARK ONLY — never for headlines or UI.
+   Editorial stack (Cargo-style technical editorial):
+   - Display/headlines: Archivo (Helvetica-grade grotesque, 500–900)
+   - Body: Lora (editorial serif w/ true italics)
+   - Meta/labels: IBM Plex Mono (index rows, timestamps, captions) */
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+@font-face {
+  font-family: 'iCiel Gotham';
+  src: url('../assets/fonts/iCielGothamBold.ttf') format('truetype');
+  font-weight: 700 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-logo: 'iCiel Gotham', 'Arial Black', sans-serif; /* logo wordmark only */
+  --font-display: 'Archivo', 'Helvetica Neue', Helvetica, sans-serif;
+  --font-body: 'Lora', Georgia, serif;
+  --font-mono: 'IBM Plex Mono', 'SF Mono', Consolas, monospace;
+
+  /* Scale */
+  --text-hero: 56px;      /* masthead headlines — Archivo 800/900, tight */
+  --text-h1: 40px;
+  --text-h2: 28px;
+  --text-h3: 20px;
+  --text-body-size: 17px;
+  --text-small: 14px;
+  --text-caption: 12px;
+  --text-meta: 11px;      /* mono meta rows — uppercase, tracked +0.08em */
+
+  --leading-tight: 1.02;
+  --leading-heading: 1.12;
+  --leading-body: 1.55;
+
+  --tracking-display: -0.01em;
+  --tracking-meta: 0.08em;
+}

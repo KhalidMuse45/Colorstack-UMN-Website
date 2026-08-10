@@ -1,0 +1,92 @@
+/* ColorStack UMN — typography tokens */
+/* iCiel Gotham Bold is the LOGO WORDMARK ONLY — never for headlines or UI.
+   Editorial stack (Cargo-style technical editorial):
+   - Display/headlines: Archivo (Helvetica-grade grotesque, 500–900)
+   - Body: Lora (editorial serif w/ true italics)
+   - Meta/labels: IBM Plex Mono (index rows, timestamps, captions) */
+
+/* ── Self-hosted faces (SETUP.md §6) ───────────────────────────────────────
+   This is the ONE sanctioned divergence from design/tokens/typography.css,
+   which ships a runtime @import from fonts.googleapis.com. SETUP.md §6 and
+   UX-SPEC.md §8 forbid a render-blocking third-party request, so the @import
+   is replaced with local faces. Latin subset only. Sources and the exact
+   unicode-range come straight from Google's css2 API — do not hand-edit.
+
+   Archivo and Lora are VARIABLE fonts: one file each covers its whole weight
+   range, so the ranges below are declared, not enumerated. IBM Plex Mono is
+   static and needs one file per weight.
+
+   iCiel Gotham has NO @font-face here on purpose: the binary is absent from
+   the bundle (design/BUNDLE.md, "known bundle gaps") and the chapter mark is
+   a PNG, so nothing needs the face. --font-logo stays declared below so that
+   restoring it later is a one-block change. Logged in HANDOFF-LOG.md.
+   ─────────────────────────────────────────────────────────────────────── */
+
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 500 900;
+  font-display: swap;
+  src: url('/fonts/archivo-normal-0186fb.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url('/fonts/lora-normal-ba4655.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400 500;
+  font-display: swap;
+  src: url('/fonts/lora-italic-58ffbf.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/plexmono-normal-bc87d8.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/plexmono-normal-a80b2c.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  --font-logo: 'iCiel Gotham', 'Arial Black', sans-serif; /* logo wordmark only */
+  --font-display: 'Archivo', 'Helvetica Neue', Helvetica, sans-serif;
+  --font-body: 'Lora', Georgia, serif;
+  --font-mono: 'IBM Plex Mono', 'SF Mono', Consolas, monospace;
+
+  /* Scale */
+  --text-hero: 56px;      /* masthead headlines — Archivo 800/900, tight */
+  --text-h1: 40px;
+  --text-h2: 28px;
+  --text-h3: 20px;
+  --text-body-size: 17px;
+  --text-small: 14px;
+  --text-caption: 12px;
+  --text-meta: 11px;      /* mono meta rows — uppercase, tracked +0.08em */
+
+  --leading-tight: 1.02;
+  --leading-heading: 1.12;
+  --leading-body: 1.55;
+
+  --tracking-display: -0.01em;
+  --tracking-meta: 0.08em;
+}

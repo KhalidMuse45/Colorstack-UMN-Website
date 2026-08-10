@@ -1,8 +1,13 @@
-# <img src="images/logo.png" width="32" height="32" alt="Logo"> ColorStack UMN — Official Website
+# <img src="public/images/colorstack-umn-logo.png" width="32" height="32" alt="ColorStack UMN chapter logo"> ColorStack UMN — Official Website
 
 The official website for the **University of Minnesota Chapter** of [ColorStack](https://www.colorstack.org), a community dedicated to increasing the number of Black, Latinx, and Indigenous technologists who graduate and launch rewarding technical careers.
 
-🔗 **Live Site**: [hudeifi.github.io/colorstack-umn-website](https://hudeifi.github.io/colorstack-umn-website/)
+🔗 **Live Site**: [colorstackumn.org](https://colorstackumn.org)
+
+> **Currently being rebuilt.** The site is mid-revamp against the design bundle in `design/`.
+> New here? Start at **[`.ai/README.md`](.ai/README.md)** — slice status, where the spec lives,
+> and the gotchas already paid for. Then [`CONTRIBUTING.md`](CONTRIBUTING.md).
+> Progress and open blockers live in [`HANDOFF-LOG.md`](HANDOFF-LOG.md); the audit of the old site is [`RECON.md`](RECON.md).
 
 ---
 
@@ -10,7 +15,7 @@ The official website for the **University of Minnesota Chapter** of [ColorStack]
 
 ColorStack at the University of Minnesota is an inclusive student organization focused on bolstering the representation and success of underrepresented students within computing disciplines. We leverage UMN's vast resources and the Twin Cities' thriving tech ecosystem to create meaningful change in tech diversity.
 
-**Founded**: 2025 · **Members**: 50+ · **Offers Secured**: 25+
+**Founded**: 2025
 
 ---
 
@@ -18,11 +23,10 @@ ColorStack at the University of Minnesota is an inclusive student organization f
 
 | Layer | Technology |
 |-------|-----------|
-| Structure | HTML5 |
-| Styling | CSS3 (Custom Properties, Flexbox, Grid) |
-| Interactivity | Vanilla JavaScript |
-| Fonts | Google Fonts (Playfair Display, DM Sans) |
-| Hosting | GitHub Pages |
+| Framework | Astro 5 (static output, zero client JS by default) |
+| Styling | Plain CSS with design tokens from `design/tokens/` |
+| Fonts | Archivo, Lora, IBM Plex Mono — self-hosted woff2, latin subset |
+| Hosting | GitHub Pages · apex domain via `public/CNAME` |
 
 ---
 
@@ -30,49 +34,67 @@ ColorStack at the University of Minnesota is an inclusive student organization f
 
 ```
 colorstack-umn-website/
-├── index.html          # Main single-page website
-├── styles.css          # All styling (UMN maroon & gold theme)
-├── script.js           # Interactive elements (About Us toggle)
-├── README.md           # This file
-└── images/
-    ├── logo.png        # ColorStack UMN chapter logo
-    └── hudeifi.jpg     # Member testimonial photo
+├── src/
+│   ├── styles/         # Token layer, copied from design/tokens/ + base.css
+│   ├── layouts/        # Base.astro — imports tokens first
+│   ├── components/     # Chrome and primitives
+│   └── pages/          # One file per route
+├── content/            # events.json, issues.json, team.json, jobs.json
+├── public/
+│   ├── fonts/          # Self-hosted woff2
+│   ├── images/
+│   └── CNAME           # colorstackumn.org — must survive every build
+├── design/             # Vendored design bundle — never hand-edited
+├── CLAUDE.md           # Orchestrator constitution
+├── HANDOFF-LOG.md      # Slice ledger + blockers
+└── RECON.md            # Audit of the pre-revamp site
 ```
 
 ---
 
 ## Local Development
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/hudeifi/colorstack-umn-website.git
-   ```
-2. Open `index.html` in your browser — no build tools or dependencies required.
+Requires Node `^20.19` or `>=22.12`.
+
+```bash
+git clone https://github.com/KhalidMuse45/Colorstack-UMN-Website.git colorstack-umn-website
+cd colorstack-umn-website
+npm install
+npm run dev        # http://localhost:4321
+npm run build      # static output to dist/
+npm run check      # astro check — types and template diagnostics
+```
+
+Brand guardrails run as a pre-commit hook. Enable them once per clone:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+The hook blocks literal hex values outside the token layer, `outline` suppression without a replacement ring, gradients and glassmorphism, and misspellings of "ColorStack".
 
 ---
 
 ## Deployment
 
-This site is deployed via **GitHub Pages** from the `main` branch.
-
-To deploy updates, simply push changes to `main`:
-```bash
-git add .
-git commit -m "Update site content"
-git push origin main
-```
-Changes go live automatically within a few minutes.
+Deployed via **GitHub Pages**. `public/CNAME` carries the apex domain and is emitted into `dist/` on every build — do not move it back to the repo root.
 
 ---
 
 ## Roadmap
 
-- [x] Single-page MVP with mission, stats, offerings, testimonial, and contact
-- [ ] Events page with upcoming meetings and workshops
-- [ ] Team page featuring executive board members
-- [ ] Sponsor section highlighting industry partners
-- [ ] Photo gallery from chapter events
-- [ ] Blog or newsletter integration
+Tracked as slices in `HANDOFF-LOG.md`.
+
+- [x] Slice 1 — Scaffold, tokens, self-hosted fonts, guardrails
+- [ ] Slice 2 — Global chrome (NavBar, MobileSheet, Footer)
+- [ ] Slice 3 — Primitives (MetaRow, FigureBlock, EventCard, JoinBlock, …)
+- [ ] Slice 4 — Content layer (`content/*.json` + loaders)
+- [ ] Slice 5 — Home `/`
+- [ ] Slice 6 — `/join` + `/events`
+- [ ] Slice 7 — `/newsletter` archive + reader
+- [ ] Slice 8 — `/opportunities` + `/about` + `/about/team`
+- [ ] Slice 9 — `/sponsor`
+- [ ] Slice 10 — Motion, a11y, and performance pass
 
 ---
 
@@ -82,7 +104,7 @@ This site is maintained by the **ColorStack UMN Executive Board**. To suggest ch
 
 - **Email**: [colorstk@umn.edu](mailto:colorstk@umn.edu)
 - **LinkedIn**: [ColorStack UMN](https://www.linkedin.com/company/colorstackumn/about/)
-- **Instagram**: [@colorstackumn](https://www.instagram.com/p/DPesfD-kkT0/)
+- **Instagram**: [@colorstackumn](https://www.instagram.com/colorstackumn/)
 
 ---
 

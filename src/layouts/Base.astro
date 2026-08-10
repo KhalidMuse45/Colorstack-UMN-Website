@@ -1,0 +1,52 @@
+---
+/**
+ * Base layout. The token stylesheet is imported FIRST, before any component
+ * style, so token declarations win the cascade order they were written for
+ * (SETUP.md §5).
+ *
+ * Chrome (NavBar / MobileSheet / Footer) lands here in slice 2. Until then
+ * this is deliberately a bare document shell.
+ */
+import '../styles/styles.css';
+import '../styles/base.css';
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    {/* The two faces above the fold on every page: the Archivo display cut
+        (LCP element on the home masthead) and the Lora body cut. The Lora
+        italic and Plex Mono cuts ride on font-display: swap. UX-SPEC §8. */}
+    <link
+      rel="preload"
+      href="/fonts/archivo-normal-0186fb.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/lora-normal-ba4655.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

@@ -1,0 +1,67 @@
+/* ColorStack UMN — base layer.
+   Loads AFTER the token files. Contains no values of its own: every
+   declaration here resolves through var(--token). This file is checked by
+   .githooks/pre-commit exactly like component CSS — a literal hex here is a
+   failed commit, not a style opinion. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--surface-page);   /* --cream. Never white. UX-SPEC §9 */
+  color: var(--text-body);
+  font-family: var(--font-body);
+  font-size: var(--text-body-size);
+  line-height: var(--leading-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: var(--leading-heading);
+  letter-spacing: var(--tracking-display);
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Gold focus ring on every interactive element. UX-SPEC §6 / §8.
+   Suppressing the outline without supplying a replacement ring is a hard
+   fail — the pre-commit hook greps for exactly that declaration. */
+:where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* Motion is opt-in, never opt-out: every transition and animation in this
+   codebase lives inside a `no-preference` block. This is the backstop for
+   anything that slips through, plus for UA-level smooth scrolling. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
