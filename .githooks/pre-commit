@@ -6,8 +6,10 @@
 # hex is legal. Everywhere else — including src/styles/base.css — it is
 # var(--token) or nothing (UX-SPEC.md §0, agents/implementer.md).
 fail=0
+# Excluded: the vendored bundle, the hook itself, and the agent/orchestration
+# docs — those legitimately quote violations in order to forbid them.
 files=$(git diff --cached --name-only --diff-filter=ACM |
-  grep -Ev '^(design/|\.githooks/|plans/|CLAUDE\.md$|HANDOFF-LOG\.md$|RECON\.md$)')
+  grep -Ev '^(design/|\.githooks/|\.ai/|\.claude/|CLAUDE\.md$|HANDOFF-LOG\.md$|RECON\.md$)')
 for f in $files; do
   [ -f "$f" ] || continue
   if [ -f .guardrail-allow ] && grep -qxF "$f" .guardrail-allow; then continue; fi

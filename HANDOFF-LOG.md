@@ -27,6 +27,9 @@
 - Guardrail hook proven to block all four classes: literal hex, `outline` suppression, gradient/glassmorphism, "ColorStack" misspelling.
 - Dependency count matches `SETUP.md` §4 plus one justified devDependency (below).
 
+| 2 chrome | orchestrator (plan + shared data) | **planned, not started** | `.ai/plans/global-chrome.md`, `.ai/envelopes/*`, `src/data/nav.ts` | envelopes ready to inject; no implementer has written a file yet |
+| — scaffolding | orchestrator | done | `.ai/README.md`, `CONTRIBUTING.md`, `.githooks/pre-commit`, `README.md` | `plans/` moved to `.ai/plans/`; hook exclusions updated to match |
+
 ## Blocked
 
 ### Resolved 2026-08-10 (human decisions — these bind slice 1)

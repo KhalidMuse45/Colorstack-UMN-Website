@@ -5,8 +5,9 @@ The official website for the **University of Minnesota Chapter** of [ColorStack]
 🔗 **Live Site**: [colorstackumn.org](https://colorstackumn.org)
 
 > **Currently being rebuilt.** The site is mid-revamp against the design bundle in `design/`.
-> Read `CLAUDE.md` → `design/ORCHESTRATION.md` → `design/UX-SPEC.md` before contributing.
-> Progress and open blockers live in `HANDOFF-LOG.md`; the audit of the old site is `RECON.md`.
+> New here? Start at **[`.ai/README.md`](.ai/README.md)** — slice status, where the spec lives,
+> and the gotchas already paid for. Then [`CONTRIBUTING.md`](CONTRIBUTING.md).
+> Progress and open blockers live in [`HANDOFF-LOG.md`](HANDOFF-LOG.md); the audit of the old site is [`RECON.md`](RECON.md).
 
 ---
 
