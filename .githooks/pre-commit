@@ -1,0 +1,23 @@
+#!/bin/sh
+# Brand guardrails — scans ONLY files staged for this commit.
+# Skips the vendored bundle, orchestration docs, and paths in .guardrail-allow.
+fail=0
+files=$(git diff --cached --name-only --diff-filter=ACM |
+  grep -Ev '^(design/|\.githooks/|plans/|CLAUDE\.md$|HANDOFF-LOG\.md$|RECON\.md$)')
+for f in $files; do
+  [ -f "$f" ] || continue
+  if [ -f .guardrail-allow ] && grep -qxF "$f" .guardrail-allow; then continue; fi
+  case "$f" in
+    *.css)
+      grep -n "outline: *none" "$f" && { echo "FAIL $f — outline:none"; fail=1; }
+      grep -niE "linear-gradient|radial-gradient|backdrop-filter" "$f" && { echo "FAIL $f — gradient/glassmorphism"; fail=1; }
+      ;;
+  esac
+  case "$f" in
+    *.html|*.js|*.ts|*.jsx|*.tsx|*.astro|*.json|*.md)
+      grep -nE 'Colorstack|COLORSTACK' "$f" && { echo "FAIL $f — ColorStack casing"; fail=1; }
+      ;;
+  esac
+done
+[ "$fail" = 1 ] && echo "--> fix it, or allowlist the path in .guardrail-allow and log why in HANDOFF-LOG.md"
+exit $fail

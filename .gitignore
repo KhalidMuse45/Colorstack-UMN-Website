@@ -1,0 +1,6 @@
+.astro/
+.DS_Store
+.logs/
+design.new/
+dist/
+node_modules/
