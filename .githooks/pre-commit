@@ -1,6 +1,10 @@
 #!/bin/sh
 # Brand guardrails — scans ONLY files staged for this commit.
 # Skips the vendored bundle, orchestration docs, and paths in .guardrail-allow.
+#
+# The four token files copied from design/tokens/ are the ONE place a literal
+# hex is legal. Everywhere else — including src/styles/base.css — it is
+# var(--token) or nothing (UX-SPEC.md §0, agents/implementer.md).
 fail=0
 files=$(git diff --cached --name-only --diff-filter=ACM |
   grep -Ev '^(design/|\.githooks/|plans/|CLAUDE\.md$|HANDOFF-LOG\.md$|RECON\.md$)')
@@ -8,14 +12,29 @@ for f in $files; do
   [ -f "$f" ] || continue
   if [ -f .guardrail-allow ] && grep -qxF "$f" .guardrail-allow; then continue; fi
   case "$f" in
-    *.css)
+    *.css|*.astro|*.jsx|*.tsx|*.svelte|*.vue)
+      case "$f" in
+        src/styles/colors.css|src/styles/typography.css|src/styles/spacing.css|src/styles/styles.css)
+          ;;   # token layer, copied from design/tokens/ — literal hexes are the point
+        *)
+          grep -nE '#[0-9a-fA-F]{3}([0-9a-fA-F]{3}([0-9a-fA-F]{2})?)?\b' "$f" &&
+            { echo "FAIL $f — literal hex outside src/styles/ (use var(--token))"; fail=1; }
+          ;;
+      esac
       grep -n "outline: *none" "$f" && { echo "FAIL $f — outline:none"; fail=1; }
       grep -niE "linear-gradient|radial-gradient|backdrop-filter" "$f" && { echo "FAIL $f — gradient/glassmorphism"; fail=1; }
       ;;
   esac
   case "$f" in
     *.html|*.js|*.ts|*.jsx|*.tsx|*.astro|*.json|*.md)
-      grep -nE 'Colorstack|COLORSTACK' "$f" && { echo "FAIL $f — ColorStack casing"; fail=1; }
+      # The GitHub repo slug is itself misspelled ("Colorstack-UMN-Website").
+      # Docs must be able to quote the real clone URL, so that exact remote
+      # path is the one sanctioned exception. Rename the repo upstream and
+      # this line should be deleted.
+      if grep -nE 'Colorstack|COLORSTACK' "$f" |
+           grep -v 'github\.com/KhalidMuse45/Colorstack-UMN-Website'; then
+        echo "FAIL $f — ColorStack casing"; fail=1
+      fi
       ;;
   esac
 done

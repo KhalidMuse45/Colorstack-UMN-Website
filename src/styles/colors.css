@@ -1,0 +1,45 @@
+/* ColorStack UMN — color tokens */
+:root {
+  /* Base — UMN chapter colors (school colors take priority per national guidelines) */
+  --maroon: #7A0019;        /* UMN maroon — logo, headers, primary actions */
+  --maroon-deep: #5B0013;   /* official UMN Dark Maroon — hover / pressed */
+  --maroon-light: #900021;  /* official UMN Light Maroon */
+  --gold: #FFCC33;          /* UMN gold — accents, highlights */
+  --gold-dark: #FFB71E;     /* official UMN Dark Gold */
+  --gold-soft: #FFDE7A;     /* official UMN Light Gold — hover highlights */
+
+  /* Official UMN secondary grays (Folwell web theme) */
+  --gray-darker: #333333;
+  --gray-dark: #5A5A5A;
+  --gray-medium: #777677;
+  --gray-light: #D5D6D2;
+
+  /* Base — ColorStack national accents (use sparingly) */
+  --stack-yellow: #FCB432;  /* THE ColorStack yellow — never any other yellow */
+  --teal: #2E9E91;
+  --pink: #F0426B;
+  --coral: #FB6D4C;
+  --rose: #C6887F;          /* dusty maroon tint — duotone/editorial section bg */
+
+  /* Neutrals */
+  --cream: #FBF5EC;         /* default page background */
+  --paper: #FFFFFF;
+  --ink: #1F1A17;           /* body text */
+  --ink-soft: #5C534E;      /* secondary text */
+  --line: #E8DCCB;          /* borders on cream */
+  --hairline: rgba(31, 26, 23, 0.3);   /* editorial rules on light bg */
+  --hairline-inverse: rgba(251, 245, 236, 0.35); /* rules on maroon */
+
+  /* Semantic aliases */
+  --surface-page: var(--cream);
+  --surface-card: var(--paper);
+  --text-body: var(--ink);
+  --text-muted: var(--ink-soft);
+  --text-heading: var(--maroon);
+  --text-on-maroon: #FFFFFF;
+  --text-on-gold: var(--maroon);
+  --accent-primary: var(--maroon);
+  --accent-highlight: var(--gold);
+  --border-default: var(--line);
+  --focus-ring: var(--gold);
+}

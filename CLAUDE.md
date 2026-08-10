@@ -27,3 +27,20 @@ Never skip review. Never fan out more than one slice deep without integrating.
 
 ## Ledger
 Maintain `HANDOFF-LOG.md` at the repo root. Append one line per delegated task: `[slice] [agent] [status] [files touched] [open question]`. This is how the human resumes after a crash.
+
+## Spawning subagents via herdr
+Workspace `colorstack`. Tab 3 = `agents`, reserved for you. Never spawn into tabs 1 or 2.
+
+Spawn → inject → wait → collect:
+  herdr pane split 3-1 --direction down
+  herdr pane run 3-N "claude"
+  herdr agent prompt 3-N "<the delegation envelope from ORCHESTRATION.md §3>" --wait
+  herdr agent wait 3-N --status done --timeout 900
+  herdr pane read 3-N --source recent --lines 200
+
+Rules:
+- Max 3 concurrent subagent panes. More than that and you cannot supervise the output.
+- Each subagent gets ONE envelope. Never a second task in the same pane — kill it and split fresh.
+- Before delegating, `herdr pane read 2-1 --source recent --lines 30` to confirm the server is green.
+- A pane in `blocked` is waiting on a human decision. Read it, answer it, or escalate to me — never leave it parked.
+- After collecting, close the pane. Long-lived subagent panes accumulate confused history.
