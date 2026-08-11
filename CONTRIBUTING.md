@@ -2,6 +2,16 @@
 
 This site is mid-rebuild against a vendored design system. Before you write anything, read **[`.ai/README.md`](.ai/README.md)** — it is the map: current slice status, where the spec lives, the pane contract, and the gotchas already paid for.
 
+## Quick start by role
+
+| You are… | Read these three, in order | Then |
+|---|---|---|
+| A human developer | [`.ai/README.md`](.ai/README.md) · this file · [`.ai/OWNERSHIP.md`](.ai/OWNERSHIP.md) | branch `revamp/<slice>`, build, PR |
+| An AI agent | your role file in [`.claude/agents/`](.claude/agents/) · your envelope in [`.ai/envelopes/`](.ai/envelopes/) · the spec lines quoted in it | touch only your write list, report per the envelope |
+| A reviewer | [`.claude/agents/reviewer.md`](.claude/agents/reviewer.md) · [`.ai/reviews/README.md`](.ai/reviews/README.md) · the PR diff | verdict + ledger row in [`HANDOFF-LOG.md`](HANDOFF-LOG.md) |
+
+Everything below is the detail behind that table.
+
 ## Setup
 
 Requires Node `^20.19` or `>=22.12`.

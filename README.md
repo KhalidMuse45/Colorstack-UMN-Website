@@ -9,6 +9,15 @@ The official website for the **University of Minnesota Chapter** of [ColorStack]
 > and the gotchas already paid for. Then [`CONTRIBUTING.md`](CONTRIBUTING.md).
 > Progress and open blockers live in [`HANDOFF-LOG.md`](HANDOFF-LOG.md); the audit of the old site is [`RECON.md`](RECON.md).
 
+| I want to… | Read |
+|---|---|
+| Understand the project & current status | [`.ai/README.md`](.ai/README.md) |
+| Contribute (human or agent) | [`CONTRIBUTING.md`](CONTRIBUTING.md) — quick start by role |
+| Know who owns a path before touching it | [`.ai/OWNERSHIP.md`](.ai/OWNERSHIP.md) |
+| See blockers & the work ledger | [`HANDOFF-LOG.md`](HANDOFF-LOG.md) |
+| Check the design authority | [`design/UX-SPEC.md`](design/UX-SPEC.md) |
+| Review a PR | [`.ai/reviews/README.md`](.ai/reviews/README.md) |
+
 ---
 
 ## About
