@@ -1,0 +1,4 @@
+# Shell scripts must stay LF — CRLF breaks sh on every platform, including
+# Git Bash on Windows (`$'\r': command not found` in guardrails + the hook).
+*.sh text eol=lf
+.githooks/* text eol=lf

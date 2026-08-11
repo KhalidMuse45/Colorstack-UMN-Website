@@ -1,0 +1,269 @@
+---
+/**
+ * Sticky global NavBar (UX-SPEC §2 / §5.1.1 / §6).
+ *
+ * Desktop (≥900px): logo left, primary links right, Join gold pill last.
+ * Mobile (<900px): logo + hamburger. Links and the Join pill live in
+ * MobileSheet.astro, which owns the sheet's open/close state and focus trap;
+ * this component only renders the trigger and exposes [data-nav-toggle].
+ *
+ * Route data comes from src/data/nav.ts — do not restate or edit routes.
+ */
+import { primaryNav, joinCta, chapter } from '../data/nav';
+---
+
+<header class="nav-bar" data-nav>
+  <div class="nav-bar-inner">
+    <!-- Logo marks home. No border, no recolor, no crop (DONE-5). -->
+    <a class="nav-brand" href="/" aria-label={`${chapter.name} — home`}>
+      <img
+        src="/images/colorstack-umn-logo.png"
+        alt="ColorStack UMN logo"
+        width="1544"
+        height="1534"
+      />
+    </a>
+
+    <nav class="nav-primary" aria-label="Primary">
+      <ul class="nav-list">
+        {
+          primaryNav.map((l) => (
+            <li class="nav-item">
+              <a class="nav-link" href={l.href}>{l.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <a class="nav-cta" href={joinCta.href}>{joinCta.label}</a>
+
+    <button
+      class="nav-toggle"
+      type="button"
+      data-nav-toggle
+      aria-expanded="false"
+      aria-controls="mobile-sheet"
+      aria-haspopup="dialog"
+    >
+      <span class="nav-toggle-label">Menu</span>
+      <span class="nav-toggle-box" aria-hidden="true">
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </span>
+    </button>
+  </div>
+</header>
+
+<style>
+  .nav-bar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--surface-page);
+  }
+
+  /* The 1px --hairline bottom rule appears only once scrolled (§5.1.1).
+     Drawn as an overlay so adding it never shifts the 1px layout. */
+  .nav-bar::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: var(--hairline);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .nav-bar.is-scrolled::after {
+    opacity: 1;
+  }
+
+  .nav-bar-inner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--space-2) var(--space-5);
+  }
+
+  .nav-brand {
+    display: inline-flex;
+    align-items: center;
+    min-width: 44px;
+    min-height: 44px;
+    line-height: 0;
+  }
+
+  .nav-brand img {
+    height: var(--space-6);
+    width: auto;
+  }
+
+  .nav-primary {
+    margin-left: auto;
+  }
+
+  .nav-list {
+    display: flex;
+    gap: var(--space-1);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Link treatment (§6): underline + --gold-soft highlighter swipe, drawn
+     with pseudo-elements because gradients are off-brand and banned. The
+     ::before sits behind the text (default paint order), the ::after is
+     the underline. Static states live outside the motion gate; the movement
+     is the only thing that is gated. */
+  .nav-link {
+    position: relative;
+    z-index: 0;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 var(--space-3);
+    font-family: var(--font-display);
+    font-size: var(--text-small);
+    font-weight: 600;
+    letter-spacing: var(--tracking-display);
+    color: var(--text-body);
+    text-decoration: none;
+  }
+
+  .nav-link::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    inset: var(--space-2) var(--space-2) var(--space-1);
+    background: var(--gold-soft);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    left: var(--space-2);
+    right: var(--space-2);
+    bottom: var(--space-1);
+    height: 1px;
+    background: var(--accent-primary);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  .nav-link:hover::before,
+  .nav-link:focus-visible::before,
+  .nav-link:hover::after,
+  .nav-link:focus-visible::after {
+    transform: scaleX(1);
+  }
+
+  /* Join — gold pill CTA, always last (§2). */
+  .nav-cta {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: var(--space-2) var(--space-5);
+    border-radius: var(--radius-pill);
+    background: var(--accent-highlight);
+    color: var(--text-on-gold);
+    font-family: var(--font-display);
+    font-size: var(--text-small);
+    font-weight: 700;
+    letter-spacing: var(--tracking-display);
+    text-decoration: none;
+  }
+
+  .nav-cta:hover,
+  .nav-cta:focus-visible,
+  .nav-cta:active {
+    background: var(--gold-dark);
+  }
+
+  /* Hamburger — mobile only. 44×44 target (§8). */
+  .nav-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    margin-left: auto;
+    padding: 0 var(--space-2);
+    min-width: 44px;
+    min-height: 44px;
+    border: 0;
+    background: none;
+    color: var(--text-body);
+    cursor: pointer;
+  }
+
+  .nav-toggle-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    letter-spacing: var(--tracking-meta);
+    text-transform: uppercase;
+  }
+
+  .nav-toggle-box {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 20px;
+  }
+
+  .nav-toggle-bar {
+    display: block;
+    height: 2px;
+    background: var(--text-body);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .nav-bar::after {
+      transition: opacity 0.2s ease;
+    }
+
+    .nav-link::before,
+    .nav-link::after {
+      transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .nav-cta {
+      transition: background-color 0.2s ease;
+    }
+  }
+
+  @media (max-width: 899px) {
+    .nav-primary,
+    .nav-cta {
+      display: none;
+    }
+
+    .nav-toggle {
+      display: inline-flex;
+    }
+
+    .nav-bar-inner {
+      padding-block: var(--space-1);
+    }
+  }
+</style>
+
+<script>
+  // Sticky scroll state (§5.1.1): a passive listener toggles the hairline
+  // bottom rule. No layout reads in the callback — just one class flip.
+  const header = document.querySelector('[data-nav]');
+  if (header) {
+    const onScroll = () => {
+      header.classList.toggle('is-scrolled', window.scrollY > 0);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+</script>

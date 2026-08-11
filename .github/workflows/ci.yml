@@ -34,6 +34,10 @@ jobs:
       - name: Link check (dist)
         # Delegates to the lint:links npm script so the skip-list lives in ONE
         # place (package.json). Skips = external social domains that block bots
-        # + the site's own origin, which 404s until the first Pages deploy.
-        # Never add skips for local routes — those must resolve inside ./dist.
+        # + the site's own origin (404s until the first Pages deploy) + the
+        # seven spec-mandated chrome links to routes that don't exist until
+        # slices 5-9 (/events /newsletter /opportunities /about /about/team
+        # /join /sponsor). UX-SPEC forbids removing those links or stubbing the
+        # pages, so they are TEMPORARY skips: delete each one from package.json
+        # in the slice that builds its route. Any other local 404 must fail.
         run: npm run lint:links
