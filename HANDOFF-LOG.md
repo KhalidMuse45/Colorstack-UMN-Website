@@ -37,6 +37,14 @@
 | infra qwen pane | orchestrator | done | — | local Qwen3.5-2B via ODS/llama-server brought up (Docker Desktop was off); opencode agent `qwen-pr` started in `w9:p5` on `llama-server/Qwen3.5-2B-Q4_K_M.gguf` for PR comments/auto-checks |
 | infra unit C | implementer `w9:p4` (DeepSeek V4 Flash Free, opencode) | **done** | `.ai/README.md` (6 stale paths), `.ai/reviews/docs-link-audit.md` | audit: 0 broken md links; `colorstackumn.org` 404s until first Pages deploy; stale paths in root `CLAUDE.md` §2a left for a human call (constitution file) |
 | infra glue 2 | orchestrator | done | `.claude/agents/{planner,implementer,reviewer}.md` | applied Unit C §2b path fixes (design/ prefixes, plans/ → .ai/plans/) — these role files bind subagents and the stale paths actively misled them |
+| infra review | reviewer (local subagent) | **FAIL → fixed → gate passed** | verdict only | defect 1: `scripts/README.md:24` tripped the hook's casing check (hook lacked `scripts/`+`.github/` exclusions that guardrails.sh has) — fixed by extending `.githooks/pre-commit:12`, hook/CI parity restored, hook verified PASS on the staged slice. defect 2: plan lacked Unit C + DONE assertions — plan updated. note taken: ci.yml now calls `npm run lint:links` so the skip-list lives in one place |
+| infra qwen check | `qwen-pr` `w9:p5` (Qwen3.5-2B local) | done, artifact retired | `.ai/reviews/README.md` | Qwen wrote an advisory PR checklist; per the human's call the throwaway artifact was untracked and replaced with a general commenting guide (`.ai/reviews/README.md`); the qwen pane remains for future PR auto-checks |
+
+### infra-multidev — open items for the human
+- **OpenRouter credits exhausted** — the Kimi K3 pane cannot run until topped up (or retire it).
+- **`colorstackumn.org` returns 404** — expected until `deploy.yml` first runs on main; enable GitHub Pages "GitHub Actions" source in repo settings before merging.
+- **CODEOWNERS per-area handles** — commented placeholders; needs real e-board GitHub handles.
+- **Root `CLAUDE.md` stale paths** (audit §2a) — constitution file, left untouched pending a human call.
 
 ## Blocked
 
