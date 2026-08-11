@@ -29,6 +29,14 @@
 
 | 2 chrome | orchestrator (plan + shared data) | **planned, not started** | `.ai/plans/global-chrome.md`, `.ai/envelopes/*`, `src/data/nav.ts` | envelopes ready to inject; no implementer has written a file yet |
 | — scaffolding | orchestrator | done | `.ai/README.md`, `CONTRIBUTING.md`, `.githooks/pre-commit`, `README.md` | `plans/` moved to `.ai/plans/`; hook exclusions updated to match |
+| infra unit A | implementer `w9:p2` (DeepSeek V4 Flash Free, opencode) | **done, orchestrator-verified** | `.github/workflows/ci.yml`, `.github/workflows/deploy.yml`, `scripts/guardrails.sh`, `scripts/README.md` | verified: guardrails 0-on-clean / 1-on-planted-hex, both YAMLs parse, `npm run check` + `build` clean |
+| infra glue | orchestrator | done | `package.json` | added `lint` (guardrails tree-wide) + `lint:links` (linkinator vs dist) scripts; both smoke-tested |
+| infra unit B | implementer `w9:p3` (Kimi K3, opencode) | **pane dead — reassigned** | — | Kimi K3 pane failed on injection: OpenRouter account out of credits ("can only afford 1777 tokens"). Human decision: top up credits or retire the pane. Unit B re-delegated to a local Claude implementer subagent, same envelope |
+| infra unit B | implementer (local subagent) | **done, awaiting gate** | `.ai/OWNERSHIP.md`, `.ai/envelopes/TEMPLATE.md`, `.github/CODEOWNERS`, `.github/pull_request_template.md`, `CONTRIBUTING.md` | CODEOWNERS per-area handles unknown — shipped commented out; needs real handles from the e-board |
+| infra unit C | implementer `w9:p4` (DeepSeek V4 Flash Free, opencode) | delegated | `README.md`, `.ai/README.md`, `.ai/plans/*`, `.ai/reviews/docs-link-audit.md` | envelope `.ai/envelopes/infra-unit-c-docs-links.md` — markdown link audit; CI only covers dist/ |
+| infra qwen pane | orchestrator | done | — | local Qwen3.5-2B via ODS/llama-server brought up (Docker Desktop was off); opencode agent `qwen-pr` started in `w9:p5` on `llama-server/Qwen3.5-2B-Q4_K_M.gguf` for PR comments/auto-checks |
+| infra unit C | implementer `w9:p4` (DeepSeek V4 Flash Free, opencode) | **done** | `.ai/README.md` (6 stale paths), `.ai/reviews/docs-link-audit.md` | audit: 0 broken md links; `colorstackumn.org` 404s until first Pages deploy; stale paths in root `CLAUDE.md` §2a left for a human call (constitution file) |
+| infra glue 2 | orchestrator | done | `.claude/agents/{planner,implementer,reviewer}.md` | applied Unit C §2b path fixes (design/ prefixes, plans/ → .ai/plans/) — these role files bind subagents and the stale paths actively misled them |
 
 ## Blocked
 

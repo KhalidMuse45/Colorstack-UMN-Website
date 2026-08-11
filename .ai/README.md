@@ -48,7 +48,7 @@ Slice 1 is done and gated. Slice 2 is planned but **not started** — no impleme
 | 9 | `/sponsor` | blocked — needs real reach numbers |
 | 10 | Motion + a11y + perf, and the Node 22 / Astro 7 upgrade | not started |
 
-The slice order is reconciled from `design/ORCHESTRATION.md` §4 and `design/UX-SPEC.md` §10, which disagree in three places. The reconciliation and its reasoning are in `../HANDOFF-LOG.md`.
+The slice order is reconciled from `../design/ORCHESTRATION.md` §4 and `../design/UX-SPEC.md` §10, which disagree in three places. The reconciliation and its reasoning are in `../HANDOFF-LOG.md`.
 
 ---
 
@@ -68,9 +68,9 @@ git config core.hooksPath .githooks   # once per clone — enables the brand gua
 
 ## 5. The rules that will fail your commit
 
-These are enforced by `.githooks/pre-commit`, not by review. Full list in `../CLAUDE.md`.
+These are enforced by `../.githooks/pre-commit`, not by review. Full list in `../CLAUDE.md`.
 
-- **No literal hex outside the token layer.** Only `src/styles/{colors,typography,spacing,styles}.css` may contain one. Everywhere else: `var(--token)` or nothing.
+- **No literal hex outside the token layer.** Only `../src/styles/{colors,typography,spacing,styles}.css` may contain one. Everywhere else: `var(--token)` or nothing.
 - **No suppressing focus outlines.** Every interactive element keeps a visible 2px gold ring at 2px offset.
 - **No gradients, textures, glassmorphism, or heavy shadows.** The brand is flat.
 - **"ColorStack" — capital C, capital S.** Always. The one exception is the GitHub repo slug, which is misspelled upstream; the hook carves that out by exact URL. Rename the repo and that exception should be deleted.
@@ -87,7 +87,7 @@ recon → plan → fan out → review → integrate → gate → next slice
 
 Never skip review. Never fan out more than one slice deep without integrating. Commit once per slice with the ledger line in the body.
 
-**Fan out** when the work splits into ≥2 file-disjoint units of similar size. **Do it yourself** when the change is under ~30 lines, crosses every subagent's files, or is integration glue — shared data files and layout mounting points are always orchestrator-owned, which is why `src/data/nav.ts` was written before slice 2 fanned out.
+**Fan out** when the work splits into ≥2 file-disjoint units of similar size. **Do it yourself** when the change is under ~30 lines, crosses every subagent's files, or is integration glue — shared data files and layout mounting points are always orchestrator-owned, which is why `../src/data/nav.ts` was written before slice 2 fanned out.
 
 Each subagent gets exactly one envelope (`envelopes/`), never a second task in the same session. A subagent that reports "I also fixed X" gets X reverted unless X was in its write list.
 
@@ -119,9 +119,9 @@ Close the pane after collecting — long-lived subagent panes accumulate confuse
 ## 8. Gotchas already paid for
 
 - **Node 20 pins us to Astro 5.** `astro@7` and current `create-astro` need ≥22.12. The consequence is 3 `npm audit` findings (2 high) that only Astro 7 fixes — all build/dev-time, none shipped in static output. Scheduled for slice 10. Don't "fix" it with `npm audit fix --force`; that silently jumps a major.
-- **`src/styles/typography.css` diverges from `design/tokens/typography.css` on purpose.** The bundle ships a runtime Google Fonts `@import`; `SETUP.md` §6 forbids it. Faces are self-hosted latin-subset woff2 in `public/fonts/`. Do not "restore" the import.
+- **`../src/styles/typography.css` diverges from `../design/tokens/typography.css` on purpose.** The bundle ships a runtime Google Fonts `@import`; `../design/SETUP.md` §6 forbids it. Faces are self-hosted latin-subset woff2 in `../public/fonts/`. Do not "restore" the import.
 - **iCiel Gotham has no `@font-face`.** The binary is absent from the bundle and the chapter mark is a PNG, so nothing needs the face. `--font-logo` stays declared so restoring it is one block.
-- **`public/CNAME` must survive every build.** It carries the apex domain. Don't move it back to the repo root.
+- **`../public/CNAME` must survive every build.** It carries the apex domain. Don't move it back to the repo root.
 - **Links to unbuilt routes will 404 in dev.** That is expected until slices 5–9. Do not remove links or invent pages to make it quiet.
 - **This machine ran out of disk mid-slice-2.** If tooling starts failing in strange ways, check `df -h /` before debugging anything else.
 

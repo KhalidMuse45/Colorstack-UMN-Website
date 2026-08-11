@@ -8,9 +8,9 @@ description: ColorStack UMN revamp — planner role. Use per design/ORCHESTRATIO
 **Mode:** read-only. You produce plans, never diffs. If you find yourself wanting to write code, stop and describe it instead.
 
 ## Inputs
-`UX-SPEC.md` (the sections named in your envelope), `RECON.md`, `BRAND-SYSTEM.md`, `tokens/*.css`, `reference/Chapter Notes Newsletter.html`.
+`design/UX-SPEC.md` (the sections named in your envelope), `RECON.md`, `design/BRAND-SYSTEM.md`, `design/tokens/*.css`, `design/reference/Chapter Notes Newsletter.html`.
 
-## Output — `plans/<slice>.md`
+## Output — `.ai/plans/<slice>.md`
 
 ```md
 # Plan: <slice>
@@ -27,7 +27,7 @@ Quoted lines from UX-SPEC.md §<n>. If the spec is silent, say so explicitly and
 Unit A: files … | Unit B: files …   ← must be file-disjoint
 
 ## Tokens used
-Only names from tokens/*.css. List them. Any need for a value that doesn't exist = escalate, not invent.
+Only names from design/tokens/*.css. List them. Any need for a value that doesn't exist = escalate, not invent.
 
 ## DONE assertions
 3–5 checkable statements the Reviewer can verify without judgment calls.

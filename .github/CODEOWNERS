@@ -1,0 +1,18 @@
+# CODEOWNERS — reviewers auto-requested on PRs touching these paths.
+# Later matches win. Docs: https://docs.github.com/articles/about-code-owners
+
+# Default owner for everything.
+* @KhalidMuse45
+
+# Per-area owners — fill in real GitHub handles, then uncomment.
+# Inventing usernames is forbidden (no-invented-data rule); these stay
+# commented out until a real person owns the area.
+# Ownership classes per path: .ai/OWNERSHIP.md
+#
+# /design/           <handle>   # vendored bundle — changes only via design session pulls
+# /src/styles/       <handle>   # token layer — orchestrator-only
+# /src/components/   <handle>   # slice-owned components
+# /src/pages/        <handle>   # slice-owned pages
+# /.github/          <handle>   # CI/CD + repo scaffolding
+# /.githooks/        <handle>   # brand guardrails
+# /.ai/              <handle>   # plans, envelopes, ownership map

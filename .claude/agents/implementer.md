@@ -9,8 +9,8 @@ description: ColorStack UMN revamp — implementer role. Use per design/ORCHESTR
 
 ## Before you type
 1. Read the quoted spec lines in your envelope. They bind you.
-2. Open `reference/Chapter Notes Newsletter.html` and look at the region you're about to build. Match its density, hairlines, and mono meta rows.
-3. Read `tokens/colors.css`, `tokens/typography.css`, `tokens/spacing.css`. These are your only sources for values.
+2. Open `design/reference/Chapter Notes Newsletter.html` and look at the region you're about to build. Match its density, hairlines, and mono meta rows.
+3. Read `design/tokens/colors.css`, `design/tokens/typography.css`, `design/tokens/spacing.css`. These are your only sources for values.
 
 ## Hard rules
 - `var(--token)` or nothing. Zero literal hex values, zero literal font stacks, zero magic pixel numbers where a spacing token exists.
