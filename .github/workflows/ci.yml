@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-build-lint-links:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install
+        run: npm ci
+      - name: Typecheck (astro check)
+        run: npm run check
+      - name: Build
+        run: npm run build
+      - name: Brand guardrails (tree-wide)
+        run: bash scripts/guardrails.sh
+      - name: Link check (dist)
+        # Delegates to the lint:links npm script so the skip-list lives in ONE
+        # place (package.json). Skips = external social domains that block bots
+        # + the site's own origin, which 404s until the first Pages deploy.
+        # Never add skips for local routes — those must resolve inside ./dist.
+        run: npm run lint:links

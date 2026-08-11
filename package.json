@@ -11,6 +11,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
+    "lint": "bash scripts/guardrails.sh",
+    "lint:links": "npx --yes linkinator ./dist --recurse --skip \"https://colorstackumn\\.org/|linkedin\\.com|instagram\\.com\" --verbosity error",
     "astro": "astro"
   },
   "dependencies": {

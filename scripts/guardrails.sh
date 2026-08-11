@@ -1,14 +1,19 @@
 #!/bin/sh
-# Brand guardrails — scans ONLY files staged for this commit.
-# Skips the vendored bundle, orchestration docs, and paths in .guardrail-allow.
+# Brand guardrails — CI edition of .githooks/pre-commit.
+# The hook scans only STAGED files; CI cannot trust per-clone hooks, so this
+# scans every git-tracked file tree-wide. Same four check classes, same
+# exclusions, so a local commit and a CI run always agree on a violation.
 #
-# The four token files copied from design/tokens/ are the ONE place a literal
-# hex is legal. Everywhere else — including src/styles/base.css — it is
-# var(--token) or nothing (UX-SPEC.md §0, agents/implementer.md).
+# Checked (for every non-excluded tracked file):
+#   1. no literal hex outside the token layer (src/styles/*.css only)
+#   2. no `outline: none`
+#   3. no gradients / backdrop-filter (glassmorphism)
+#   4. ColorStack casing — capital C, capital S, always
+# Excluded: vendored bundle, orchestration docs, CI files, this script, and any
+# path allowlisted in .guardrail-allow.
+set -u
 fail=0
-# Excluded: the vendored bundle, the hook itself, and the agent/orchestration
-# docs — those legitimately quote violations in order to forbid them.
-files=$(git diff --cached --name-only --diff-filter=ACM |
+files=$(git ls-files |
   grep -Ev '^(design/|\.githooks/|\.ai/|\.claude/|\.github/|scripts/|CLAUDE\.md$|HANDOFF-LOG\.md$|RECON\.md$)')
 for f in $files; do
   [ -f "$f" ] || continue

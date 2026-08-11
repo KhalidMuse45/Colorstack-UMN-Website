@@ -46,6 +46,12 @@ Not machine-checkable, equally binding. Full text in [`design/UX-SPEC.md`](desig
 
 **`src/styles/` is the token layer.** The four files there are copies of `design/tokens/`. Do not redeclare a token, and do not add a value that does not already exist — a missing token is an escalation, not an invention. The one sanctioned divergence is `typography.css`, which self-hosts the fonts instead of using the bundle's runtime Google Fonts import; that is documented in the file itself.
 
+## Branching & ownership
+
+- Branches are named `revamp/<slice-name>` — **one slice per branch**.
+- Parallel work within a slice runs on **disjoint file sets** — never the same file.
+- Who owns which path, how to claim work, and how to extend a feature without crossing a boundary: [`.ai/OWNERSHIP.md`](.ai/OWNERSHIP.md).
+
 ## Logging your work
 
 Append to [`HANDOFF-LOG.md`](HANDOFF-LOG.md). It is how the next person — human or agent — resumes without re-deriving your reasoning. Record deviations and their justification, not just what changed.

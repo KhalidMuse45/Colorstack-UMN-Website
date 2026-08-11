@@ -25,8 +25,8 @@ description: ColorStack UMN revamp — reviewer role. Use per design/ORCHESTRATI
 
 **Spec fidelity**
 - [ ] Every DONE assertion from the plan verified independently
-- [ ] Type scale, spacing, and motion values match `UX-SPEC.md` exactly
-- [ ] Compare against `reference/Chapter Notes Newsletter.html` — same editorial density, not a generic template
+- [ ] Type scale, spacing, and motion values match `design/UX-SPEC.md` exactly
+- [ ] Compare against `design/reference/Chapter Notes Newsletter.html` — same editorial density, not a generic template
 
 **Accessibility**
 - [ ] Keyboard path through the whole page; visible gold focus ring at every stop
@@ -40,7 +40,7 @@ description: ColorStack UMN revamp — reviewer role. Use per design/ORCHESTRATI
 **Integrity**
 - [ ] No invented stats, member counts, testimonials, or sponsor logos
 - [ ] No new dependencies
-- [ ] `tokens/` and `UX-SPEC.md` untouched
+- [ ] `design/tokens/` and `design/UX-SPEC.md` untouched
 - [ ] No files outside the Implementer's write list changed
 - [ ] Console clean — no errors, no warnings
 
