@@ -46,6 +46,11 @@
 - **CODEOWNERS per-area handles** — commented placeholders; needs real e-board GitHub handles.
 - **Root `CLAUDE.md` stale paths** (audit §2a) — constitution file, left untouched pending a human call.
 
+| 2 chrome unit A | implementer `w9:p2` (DeepSeek V4 Flash Free, opencode) | **done after 2 defect rounds** | `src/components/NavBar.astro`, `src/components/MobileSheet.astro` | round 1: illegal top-level `return` in module script broke the build (11 ts errors); round 2 (review defects): links-left layout, stale `transitionend` race, sub-44px logo target — all fixed and re-verified. Sticky hairline uses the plan-sanctioned passive one-class scroll listener (logged per plan risk) |
+| 2 chrome unit B | implementer `w9:p4` (DeepSeek V4 Flash Free, opencode) | **done** | `src/components/Footer.astro` | clock = build-time seed + JS tick, `tabular-nums`; Colophon facts all trace to README — nothing invented; pane hit an opencode Temp-dir permission prompt mid-run (approved once) |
+| 2 chrome glue | orchestrator | done | `src/layouts/Base.astro`, `.gitattributes` | mounted skip link (44px) + NavBar + MobileSheet + `<main id="main">` + Footer; `.gitattributes` pins `*.sh` and `.githooks/*` to LF — CRLF checkout was breaking guardrails + the hook on Windows (reviewer note) |
+| 2 chrome review | reviewer (local subagent) | **FAIL → fixes → PASS WITH NOTES** | verdict only | notes carried to slice 3: mint a real 32px `--text-*` token (sheet links use `--space-6` as font-size); unify §6 reduced-motion interpretation (NavBar keeps state/drops motion, Footer drops the state) ; no-JS mobile users have footer-only nav; `<time datetime>` goes stale under the live clock; copyright line has no year. Runtime browser/axe/Lighthouse checks remain UNVERIFIED — slice 10 |
+
 ## Blocked
 
 ### Resolved 2026-08-10 (human decisions — these bind slice 1)

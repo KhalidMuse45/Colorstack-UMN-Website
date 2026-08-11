@@ -1,0 +1,258 @@
+---
+/**
+ * Global Footer — slice 2, Unit B.
+ * Reads every route and chapter string from src/data/nav.ts — never restated
+ * here, never edited there. Not mounted by this file: the orchestrator wires
+ * it into Base.astro after both chrome units land.
+ *
+ * Shape (UX-SPEC §2): hairline top rule, 4 columns (Chapter / Explore /
+ * Connect / Colophon), then a mono meta row closed by a live-updating clock.
+ * Reference for the meta row is the newsletter footer: mono 11px, uppercased
+ * in CSS (never in source text), +0.08em tracking, 1px hairline above.
+ */
+import { chapter, exploreNav, connectNav, isExternal } from '../data/nav';
+
+interface FooterLink {
+  href: string;
+  label: string;
+  external: boolean;
+  newTab: boolean;
+}
+
+const exploreLinks: FooterLink[] = exploreNav.map((l) => ({
+  ...l,
+  external: isExternal(l.href),
+  newTab: l.href.startsWith('http'),
+}));
+
+const connectLinks: FooterLink[] = connectNav.map((l) => ({
+  ...l,
+  external: isExternal(l.href),
+  newTab: l.href.startsWith('http'),
+}));
+
+// Build-time seed for the no-JS case. The inline script below upgrades it to a
+// live clock (progressive enhancement — the page is correct without it).
+const clockDate = new Date();
+const clockSeed = clockDate.toLocaleTimeString('en-GB', { hour12: false });
+const clockISO = clockDate.toISOString();
+
+// Colophon facts, sourced from README's Tech Stack / RECON — no invented
+// numbers, no founding year (decision logged in the envelope).
+const colophon = [
+  'Static Astro — zero client JS by default',
+  'Self-hosted Archivo / Lora / IBM Plex Mono',
+  'Served from GitHub Pages',
+];
+---
+
+<footer class="site-footer">
+  <div class="footer__inner">
+    <div class="footer__columns">
+      <section class="footer__col" aria-label="Chapter">
+        <p class="footer__heading">Chapter</p>
+        <p class="footer__brand">{chapter.name}</p>
+        <a
+          class="footer__link"
+          href={'mailto:' + chapter.email}
+          >{chapter.email}<span class="footer__marker" aria-hidden="true">↗</span></a
+        >
+      </section>
+
+      <nav class="footer__col" aria-label="Explore">
+        <p class="footer__heading">Explore</p>
+        <ul class="footer__links">
+          {
+            exploreLinks.map((link) => (
+              <li>
+                <a class="footer__link" href={link.href}>{link.label}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <nav class="footer__col" aria-label="Connect">
+        <p class="footer__heading">Connect</p>
+        <ul class="footer__links">
+          {
+            connectLinks.map((link) => (
+              <li>
+                <a
+                  class="footer__link"
+                  href={link.href}
+                  target={link.newTab ? '_blank' : undefined}
+                  rel={link.newTab ? 'noopener noreferrer' : undefined}
+                  >{link.label}
+                  {link.external && (
+                    <span class="footer__marker" aria-hidden="true">↗</span>
+                  )}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <section class="footer__col" aria-label="Colophon">
+        <p class="footer__heading">Colophon</p>
+        {colophon.map((line) => <p class="footer__colophon">{line}</p>)}
+      </section>
+    </div>
+
+    <div class="footer__meta">
+      <span>© ColorStack UMN — All Rights Reserved</span>
+      <span>{chapter.affiliation}</span>
+      <span class="footer__clock"
+        ><time datetime={clockISO} data-live-clock>{clockSeed}</time></span
+      >
+    </div>
+  </div>
+</footer>
+
+<script>
+  const clock = document.querySelector('[data-live-clock]');
+  if (clock) {
+    const fmt = new Intl.DateTimeFormat('en-GB', {
+      hour12: false,
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    });
+    const tick = () => {
+      clock.textContent = fmt.format(new Date());
+    };
+    tick();
+    setInterval(tick, 1000);
+  }
+</script>
+
+<style>
+  /* Footer — hairline top rule, flat cream ground, no boxes, no shadows. */
+  .site-footer {
+    border-top: 1px solid var(--hairline);
+    background: var(--surface-page);
+  }
+
+  .footer__inner {
+    max-width: 1200px;
+    margin-inline: auto;
+    padding: var(--space-7) var(--space-4) var(--space-6);
+  }
+
+  /* ── 4 columns ───────────────────────────────────────────────────────── */
+  .footer__columns {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 900px) {
+    .footer__columns {
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-5);
+    }
+    .footer__col + .footer__col {
+      border-left: 1px solid var(--hairline);
+      padding-left: var(--space-5);
+    }
+  }
+
+  .footer__heading {
+    margin: 0 0 var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    letter-spacing: var(--tracking-meta);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .footer__brand {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: var(--text-h2);
+    line-height: var(--leading-heading);
+    letter-spacing: var(--tracking-display);
+    color: var(--text-heading);
+  }
+
+  .footer__links {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Links — §6: underline on hover, --gold-soft highlighter swipe,
+     --maroon-light ↗ on external. Hit target ≥44px (§8). */
+  .footer__link {
+    position: relative;
+    display: inline-block;
+    padding-block: var(--space-3);
+    color: var(--maroon);
+    text-decoration: none;
+  }
+
+  .footer__link::before {
+    content: '';
+    position: absolute;
+    inset: 0 calc(-1 * var(--space-1)) 0 calc(-1 * var(--space-1));
+    background: var(--gold-soft);
+    z-index: -1;
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .footer__link::before {
+      transition: transform 180ms ease;
+    }
+    .footer__link:hover::before,
+    .footer__link:focus-visible::before {
+      transform: scaleX(1);
+    }
+  }
+
+  .footer__link:hover {
+    text-decoration: underline;
+  }
+
+  .footer__marker {
+    color: var(--maroon-light);
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    margin-left: var(--space-1);
+  }
+
+  .footer__colophon {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: var(--text-small);
+  }
+
+  .footer__colophon + .footer__colophon {
+    margin-top: var(--space-2);
+  }
+
+  /* ── mono meta row — newsletter footer device ─────────────────────────── */
+  .footer__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-5);
+    margin-top: var(--space-6);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--hairline);
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    letter-spacing: var(--tracking-meta);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .footer__clock {
+    margin-left: auto;
+    font-variant-numeric: tabular-nums;
+  }
+</style>

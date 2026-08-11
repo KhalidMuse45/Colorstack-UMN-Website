@@ -3,12 +3,12 @@
  * Base layout. The token stylesheet is imported FIRST, before any component
  * style, so token declarations win the cascade order they were written for
  * (SETUP.md §5).
- *
- * Chrome (NavBar / MobileSheet / Footer) lands here in slice 2. Until then
- * this is deliberately a bare document shell.
  */
 import '../styles/styles.css';
 import '../styles/base.css';
+import NavBar from '../components/NavBar.astro';
+import MobileSheet from '../components/MobileSheet.astro';
+import Footer from '../components/Footer.astro';
 
 interface Props {
   title: string;
@@ -47,6 +47,39 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     />
   </head>
   <body>
-    <slot />
+    <a class="skip-link" href="#main">Skip to content</a>
+    <NavBar />
+    <MobileSheet />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
   </body>
 </html>
+
+<style>
+  /* Skip-to-content (UX-SPEC §8): first tab stop, hidden until focused,
+     surfaces above the sticky NavBar with the standard gold ring. */
+  .skip-link {
+    position: absolute;
+    top: var(--space-2);
+    left: var(--space-2);
+    z-index: 70;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: var(--space-2) var(--space-4);
+    background: var(--surface-page);
+    color: var(--text-body);
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    letter-spacing: var(--tracking-meta);
+    text-transform: uppercase;
+    text-decoration: none;
+    transform: translateY(calc(-100% - var(--space-4)));
+  }
+
+  .skip-link:focus-visible {
+    transform: translateY(0);
+  }
+</style>
