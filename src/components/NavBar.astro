@@ -123,6 +123,7 @@ import { primaryNav, joinCta, chapter } from '../data/nav';
      is the only thing that is gated. */
   .nav-link {
     position: relative;
+    z-index: 0;
     display: inline-flex;
     align-items: center;
     min-height: 44px;
@@ -138,6 +139,7 @@ import { primaryNav, joinCta, chapter } from '../data/nav';
   .nav-link::before {
     content: '';
     position: absolute;
+    z-index: -1;
     inset: var(--space-2) var(--space-2) var(--space-1);
     background: var(--gold-soft);
     transform: scaleX(0);

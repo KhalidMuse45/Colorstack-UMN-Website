@@ -1,4 +1,5 @@
 .astro/
+browseruse.md
 .DS_Store
 .logs/
 design.new/
