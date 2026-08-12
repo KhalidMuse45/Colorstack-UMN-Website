@@ -1,0 +1,483 @@
+---
+/**
+ * MOTION LAB — the gate for landing build order #1.
+ *
+ * `design/LANDING-PAGE.md:99`: "copy the nine files, verify each renders in
+ * isolation before touching the page. Gate: a scratch route showing all nine."
+ *
+ * Deliberately standalone rather than wrapped in Base.astro: isolating the
+ * primitives from NavBar/Footer is the point, so a failure here is the
+ * component's and not the chrome's.
+ *
+ * This route is noindex and excluded from the sitemap in astro.config.mjs.
+ * It is worth keeping after the gate as a living component gallery, which is
+ * cheaper than rediscovering these props from the .d.ts every time.
+ *
+ * WHAT TO CHECK, in the three states that matter:
+ *   1. Normal          every panel animates, marquees loop with no seam
+ *   2. Reduced motion  everything visible and readable, nothing animates,
+ *                      nothing sits at opacity 0
+ *   3. JS disabled     identical to (2). This is the real test of the port:
+ *                      the React originals fail it by construction
+ */
+import '../styles/styles.css';
+import '../styles/base.css';
+
+import TextRoll from '../components/motion/TextRoll.astro';
+import TextLoop from '../components/motion/TextLoop.astro';
+import TextEffect from '../components/motion/TextEffect.astro';
+import ProgressiveBlur from '../components/motion/ProgressiveBlur.astro';
+import PhotoReveal from '../components/motion/PhotoReveal.astro';
+import InfiniteSlider from '../components/motion/InfiniteSlider.astro';
+import AnimatedGroup from '../components/motion/AnimatedGroup.astro';
+import LiquidMenu from '../components/motion/LiquidMenu.astro';
+import Accordion from '../components/motion/Accordion.astro';
+
+import { photos, programs, community, inTheRoom } from '../data/landing';
+
+const panels = [
+  ['01', 'TextRoll', 'Characters roll up on entry. The accessible name must stay intact, not read as separated letters.'],
+  ['02', 'TextLoop', 'Rotating phrases, inline. Pauses on hover.'],
+  ['03', 'TextLoop stack', 'Photo roll in a fixed box. The box must not resize between frames.'],
+  ['04', 'TextEffect', 'Per character and per word reveal.'],
+  ['05', 'ProgressiveBlur', 'Layered blur, standalone. Zero runtime JS.'],
+  ['06', 'PhotoReveal', 'Caption rises on hover, focus and tap. Keyboard reachable.'],
+  ['07', 'InfiniteSlider', 'Seamless marquee. Check the wrap point for a seam.'],
+  ['08', 'InfiniteSlider reverse', 'Travels the other way. Second instance proves independence.'],
+  ['09', 'AnimatedGroup', 'Staggered grid entrance, blur-slide preset.'],
+  ['10', 'Accordion', 'Not on the landing page. Real buttons, aria-expanded.'],
+  ['11', 'LiquidMenu', 'Fixed, bottom right. Tab to it, Enter, Tab through, Escape.'],
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Motion lab — ColorStack UMN</title>
+    <meta name="description" content="Internal gate route: the nine motion primitives in isolation." />
+  </head>
+  <body>
+    <main id="main" class="lab">
+      <header class="lab-head">
+        <p class="lab-eyebrow">Internal gate route</p>
+        <h1 class="lab-title">Motion lab</h1>
+        <p class="lab-lede">
+          The nine primitives in isolation. Every one of them must stay
+          readable with JavaScript disabled and with reduced motion on.
+          Nothing may sit at opacity 0 in either state.
+        </p>
+        <ul class="lab-checks">
+          {panels.map(([n, name, note]) => (
+            <li><b>{n}</b> {name}. {note}</li>
+          ))}
+        </ul>
+      </header>
+
+      <section class="panel" id="p01">
+        <h2 class="panel-h"><span>01</span> TextRoll</h2>
+        <p class="panel-note">Accessible name must read "ColorStack UMN".</p>
+        <div class="panel-body">
+          <h3 class="display-xl"><TextRoll stagger={0.03} duration={700}>ColorStack UMN</TextRoll></h3>
+          <h3 class="display-md"><TextRoll stagger={0.024} duration={700}>Come find your people.</TextRoll></h3>
+        </div>
+      </section>
+
+      <section class="panel" id="p02">
+        <h2 class="panel-h"><span>02</span> TextLoop</h2>
+        <p class="panel-note">Inline rotator. Baseline must not jump between frames.</p>
+        <div class="panel-body">
+          <p class="rotator">
+            <span>Building a space for</span>
+            <TextLoop interval={2.2}>
+              <span>Black students.</span>
+              <span>Latinx students.</span>
+              <span>first-generation students.</span>
+              <span>you.</span>
+            </TextLoop>
+          </p>
+        </div>
+      </section>
+
+      <section class="panel" id="p03">
+        <h2 class="panel-h"><span>03</span> TextLoop, stack</h2>
+        <p class="panel-note">Photo roll. Fixed box, crossfade, no resize.</p>
+        <div class="panel-body">
+          <div class="roll">
+            <TextLoop stack={true} interval={3.4} transition={900}>
+              {community.roll.map((p) => (
+                <img src={p.src} alt={p.alt} width={p.width} height={p.height} class="roll-img" style={p.objectPosition ? `object-position:${p.objectPosition}` : undefined} />
+              ))}
+            </TextLoop>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="p04">
+        <h2 class="panel-h"><span>04</span> TextEffect</h2>
+        <p class="panel-note">Per character, then per word.</p>
+        <div class="panel-body">
+          <p class="display-sm"><TextEffect per="char" preset="blur">Chapter Notes, expanded to a site.</TextEffect></p>
+          <p class="display-sm"><TextEffect per="word" preset="fade-up">We are building the room we wanted as freshmen.</TextEffect></p>
+        </div>
+      </section>
+
+      <section class="panel" id="p05">
+        <h2 class="panel-h"><span>05</span> ProgressiveBlur</h2>
+        <p class="panel-note">Standalone, over a photo. No runtime JS at all.</p>
+        <div class="panel-body">
+          <div class="blur-demo">
+            <img src={photos.summitGroup.src} alt={photos.summitGroup.alt} width={photos.summitGroup.width} height={photos.summitGroup.height} />
+            <ProgressiveBlur blurIntensity={6} style="bottom:0;left:0;width:100%;height:50%" />
+            <p class="blur-caption">Caption sits over the blur ramp.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="p06">
+        <h2 class="panel-h"><span>06</span> PhotoReveal</h2>
+        <p class="panel-note">Tab to a tile. The caption must settle fully visible, with a gold ring.</p>
+        <div class="panel-body row">
+          {programs.slice(0, 2).map((prog) => (
+            <PhotoReveal
+              src={prog.photo.src}
+              alt={prog.photo.alt}
+              height={400}
+              width="clamp(280px,32vw,400px)"
+              radius={14}
+              blurIntensity={6}
+              objectPosition={prog.photo.objectPosition ?? 'center'}
+            >
+              <span class="tile-title">{prog.title}</span>
+              <span class="tile-body">{prog.body}</span>
+            </PhotoReveal>
+          ))}
+        </div>
+      </section>
+
+      <section class="panel" id="p07">
+        <h2 class="panel-h"><span>07</span> InfiniteSlider</h2>
+        <p class="panel-note">Watch the wrap point. No seam, no stutter, no empty track.</p>
+        <div class="panel-body">
+          <InfiniteSlider gap={20} duration={58}>
+            {programs.map((prog) => (
+              <PhotoReveal
+                src={prog.photo.src}
+                alt={prog.photo.alt}
+                height={400}
+                width="clamp(280px,32vw,400px)"
+                radius={14}
+                blurIntensity={6}
+                objectPosition={prog.photo.objectPosition ?? 'center'}
+                style="flex:none"
+              >
+                <span class="tile-title">{prog.title}</span>
+                <span class="tile-body">{prog.body}</span>
+              </PhotoReveal>
+            ))}
+          </InfiniteSlider>
+        </div>
+      </section>
+
+      <section class="panel" id="p08">
+        <h2 class="panel-h"><span>08</span> InfiniteSlider, reverse</h2>
+        <p class="panel-note">Second instance on the same page. Must not share state with 07.</p>
+        <div class="panel-body">
+          <InfiniteSlider gap={20} duration={64} reverse={true}>
+            {['Workshops', 'Leadership', 'Professional Development', 'Community', 'Outreach'].map((label) => (
+              <div class="chip-card">{label}</div>
+            ))}
+          </InfiniteSlider>
+        </div>
+      </section>
+
+      <section class="panel" id="p09">
+        <h2 class="panel-h"><span>09</span> AnimatedGroup</h2>
+        <p class="panel-note">blur-slide, auto-fit grid. The most aggressive hidden state of the nine.</p>
+        <div class="panel-body">
+          <AnimatedGroup preset="blur-slide" stagger={0.07} minColumnWidth={248} gap={20}>
+            {inTheRoom.grid.map((p) => (
+              <img src={p.src} alt={p.alt} width={p.width} height={p.height} class="grid-img" style={p.objectPosition ? `object-position:${p.objectPosition}` : undefined} />
+            ))}
+          </AnimatedGroup>
+        </div>
+      </section>
+
+      <section class="panel" id="p10">
+        <h2 class="panel-h"><span>10</span> Accordion</h2>
+        <p class="panel-note">Real buttons, aria-expanded, collapsed panels not focusable.</p>
+        <div class="panel-body">
+          <Accordion defaultOpen={0}>
+            <div class="acc-item">
+              <span data-acc-title>Do I have to be Black or Latinx to come?</span>
+              <div data-acc-body>
+                <p>Events are open to everyone. The community centers Black and Latinx students.</p>
+              </div>
+            </div>
+            <div class="acc-item">
+              <span data-acc-title>What year should I join?</span>
+              <div data-acc-body>
+                <p>Any year. Recruiting starts earlier than most people expect, so earlier helps.</p>
+              </div>
+            </div>
+          </Accordion>
+        </div>
+      </section>
+
+      <section class="panel" id="p11">
+        <h2 class="panel-h"><span>11</span> LiquidMenu</h2>
+        <p class="panel-note">
+          Fixed, bottom right of the viewport. Tab to the trigger, Enter to open,
+          Tab through the three items, Escape to close and restore focus.
+          Offset is 44px, not the reference's 18px: at 375px the fan overflowed.
+        </p>
+        <div class="panel-body"><p class="muted">Rendered outside this panel, fixed to the viewport.</p></div>
+      </section>
+    </main>
+
+    <div class="fab">
+      <LiquidMenu label="Get in touch" radius={76} size={62} blur={7} contrast={20}>
+        <a href="mailto:colorstk@umn.edu" aria-label="Email ColorStack UMN">@</a>
+        <a href="https://www.instagram.com/colorstackumn/" target="_blank" rel="noopener" aria-label="ColorStack UMN on Instagram">IG</a>
+        <a href="https://logicform.io/v/6a4aacba51ee6e65572aaa48" target="_blank" rel="noopener" aria-label="Join the mailing list">Join</a>
+      </LiquidMenu>
+    </div>
+  </body>
+</html>
+
+<style>
+  .lab {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--space-7) var(--space-5) var(--space-8);
+  }
+
+  .lab-eyebrow,
+  .panel-note,
+  .lab-checks {
+    font-family: var(--font-display);
+    font-size: var(--text-label);
+    font-weight: 600;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--maroon-light);
+  }
+
+  .lab-title {
+    margin: var(--space-3) 0 var(--space-4);
+    font-family: var(--font-display);
+    font-size: var(--text-hero);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    color: var(--maroon);
+  }
+
+  .lab-lede {
+    max-width: 60ch;
+    font-family: var(--font-body);
+    font-size: var(--text-h3);
+    line-height: var(--leading-body);
+  }
+
+  .lab-checks {
+    text-transform: none;
+    letter-spacing: normal;
+    color: var(--ink-soft);
+    margin: var(--space-5) 0 0;
+    padding-left: var(--space-4);
+    line-height: 1.7;
+  }
+
+  .panel {
+    margin-top: var(--space-8);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--line);
+  }
+
+  .panel-h {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-h2);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+
+  .panel-h span {
+    font-size: var(--text-label);
+    font-weight: 700;
+    letter-spacing: var(--tracking-label);
+    color: var(--maroon-light);
+  }
+
+  .panel-note {
+    margin: var(--space-2) 0 0;
+    text-transform: none;
+    letter-spacing: normal;
+    color: var(--ink-soft);
+    max-width: 70ch;
+  }
+
+  .panel-body {
+    margin-top: var(--space-5);
+  }
+
+  .panel-body.row {
+    display: flex;
+    gap: var(--space-5);
+    flex-wrap: wrap;
+  }
+
+  .display-xl,
+  .display-md,
+  .display-sm {
+    font-family: var(--font-display);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    color: var(--maroon);
+    margin: 0 0 var(--space-5);
+  }
+
+  .display-xl { font-size: clamp(40px, 8vw, 92px); line-height: 0.96; }
+  .display-md { font-size: clamp(28px, 4vw, 56px); line-height: 1.04; }
+  .display-sm { font-size: clamp(22px, 3vw, 36px); line-height: 1.15; font-weight: 800; color: var(--ink); }
+
+  .rotator {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-3);
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(26px, 4vw, 50px);
+    letter-spacing: -0.025em;
+    color: var(--ink);
+  }
+
+  .roll {
+    position: relative;
+    height: clamp(300px, 36vw, 460px);
+    max-width: 620px;
+    overflow: hidden;
+    border-radius: var(--radius-media);
+    background: var(--photo-ground);
+  }
+
+  .roll-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: var(--photo-tint);
+  }
+
+  .blur-demo {
+    position: relative;
+    max-width: 620px;
+    overflow: hidden;
+    border-radius: var(--radius-media);
+    background: var(--photo-ground);
+  }
+
+  .blur-demo img {
+    display: block;
+    width: 100%;
+    height: clamp(240px, 30vw, 380px);
+    object-fit: cover;
+    filter: var(--photo-tint);
+  }
+
+  .blur-caption {
+    position: absolute;
+    left: var(--space-5);
+    right: var(--space-5);
+    bottom: var(--space-4);
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--text-h3);
+    color: var(--paper);
+  }
+
+  .tile-title {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: var(--text-h2);
+    letter-spacing: -0.02em;
+    color: var(--paper);
+  }
+
+  .tile-body {
+    display: block;
+    margin-top: var(--space-2);
+    font-family: var(--font-body);
+    font-size: var(--text-body-size);
+    line-height: 1.5;
+    color: var(--photo-ground);
+  }
+
+  .chip-card {
+    flex: none;
+    display: grid;
+    place-items: center;
+    min-width: 260px;
+    min-height: 120px;
+    padding: var(--space-5);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-media);
+    background: var(--paper);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--text-h3);
+    color: var(--maroon);
+  }
+
+  .grid-img {
+    display: block;
+    width: 100%;
+    height: clamp(210px, 22vw, 280px);
+    object-fit: cover;
+    border-radius: var(--radius-media);
+    filter: var(--photo-tint);
+  }
+
+  .acc-item {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .acc-item [data-acc-title] {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--text-h3);
+    color: var(--maroon);
+  }
+
+  .acc-item [data-acc-body] p {
+    margin: 0 0 var(--space-4);
+    font-family: var(--font-body);
+    font-size: var(--text-body-size);
+    line-height: var(--leading-body);
+    max-width: 68ch;
+  }
+
+  .muted {
+    font-family: var(--font-body);
+    color: var(--ink-soft);
+  }
+
+  /* 44px, not the reference's clamp(18px,3vw,36px). At 375px that resolved to
+     18px and pushed the rightmost fan item off-screen. See HANDOFF-LOG.md. */
+  .fab {
+    position: fixed;
+    right: 44px;
+    bottom: 44px;
+    z-index: 70;
+  }
+</style>

@@ -1,0 +1,290 @@
+---
+/**
+ * PhotoReveal - photo tile whose caption sits behind a ProgressiveBlur and
+ * rises on hover, focus, or tap.
+ *
+ * Port of design/components/motion/PhotoReveal.jsx.txt. Prop names and
+ * defaults come from design/components/motion/types.d.ts.
+ *
+ * PROGRESSIVE ENHANCEMENT
+ * The React original starts the caption at opacity 0 and reveals it from an
+ * event handler. That strands the caption for anyone without JS. Here the
+ * server-rendered state is the *visible* one: caption at full opacity, no
+ * transform. The hide-until-hover behaviour is applied only under
+ * [data-motion="armed"], and the script sets that attribute only when JS runs
+ * and prefers-reduced-motion is not "reduce". So no-JS, reduced-motion, and a
+ * thrown script all land on a readable caption.
+ *
+ * There is no entrance animation and therefore no IntersectionObserver and no
+ * reveal failsafe: the un-armed state IS the revealed state, which is a
+ * stronger guarantee than a timeout.
+ *
+ * Reveal is driven by CSS (:hover / :focus-visible / :focus-within) so it keeps
+ * working on nodes the InfiniteSlider clones after this script has run. Only
+ * the tap toggle needs JS, and that is one delegated listener on the document.
+ */
+import ProgressiveBlur from './ProgressiveBlur.astro';
+
+export interface Props {
+  src?: string;
+  alt?: string;
+  /** Tile height - px number or any CSS length */
+  height?: number | string;
+  /** Tile width - px number or any CSS length; omit to fill the parent */
+  width?: number | string;
+  /** Corner radius in px. 14 and 10 resolve to the media / control tokens. */
+  radius?: number | string;
+  /** Blur of the first blur layer */
+  blurIntensity?: number | string;
+  /** How far up the tile the blur ramps */
+  blurHeight?: string;
+  /** CSS object-position for the photo */
+  objectPosition?: string;
+  /** Keep the caption visible instead of revealing on hover */
+  always?: boolean | string;
+  /** CSS filter applied to the photo */
+  filter?: string;
+  class?: string;
+  style?: string | Record<string, string | number>;
+  [key: string]: any;
+}
+
+const {
+  src,
+  alt = '',
+  height = 380,
+  width,
+  radius = 14,
+  blurIntensity = 6,
+  blurHeight = '50%',
+  objectPosition = 'center',
+  always = false,
+  // Tokenised form of the React default "saturate(1.04) contrast(1.03)
+  // brightness(1.02)". --photo-tint holds exactly that value.
+  filter = 'var(--photo-tint)',
+  class: className,
+  style,
+  ...rest
+} = Astro.props;
+
+/**
+ * The len() helper the reference keeps: height="400" arrives as the string
+ * "400", which is an invalid CSS length and gets silently dropped. A bare
+ * number becomes px; anything else (clamp(), %, vw) passes straight through.
+ */
+function len(v?: number | string | null): string | undefined {
+  if (v === null || v === undefined || v === '') return undefined;
+  const s = String(v).trim();
+  return /^-?[\d.]+$/.test(s) ? `${Number(s)}px` : s;
+}
+
+function css(v?: string | Record<string, string | number>): string {
+  if (!v) return '';
+  if (typeof v === 'string') return v.trim().replace(/;+$/, '');
+  return Object.entries(v)
+    .map(([k, val]) => `${k.replace(/[A-Z]/g, (m) => '-' + m.toLowerCase())}:${val}`)
+    .join(';');
+}
+
+/**
+ * radius is a px API in types.d.ts, but the two values the site actually uses
+ * are tokens: 14 is media/cards, 10 is controls. Map those onto the tokens so
+ * no magic pixel ships; anything else is honoured as given.
+ */
+function radiusToken(v: number | string): string {
+  const num = Number(v);
+  if (num === 14) return 'var(--radius-media)';
+  if (num === 10) return 'var(--radius-control)';
+  return len(v) ?? 'var(--radius-media)';
+}
+
+const isAlways = always === true || always === 'true' || always === '';
+const h = len(height);
+const w = len(width);
+
+const rootStyle = [
+  h ? `--pr-h:${h}` : '',
+  w ? `--pr-w:${w}` : '',
+  `--pr-radius:${radiusToken(radius)}`,
+  `--pr-object-position:${objectPosition}`,
+  `--pr-filter:${filter}`,
+  css(style),
+]
+  .filter(Boolean)
+  .join(';');
+
+// A missing photo gets a duotone placeholder on --rose at the tile's own
+// aspect ratio, never a grey box and never a stand-in image.
+const hasPhoto = typeof src === 'string' && src.trim() !== '';
+const placeholderLabel = alt.trim() !== '' ? alt : 'Photo not yet supplied';
+---
+
+<figure
+  class:list={['photo-reveal', className]}
+  style={rootStyle}
+  tabindex="0"
+  data-photo-reveal={isAlways ? undefined : ''}
+  data-caption={isAlways ? 'on' : undefined}
+  {...rest}
+>
+  {
+    hasPhoto ? (
+      <img class="pr-img" src={src} alt={alt} loading="lazy" decoding="async" />
+    ) : (
+      <span class="pr-placeholder" role="img" aria-label={placeholderLabel} />
+    )
+  }
+
+  <ProgressiveBlur
+    blurIntensity={blurIntensity}
+    style={`bottom:0;left:0;width:100%;height:${blurHeight}`}
+  />
+
+  <figcaption class="pr-caption"><slot /></figcaption>
+</figure>
+
+<style>
+  .photo-reveal {
+    position: relative;
+    margin: 0;
+    overflow: hidden;
+    border-radius: var(--pr-radius);
+    height: var(--pr-h);
+    width: var(--pr-w, auto);
+    background: var(--photo-ground);
+    cursor: default;
+  }
+
+  .photo-reveal:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+
+  .pr-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: var(--pr-object-position, center);
+    filter: var(--pr-filter, none);
+  }
+
+  .pr-placeholder {
+    position: absolute;
+    inset: 0;
+    display: block;
+    background: var(--rose);
+  }
+
+  .pr-caption {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: var(--space-5) var(--space-5) var(--space-4);
+    color: var(--cream);
+  }
+
+  /* Un-armed is the readable state. Everything below only bites once the
+     script has confirmed JS plus prefers-reduced-motion: no-preference. */
+  .photo-reveal[data-motion='armed'] .pr-caption {
+    opacity: 0;
+    transform: translateY(var(--space-3));
+  }
+
+  .photo-reveal[data-motion='armed']:hover .pr-caption,
+  .photo-reveal[data-motion='armed']:focus-visible .pr-caption,
+  .photo-reveal[data-motion='armed']:focus-within .pr-caption,
+  .photo-reveal[data-motion='armed'][data-caption='on'] .pr-caption {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* The blur exists to make the caption legible, so it fades WITH the caption.
+     Left always-on it is just a smudge over the lower half of every photo,
+     which is how it first shipped on the programs carousel.
+
+     :global is required: .progressive-blur is a child component's root element
+     and carries that component's scope hash, not this one's, so a plain
+     descendant selector would compile to something that never matches.
+
+     Un-armed keeps both blur and caption visible, which is the correct
+     no-JS and reduced-motion state: the caption is permanently shown there
+     and still needs its backing. */
+  .photo-reveal[data-motion='armed'] :global(.progressive-blur) {
+    opacity: 0;
+  }
+
+  .photo-reveal[data-motion='armed']:hover :global(.progressive-blur),
+  .photo-reveal[data-motion='armed']:focus-visible :global(.progressive-blur),
+  .photo-reveal[data-motion='armed']:focus-within :global(.progressive-blur),
+  .photo-reveal[data-motion='armed'][data-caption='on'] :global(.progressive-blur) {
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .pr-caption {
+      transition:
+        opacity 320ms ease-out,
+        transform 460ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .pr-img {
+      transition: transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .photo-reveal[data-motion='armed']:hover .pr-img,
+    .photo-reveal[data-motion='armed']:focus-within .pr-img {
+      transform: scale(1.045);
+    }
+  }
+</style>
+
+<script>
+  // Module scoped: runs once per page, never once per instance. Everything
+  // below either loops over instances or delegates from the document.
+  (() => {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    /** Arm every tile on the page, including nodes cloned in by a slider. */
+    const armAll = () => {
+      const tiles = document.querySelectorAll('[data-photo-reveal]');
+      tiles.forEach((el) => {
+        if (!(el instanceof HTMLElement)) return;
+        if (reduce.matches) {
+          // Disarming restores the visible caption. Never the other way round.
+          el.removeAttribute('data-motion');
+          el.removeAttribute('data-caption');
+        } else {
+          el.setAttribute('data-motion', 'armed');
+        }
+      });
+    };
+
+    try {
+      armAll();
+      reduce.addEventListener('change', armAll);
+    } catch {
+      // Anything thrown here leaves every caption in its server-rendered,
+      // fully visible state. That is the whole point of arming late.
+    }
+
+    // Tap toggle. Delegated so tiles the InfiniteSlider clones later still
+    // respond without needing to be re-bound.
+    document.addEventListener(
+      'pointerdown',
+      (e) => {
+        if (e.pointerType === 'mouse') return;
+        const target = e.target;
+        if (!(target instanceof Element)) return;
+        const tile = target.closest('[data-photo-reveal]');
+        if (!(tile instanceof HTMLElement)) return;
+        if (tile.getAttribute('data-motion') !== 'armed') return;
+        const on = tile.getAttribute('data-caption') === 'on';
+        tile.setAttribute('data-caption', on ? 'off' : 'on');
+      },
+      { passive: true }
+    );
+  })();
+</script>

@@ -1,0 +1,48 @@
+---
+/**
+ * Full-bleed group photo. Section 3 of the LANDING-PAGE section order.
+ * `design/reference/LandingPage.dc.html:66-68`.
+ *
+ * Unfolds via clip-path rather than fading, which is the "unfolding paper"
+ * treatment UX-SPEC 6 specifies for images.
+ *
+ * width and height are emitted so the browser reserves the box before the
+ * file lands. The photo is above the fold on most viewports, so it is
+ * eager and high priority: lazy-loading the LCP image would cost more than
+ * it saves.
+ */
+import Reveal from '../motion/Reveal.astro';
+import { hero } from '../../data/landing';
+
+const photo = hero.photo;
+---
+
+<Reveal as="figure" wipe class="hero-photo">
+  <img
+    src={photo.src}
+    alt={photo.alt}
+    width={photo.width}
+    height={photo.height}
+    loading="eager"
+    fetchpriority="high"
+    decoding="async"
+    style={photo.objectPosition ? `object-position:${photo.objectPosition}` : undefined}
+  />
+</Reveal>
+
+<style>
+  .hero-photo {
+    margin: 0;
+    width: 100%;
+    background: var(--photo-ground);
+    overflow: hidden;
+  }
+
+  .hero-photo img {
+    display: block;
+    width: 100%;
+    height: clamp(300px, 48vw, 600px);
+    object-fit: cover;
+    filter: var(--photo-tint);
+  }
+</style>

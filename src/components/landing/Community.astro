@@ -1,0 +1,126 @@
+---
+/**
+ * Who we show up for. Section 7 of the LANDING-PAGE section order: a gold
+ * popout plate behind a stacked TextLoop photo roll, copy on the right.
+ * `design/reference/LandingPage.dc.html:138-158`.
+ *
+ * The gold plate is offset behind the photo rather than framing it. It is
+ * decorative, so it is aria-hidden. Radius is --radius-media on both, so the
+ * offset reads as one object rather than two stacked rectangles.
+ */
+import TextLoop from '../motion/TextLoop.astro';
+import Reveal from '../motion/Reveal.astro';
+import SectionLabel from './SectionLabel.astro';
+import { community } from '../../data/landing';
+---
+
+<section id="community" class="community">
+  <div class="community-grid">
+    <div class="plate-wrap">
+      <span aria-hidden="true" class="plate"></span>
+      <Reveal wipe class="roll">
+        <TextLoop stack={true} interval={3.4} transition={900} class="roll-loop">
+          {
+            community.roll.map((p) => (
+              <img
+                src={p.src}
+                alt={p.alt}
+                width={p.width}
+                height={p.height}
+                loading="lazy"
+                decoding="async"
+                class="roll-img"
+                style={p.objectPosition ? `object-position:${p.objectPosition}` : undefined}
+              />
+            ))
+          }
+        </TextLoop>
+      </Reveal>
+    </div>
+
+    <Reveal class="community-copy" index={1}>
+      <SectionLabel>{community.label}</SectionLabel>
+      <h2 class="community-title">{community.headline}</h2>
+      {community.body.map((p, i) => <p class:list={[i > 0 && 'muted']}>{p}</p>)}
+    </Reveal>
+  </div>
+</section>
+
+<style>
+  .community {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: clamp(72px, 10vw, 140px) var(--space-5);
+  }
+
+  .community-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: clamp(32px, 5vw, 72px);
+    align-items: center;
+  }
+
+  .plate-wrap {
+    position: relative;
+    padding: var(--space-6) var(--space-6) 0 0;
+    margin-bottom: 18px;
+  }
+
+  .plate {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: var(--space-6);
+    bottom: var(--space-6);
+    background: var(--gold);
+    border-radius: var(--radius-media);
+  }
+
+  .roll {
+    position: relative;
+    background: var(--photo-ground);
+    border-radius: var(--radius-media);
+    overflow: hidden;
+    height: clamp(300px, 36vw, 460px);
+  }
+
+  .roll-loop {
+    position: absolute;
+    inset: 0;
+  }
+
+  .roll-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: var(--photo-tint);
+  }
+
+  .community-copy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  .community-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(28px, 3.6vw, 44px);
+    line-height: 1.08;
+    letter-spacing: -0.025em;
+    color: var(--maroon);
+    text-wrap: balance;
+  }
+
+  .community-copy p {
+    font-family: var(--font-body);
+    font-size: 18px;
+    line-height: 1.62;
+    text-wrap: pretty;
+  }
+
+  .community-copy .muted {
+    color: var(--text-muted);
+  }
+</style>

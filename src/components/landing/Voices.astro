@@ -1,0 +1,125 @@
+---
+/**
+ * Voices. Section 9 of the LANDING-PAGE section order: a reverse
+ * InfiniteSlider of testimonial cards.
+ * `design/reference/LandingPage.dc.html:175-194`.
+ *
+ * THIS SECTION RENDERS NOTHING WHEN THERE ARE NO TESTIMONIALS.
+ *
+ * `design/LANDING-PAGE.md:133`: the three cards in the reference read
+ * "Placeholder quote / Replace" and "must not ship. Chapter owes real quotes
+ * with names and roles." CLAUDE.md bans invented testimonials outright, and
+ * UX-SPEC.md section 5.1 sets the pattern for the whole site: never render an
+ * empty band. So the array in src/data/landing.ts is empty and this component
+ * returns null rather than shipping a heading over a blank strip.
+ *
+ * Add real quotes to `testimonials` and the section appears. Nothing else
+ * needs to change.
+ */
+import InfiniteSlider from '../motion/InfiniteSlider.astro';
+import Reveal from '../motion/Reveal.astro';
+import SectionLabel from './SectionLabel.astro';
+import { voices, testimonials } from '../../data/landing';
+
+const hasQuotes = testimonials.length > 0;
+---
+
+{
+  hasQuotes && (
+    <section id="voices" class="voices">
+      <div class="voices-head">
+        <Reveal>
+          <SectionLabel class="voices-label">{voices.label}</SectionLabel>
+        </Reveal>
+        <Reveal index={1}>
+          <h2 class="voices-title">{voices.headline}</h2>
+        </Reveal>
+      </div>
+
+      <InfiniteSlider gap={20} duration={64} reverse={true}>
+        {testimonials.map((t) => (
+          <figure class="quote">
+            <blockquote>{t.quote}</blockquote>
+            <figcaption>
+              <span class="quote-name">{t.name}</span>
+              <span class="quote-role">{t.role}</span>
+            </figcaption>
+          </figure>
+        ))}
+      </InfiniteSlider>
+    </section>
+  )
+}
+
+<style>
+  .voices {
+    background: var(--paper);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: clamp(72px, 10vw, 132px) 0;
+  }
+
+  .voices-head {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--space-5) clamp(36px, 5vw, 52px);
+  }
+
+  .voices-label {
+    margin-bottom: 18px;
+  }
+
+  .voices-title {
+    max-width: 20ch;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(30px, 4.2vw, 52px);
+    line-height: 1.06;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+
+  .quote {
+    flex: none;
+    width: clamp(300px, 34vw, 440px);
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--space-5);
+    background: var(--surface-page);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-media);
+    padding: var(--space-6) 30px;
+  }
+
+  .quote blockquote {
+    margin: 0;
+    font-family: var(--font-body);
+    font-style: italic;
+    font-size: 19px;
+    line-height: 1.5;
+    color: var(--ink);
+    text-wrap: pretty;
+  }
+
+  .quote figcaption {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    font-family: var(--font-display);
+  }
+
+  .quote-name {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--maroon);
+  }
+
+  .quote-role {
+    font-weight: 500;
+    font-size: var(--text-small);
+    color: var(--text-muted);
+  }
+</style>

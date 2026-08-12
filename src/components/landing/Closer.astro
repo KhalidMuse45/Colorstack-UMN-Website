@@ -1,0 +1,116 @@
+---
+/**
+ * Split closer. Section 12 of the LANDING-PAGE section order: two full-height
+ * panels, gold and near-black.
+ * `design/reference/LandingPage.dc.html:239-254`.
+ *
+ * These are the last thing on the page before the footer and they carry the
+ * two actions the whole site exists for: join the list, then show up. The
+ * "step one / step two" framing is the reference's, and it is doing real work
+ * by making the order explicit rather than offering two equal choices.
+ *
+ * The arrow is decorative and aria-hidden; the panel is a link with a real
+ * label, so a screen reader announces the action, not an arrow glyph.
+ */
+import { closer } from '../../data/landing';
+---
+
+<section class="closer">
+  {
+    closer.map((panel) => (
+      <a
+        href={panel.href}
+        target="_blank"
+        rel="noopener"
+        class:list={['panel', `panel-${panel.tone}`]}
+      >
+        <span class="panel-step">{panel.step}</span>
+        <span class="panel-row">
+          <span class="panel-title">{panel.title}</span>
+          <span aria-hidden="true" class="panel-arrow">↗</span>
+        </span>
+      </a>
+    ))
+  }
+</section>
+
+<style>
+  .closer {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    border-top: 1px solid var(--line);
+  }
+
+  .panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: clamp(40px, 7vw, 90px);
+    padding: clamp(48px, 7vw, 96px) clamp(28px, 4vw, 64px);
+    min-height: clamp(280px, 32vw, 420px);
+    text-decoration: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .panel {
+      transition: background 300ms ease;
+    }
+  }
+
+  .panel-gold {
+    background: var(--gold);
+    color: var(--maroon);
+  }
+
+  .panel-gold:hover {
+    background: var(--gold-dark);
+  }
+
+  .panel-ink {
+    background: var(--ink);
+    color: var(--cream);
+  }
+
+  .panel-ink:hover {
+    background: var(--maroon-deep);
+  }
+
+  .panel-step {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+
+  .panel-ink .panel-step {
+    color: var(--gold-soft);
+  }
+
+  .panel-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-5);
+  }
+
+  .panel-title {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(34px, 4.6vw, 64px);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+
+  .panel-arrow {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(28px, 3vw, 44px);
+    line-height: 1;
+  }
+
+  .panel-ink .panel-arrow {
+    color: var(--gold);
+  }
+</style>

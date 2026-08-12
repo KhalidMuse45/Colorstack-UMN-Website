@@ -1,201 +1,53 @@
 ---
 /**
- * SLICE 1 SCAFFOLD GATE — not the real home page.
+ * `/` — the ColorStack UMN home page.
  *
- * This is a token-and-type specimen whose only job is to make the SETUP.md
- * §10 checklist verifiable by eye: cream ground, all three layout faces
- * rendering, hairline rules, a mono meta row, and a visible gold focus ring.
+ * Replaces the slice-1 scaffold specimen wholesale, as that file said it
+ * would. Section order is `design/LANDING-PAGE.md` "Section order"; the
+ * reference implementation is `design/reference/LandingPage.dc.html`.
  *
- * The real `/` is built in slice 5 against UX-SPEC.md §5.1. This file is
- * replaced wholesale then — do not grow features on it.
+ * Every string, photo and link comes from `src/data/landing.ts`. Nothing on
+ * this page is hardcoded copy, so the e-board can edit the site without
+ * touching layout.
+ *
+ * Sections 1 and 13 (sticky nav and footer) come from Base.astro.
+ * LANDING-PAGE.md:81: "you already have this. Keep yours."
+ *
+ * Voices is absent from the rendered output on purpose: the testimonials
+ * array is empty because the reference's three quotes are placeholders that
+ * LANDING-PAGE.md:133 says must not ship. The component returns null rather
+ * than rendering a heading over an empty strip.
  */
 import Base from '../layouts/Base.astro';
 
-const faces = [
-  {
-    token: '--font-display',
-    name: 'Archivo',
-    role: 'Display, headlines, masthead',
-    rule: 'Weights 500–900. Tracking −0.01em. Never all caps above 24px.',
-  },
-  {
-    token: '--font-body',
-    name: 'Lora',
-    role: 'Body, editorial',
-    rule: 'Ledes are italic. Leading 1.55. Max measure 68ch.',
-  },
-  {
-    token: '--font-mono',
-    name: 'IBM Plex Mono',
-    role: 'Meta, labels, captions, timestamps',
-    rule: '11px, uppercase, tracking +0.08em.',
-  },
-];
+import Hero from '../components/landing/Hero.astro';
+import HeroPhoto from '../components/landing/HeroPhoto.astro';
+import StatBand from '../components/landing/StatBand.astro';
+import Mission from '../components/landing/Mission.astro';
+import Programs from '../components/landing/Programs.astro';
+import Community from '../components/landing/Community.astro';
+import InTheRoom from '../components/landing/InTheRoom.astro';
+import Voices from '../components/landing/Voices.astro';
+import GetInTouch from '../components/landing/GetInTouch.astro';
+import Contact from '../components/landing/Contact.astro';
+import Closer from '../components/landing/Closer.astro';
+import Fab from '../components/landing/Fab.astro';
 ---
 
 <Base
-  title="ColorStack UMN — scaffold"
-  description="Slice 1 scaffold gate for the ColorStack UMN chapter site rebuild."
+  title="ColorStack UMN — Black and Latinx computer science at the U"
+  description="A home for Black and Latinx computer science students at the University of Minnesota. Workshops, leadership, professional development, and a community that shows up."
 >
-  <main class="wrap">
-    <div class="meta-row">
-      <span>ColorStack UMN</span>
-      <span>Slice 01 — Scaffold</span>
-      <span>Tokens wired</span>
-    </div>
-
-    <h1>Chapter Notes, expanded to a site.</h1>
-    <p class="lede">
-      The scaffold is standing. Ground is <code>--cream</code>, the three
-      layout faces are self-hosted, and every value below resolves through a
-      token — nothing on this page is a literal.
-    </p>
-
-    <section aria-labelledby="faces">
-      <div class="meta-row">
-        <span id="faces">№ 01 — Type</span>
-        <span>Three faces</span>
-      </div>
-      <dl class="faces">
-        {
-          faces.map((f) => (
-            <div class="face">
-              <dt style={`font-family: var(${f.token})`}>{f.name}</dt>
-              <dd>
-                <span class="role">{f.role}</span>
-                <span class="rule">{f.rule}</span>
-                <p class="specimen" style={`font-family: var(${f.token})`}>
-                  Black &amp; Latinx computer science at the University of
-                  Minnesota — 0123456789
-                </p>
-              </dd>
-            </div>
-          ))
-        }
-      </dl>
-    </section>
-
-    <section aria-labelledby="focus">
-      <div class="meta-row">
-        <span id="focus">№ 02 — Focus</span>
-        <span>Tab to check the ring</span>
-      </div>
-      <p class="lede">
-        <a href="https://colorstackumn.org/">This link</a> and
-        <button type="button">this button</button> must both show a 2px gold
-        ring at 2px offset when reached by keyboard.
-      </p>
-    </section>
-  </main>
+  <Hero />
+  <HeroPhoto />
+  <StatBand />
+  <Mission />
+  <Programs />
+  <Community />
+  <InTheRoom />
+  <Voices />
+  <GetInTouch />
+  <Contact />
+  <Closer />
+  <Fab />
 </Base>
-
-<style>
-  .wrap {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: var(--space-5) var(--space-5) var(--space-8);
-  }
-
-  .meta-row {
-    display: flex;
-    justify-content: space-between;
-    gap: var(--space-4);
-    flex-wrap: wrap;
-    padding: var(--space-3) 0;
-    border-top: 1px solid var(--hairline);
-    font-family: var(--font-mono);
-    font-size: var(--text-meta);
-    letter-spacing: var(--tracking-meta);
-    text-transform: uppercase;
-    color: var(--text-muted);
-  }
-
-  h1 {
-    font-size: var(--text-h1);
-    font-weight: 900;
-    color: var(--text-heading);
-    margin: var(--space-6) 0 var(--space-4);
-    max-width: 20ch;
-  }
-
-  .lede {
-    font-style: italic;
-    font-size: var(--text-h3);
-    max-width: 68ch;
-    margin-bottom: var(--space-7);
-    color: var(--text-body);
-  }
-
-  code {
-    font-family: var(--font-mono);
-    font-size: var(--text-small);
-    color: var(--accent-primary);
-  }
-
-  .faces {
-    margin: 0;
-    padding: 0;
-  }
-
-  .face {
-    padding: var(--space-5) 0;
-    border-bottom: 1px solid var(--border-default);
-  }
-
-  dt {
-    font-size: var(--text-h2);
-    font-weight: 700;
-    letter-spacing: var(--tracking-display);
-  }
-
-  dd {
-    margin: var(--space-2) 0 0;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-  }
-
-  .role,
-  .rule {
-    font-family: var(--font-mono);
-    font-size: var(--text-meta);
-    letter-spacing: var(--tracking-meta);
-    text-transform: uppercase;
-    color: var(--text-muted);
-  }
-
-  .specimen {
-    font-size: var(--text-h3);
-    max-width: 68ch;
-    margin-top: var(--space-2);
-  }
-
-  button {
-    font: inherit;
-    font-family: var(--font-display);
-    font-weight: 600;
-    background: var(--accent-highlight);
-    color: var(--text-on-gold);
-    border: 0;
-    border-radius: var(--radius-pill);
-    padding: var(--space-2) var(--space-5);
-    min-height: 44px;
-    cursor: pointer;
-  }
-
-  a {
-    color: var(--accent-primary);
-    text-decoration-thickness: 1px;
-    text-underline-offset: 3px;
-  }
-
-  @media (min-width: 900px) {
-    .wrap {
-      padding-block: var(--space-8);
-    }
-
-    h1 {
-      font-size: var(--text-hero);
-    }
-  }
-</style>

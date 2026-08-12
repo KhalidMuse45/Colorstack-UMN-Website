@@ -1,4 +1,4 @@
-# `.ai/` — agent & contributor scaffolding
+# Agent and contributor scaffolding
 
 Everything an incoming developer *or* AI agent needs to pick this rebuild up mid-flight. Read this file first.
 
@@ -6,7 +6,7 @@ Everything an incoming developer *or* AI agent needs to pick this rebuild up mid
 
 ## 1. What this project is
 
-A full rebuild of **colorstackumn.org** against a vendored design bundle. The old site was a single 161-line `index.html` with its own conflicting token system; it was deleted in slice 1. See `../RECON.md` for the audit that produced that verdict.
+A full rebuild of **colorstackumn.org** against a vendored design bundle. The old site was a single 161-line `index.html` with its own conflicting token system; it was deleted in slice 1. See `history/RECON.md` for the audit that produced that verdict.
 
 The work runs as an **orchestrated multi-agent loop**: one orchestrator decomposes and gates, subagents implement one slice at a time. `../CLAUDE.md` is the constitution and auto-loads in Claude Code.
 
@@ -22,12 +22,12 @@ The work runs as an **orchestrated multi-agent loop**: one orchestrator decompos
 | `../design/reference/Chapter Notes Newsletter.html` | The visual north star | read-only |
 | `../CLAUDE.md` | Orchestrator constitution — non-negotiables, loop, ledger rules | root by contract |
 | `../HANDOFF-LOG.md` | **The ledger.** Slice status, blockers, deviations, dependency justifications | root by contract — a herdr pane tails it |
-| `../RECON.md` | Audit of the pre-revamp site: what was salvageable and where | root |
-| `plans/` | One plan per slice, written before fan-out | here |
-| `envelopes/` | Ready-to-inject delegation envelopes | here |
+| `history/RECON.md` | Audit of the pre-revamp site: what was salvageable and where | root |
+| `history/plans/` | One plan per slice, written before fan-out | here |
+| `history/envelopes/` | Ready-to-inject delegation envelopes | here |
 | `../.claude/agents/` | Planner / Implementer / Reviewer role definitions | **must stay there** — Claude Code discovers agents from `.claude/agents/` |
 
-Two files deliberately did **not** move into `.ai/`: `HANDOFF-LOG.md` (the constitution names it at root, and the ledger pane tails that exact path) and `CLAUDE.md` (auto-loaded from root). `RECON.md` stays at root because the vendored brief specifies it there.
+Two files deliberately did **not** move into `docs/`: `HANDOFF-LOG.md` (the constitution names it at root, and the ledger pane tails that exact path) and `CLAUDE.md` (auto-loaded from root). `RECON.md` now lives at `docs/history/RECON.md`.
 
 ---
 
@@ -107,7 +107,7 @@ herdr workspace `colorstack` = `w3`. Pane IDs are `w3:pN` — the `3-N` shorthan
 ```bash
 herdr pane split w3:p3 --direction down
 herdr agent start <name> --kind opencode --pane w3:pN --timeout 120000
-herdr agent prompt w3:pN "$(cat .ai/envelopes/<envelope>.md)" --wait
+herdr agent prompt w3:pN "$(cat history/envelopes/<envelope>.md)" --wait
 herdr agent wait w3:pN --status done --timeout 900
 herdr pane read w3:pN --source recent --lines 200
 ```

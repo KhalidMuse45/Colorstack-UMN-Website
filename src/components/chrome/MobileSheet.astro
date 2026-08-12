@@ -11,7 +11,7 @@
  * hamburger. Runs only when JS is present; without JS the sheet stays in
  * `hidden` so no-JS visitors never see a dead overlay.
  */
-import { primaryNav, joinCta } from '../data/nav';
+import { primaryNav, joinCta } from '../../data/nav';
 ---
 
 <div
@@ -87,9 +87,10 @@ import { primaryNav, joinCta } from '../data/nav';
   }
 
   .sheet-kicker {
-    font-family: var(--font-mono);
-    font-size: var(--text-meta);
-    letter-spacing: var(--tracking-meta);
+    font-family: var(--font-display);
+    font-size: var(--text-label);
+    font-weight: 700;
+    letter-spacing: var(--tracking-label);
     text-transform: uppercase;
     color: var(--text-on-maroon);
   }
@@ -104,9 +105,10 @@ import { primaryNav, joinCta } from '../data/nav';
     border: 0;
     background: none;
     color: var(--text-on-maroon);
-    font-family: var(--font-mono);
-    font-size: var(--text-meta);
-    letter-spacing: var(--tracking-meta);
+    font-family: var(--font-display);
+    font-size: var(--text-label);
+    font-weight: 600;
+    letter-spacing: var(--tracking-label);
     text-transform: uppercase;
     cursor: pointer;
   }
@@ -190,7 +192,7 @@ import { primaryNav, joinCta } from '../data/nav';
     min-height: 44px;
     margin-top: auto;
     padding: var(--space-3) var(--space-5);
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-control);
     background: var(--accent-highlight);
     color: var(--text-on-gold);
     font-family: var(--font-display);

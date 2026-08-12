@@ -5,3 +5,7 @@ browseruse.md
 design.new/
 dist/
 node_modules/
+
+# Playwright MCP scratch output (screenshots, console logs, snapshots)
+.playwright-mcp/
+.claude/worktrees/

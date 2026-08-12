@@ -27,9 +27,9 @@ file, and the offending line). It exits 1 if any of:
 Exclusions mirror the hook exactly and add the CI files:
 
 - `design/` — vendored bundle (quotes violations to forbid them)
-- `.githooks/`, `.ai/`, `.claude/`, `.github/`, `scripts/` — hooks, agent and
+- `.githooks/`, `docs/history/`, `.claude/`, `.github/`, `scripts/` — hooks, agent and
   orchestration docs, CI config, this script
-- `CLAUDE.md`, `HANDOFF-LOG.md`, `RECON.md`
+- `CLAUDE.md`, `HANDOFF-LOG.md`
 - any path allowlisted in `.guardrail-allow` (exact match, one per line)
 
 The four token files stay in the scan but skip only the hex check — color

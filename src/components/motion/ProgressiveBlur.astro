@@ -1,0 +1,94 @@
+---
+/**
+ * ProgressiveBlur - layered blur that ramps from clear to blurred across its
+ * box, so a caption sitting on top of a photo stays legible.
+ *
+ * Port of design/components/motion/ProgressiveBlur.jsx.txt. Prop names and
+ * defaults come from design/components/motion/types.d.ts.
+ *
+ * Zero runtime JS. Every layer is computed here, at build time, and emitted as
+ * a static inline style, so the blur is present and correct with JS disabled.
+ * The only scripted thing about it is the opacity transition, and that lives
+ * behind prefers-reduced-motion in the style block below.
+ *
+ * Positioning is the caller's job: pass `style` with the box you want, e.g.
+ * "bottom:0;left:0;width:100%;height:50%". The element is absolutely
+ * positioned, aria-hidden, and never takes pointer events.
+ *
+ * The linear-gradient calls below are mask ramps, not decoration - they are
+ * the alpha channel that makes each blur layer fade into the next.
+ */
+
+export interface Props {
+  /** Blur of the first layer in px; later layers ramp up from it */
+  blurIntensity?: number | string;
+  /** Number of stacked layers - more is smoother, costlier */
+  layers?: number | string;
+  /** Which edge is most blurred */
+  direction?: 'bottom' | 'top';
+  /** Fade the whole stack in and out */
+  visible?: boolean | string;
+  class?: string;
+  /** CSS text, or a style object, describing where this box sits */
+  style?: string | Record<string, string | number>;
+  [key: string]: any;
+}
+
+const {
+  blurIntensity = 3,
+  layers = 6,
+  direction = 'bottom',
+  visible = true,
+  class: className,
+  style,
+  ...rest
+} = Astro.props;
+
+/** Serialise a caller style, whether it arrived as CSS text or an object. */
+function css(v?: string | Record<string, string | number>): string {
+  if (!v) return '';
+  if (typeof v === 'string') return v.trim().replace(/;+$/, '');
+  return Object.entries(v)
+    .map(([k, val]) => `${k.replace(/[A-Z]/g, (m) => '-' + m.toLowerCase())}:${val}`)
+    .join(';');
+}
+
+// Astro can hand a prop over as a string. Coerce before doing arithmetic.
+const n = Math.max(2, Number(layers) || 6);
+const base = Number(blurIntensity) || 3;
+const toward = direction === 'top' ? 'to bottom' : 'to top';
+const show = visible === false || visible === 'false' ? 0 : 1;
+
+const stops = (j: number) => Math.max(0, Math.min(100, (j / n) * 100));
+
+const layerStyles = Array.from({ length: n }, (_, i) => {
+  const mask = `linear-gradient(${toward}, rgb(0 0 0 / 0) ${stops(i)}%, rgb(0 0 0 / 1) ${stops(i + 1)}%, rgb(0 0 0 / 1) ${stops(i + 2)}%, rgb(0 0 0 / 0) ${stops(i + 3)}%)`;
+  const blur = `blur(${base * Math.pow(1.6, i)}px)`;
+  return `backdrop-filter:${blur};-webkit-backdrop-filter:${blur};mask-image:${mask};-webkit-mask-image:${mask}`;
+});
+
+const rootStyle = [`--pb-opacity:${show}`, css(style)].filter(Boolean).join(';');
+---
+
+<div class:list={['progressive-blur', className]} style={rootStyle} aria-hidden="true" {...rest}>
+  {layerStyles.map((s) => <div class="pb-layer" style={s}></div>)}
+</div>
+
+<style>
+  .progressive-blur {
+    position: absolute;
+    pointer-events: none;
+    opacity: var(--pb-opacity, 1);
+  }
+
+  .pb-layer {
+    position: absolute;
+    inset: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .progressive-blur {
+      transition: opacity 260ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+  }
+</style>

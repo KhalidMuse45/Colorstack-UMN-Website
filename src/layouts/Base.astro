@@ -6,9 +6,9 @@
  */
 import '../styles/styles.css';
 import '../styles/base.css';
-import NavBar from '../components/NavBar.astro';
-import MobileSheet from '../components/MobileSheet.astro';
-import Footer from '../components/Footer.astro';
+import NavBar from '../components/chrome/NavBar.astro';
+import MobileSheet from '../components/chrome/MobileSheet.astro';
+import Footer from '../components/chrome/Footer.astro';
 
 interface Props {
   title: string;
@@ -71,9 +71,11 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     padding: var(--space-2) var(--space-4);
     background: var(--surface-page);
     color: var(--text-body);
-    font-family: var(--font-mono);
-    font-size: var(--text-meta);
-    letter-spacing: var(--tracking-meta);
+    border-radius: var(--radius-control);
+    font-family: var(--font-display);
+    font-size: var(--text-small);
+    font-weight: 700;
+    letter-spacing: var(--tracking-label);
     text-transform: uppercase;
     text-decoration: none;
     transform: translateY(calc(-100% - var(--space-4)));

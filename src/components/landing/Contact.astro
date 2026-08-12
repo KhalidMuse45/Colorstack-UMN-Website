@@ -1,0 +1,147 @@
+---
+/**
+ * Contact us. Section 11 of the LANDING-PAGE section order: hairline channel
+ * rows. `design/reference/LandingPage.dc.html:218-237`.
+ *
+ * Rows, not cards. LANDING-PAGE.md and UX-SPEC.md section 9 both say a card
+ * grid here turns the editorial voice into a SaaS template.
+ *
+ * No meeting time and no meeting location: LANDING-PAGE.md:134 says the
+ * location is unconfirmed and must not be invented, so the copy routes that
+ * question to the inbox instead. The hover affordance is a padding shift
+ * rather than a transform, per UX-SPEC section 6's no-scale rule.
+ */
+import Reveal from '../motion/Reveal.astro';
+import SectionLabel from './SectionLabel.astro';
+import { contact, channels } from '../../data/landing';
+---
+
+<section id="contact" class="contact">
+  <div class="contact-grid">
+    <Reveal class="contact-copy">
+      <SectionLabel>{contact.label}</SectionLabel>
+      <h2 class="contact-title">{contact.headline}</h2>
+      <p class="contact-body">
+        {contact.body}{' '}
+        <a href={`mailto:${contact.email}`} class="contact-email">{contact.email}</a>
+      </p>
+    </Reveal>
+
+    <Reveal class="channels" index={1}>
+      {
+        channels.map((c) => (
+          <a
+            href={c.href}
+            class="channel"
+            {...(c.href.startsWith('http') ? { target: '_blank', rel: 'noopener' } : {})}
+          >
+            <span class="channel-text">
+              <span class="channel-label">{c.label}</span>
+              <span class="channel-value">{c.value}</span>
+            </span>
+            <span class="channel-marker">{c.marker}</span>
+          </a>
+        ))
+      }
+    </Reveal>
+  </div>
+</section>
+
+<style>
+  .contact {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: clamp(72px, 10vw, 132px) var(--space-5);
+  }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: clamp(28px, 5vw, 72px);
+  }
+
+  .contact-copy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  .contact-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(27px, 3.2vw, 40px);
+    line-height: 1.08;
+    letter-spacing: -0.025em;
+    color: var(--maroon);
+    text-wrap: balance;
+  }
+
+  .contact-body {
+    font-family: var(--font-body);
+    font-size: 17.5px;
+    line-height: 1.62;
+    color: var(--text-muted);
+    text-wrap: pretty;
+  }
+
+  .contact-email {
+    color: var(--maroon);
+    border-bottom: 1.5px solid var(--gold);
+    text-decoration: none;
+  }
+
+  .channels {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .channel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-5) var(--space-1);
+    border-bottom: 1px solid var(--line);
+    min-height: 44px;
+    text-decoration: none;
+  }
+
+  /* Padding shift, not a transform. UX-SPEC section 6 forbids scale on hover. */
+  @media (prefers-reduced-motion: no-preference) {
+    .channel {
+      transition: padding-left 260ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+  }
+
+  .channel:hover {
+    padding-left: var(--space-3);
+  }
+
+  .channel-text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .channel-label {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 13.5px;
+    color: var(--text-muted);
+  }
+
+  .channel-value {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--text-h3);
+    color: var(--maroon);
+  }
+
+  .channel-marker {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-small);
+    color: var(--maroon-light);
+    flex: none;
+  }
+</style>

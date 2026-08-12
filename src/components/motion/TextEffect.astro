@@ -1,0 +1,232 @@
+---
+/**
+ * TextEffect — per-character or per-word reveal, triggered on scroll into view.
+ *
+ * Port of design/components/motion/TextEffect.jsx.txt (on branch
+ * chore/design-bundle-v2). Props follow types.d.ts.
+ *
+ * Same progressive-enhancement contract as TextRoll: the server renders the
+ * plain intact string, and the script only splits it into aria-hidden units
+ * once it knows JS runs and reduced motion is off. The hidden state is gated
+ * behind BOTH [data-motion="armed"] and prefers-reduced-motion: no-preference,
+ * with a 2.5s failsafe, so nothing can be stranded at opacity: 0.
+ *
+ * Styles are is:global because the unit spans are built at runtime and so
+ * never carry Astro's scoping attribute. Every rule is namespaced under
+ * [data-texteffect].
+ */
+import type { HTMLAttributes, HTMLTag } from 'astro/types';
+
+/**
+ * `as` has to be a generic tag parameter, not a plain `as?: string`. A bare
+ * string `as` member silently voids the whole Props interface in Astro: the
+ * component keeps compiling but NOTHING on it is type checked any more, so
+ * typos in `per` or `preset` sail straight through `astro check`.
+ */
+type Props<Tag extends HTMLTag = 'span'> = Omit<HTMLAttributes<Tag>, 'as'> & {
+  /** Element tag to render */
+  as?: Tag;
+  /** Text to animate. Falls back to the default slot. */
+  text?: string;
+  /** Split granularity */
+  per?: 'char' | 'word';
+  /** Hidden-state treatment */
+  preset?: 'fade' | 'fade-up' | 'blur';
+  /** Seconds before the first unit animates */
+  delay?: number | string;
+  /** Seconds between units. Defaults to 0.018 (char) / 0.055 (word). */
+  stagger?: number | string;
+  /** Animate only the first time it enters view */
+  once?: boolean | string;
+  /** String only, to stay consistent with TextRoll and TextLoop. */
+  style?: string;
+};
+
+const {
+  text,
+  per = 'char',
+  preset = 'fade',
+  delay = 0,
+  stagger,
+  once = true,
+  as: tagName = 'span',
+  class: className,
+  style,
+  ...rest
+} = Astro.props;
+
+/** Astro can hand a numeric prop over as a string. Coerce, never trust. */
+const num = (value: unknown, fallback: number): number => {
+  if (value === undefined || value === null || value === '') return fallback;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+};
+
+const unit = per === 'word' ? 'word' : 'char';
+const step = num(stagger, unit === 'char' ? 0.018 : 0.055);
+const lead = num(delay, 0);
+// An author writing once="false" in markup hands over the string "false".
+const onlyOnce = !(once === false || once === 'false');
+
+const Tag = tagName as any;
+const inlineStyle = style || undefined;
+---
+
+<Tag
+  class:list={['teffect', className]}
+  style={inlineStyle}
+  data-texteffect
+  data-per={unit}
+  data-preset={preset}
+  data-stagger={step}
+  data-delay={lead}
+  data-once={onlyOnce ? '' : undefined}
+  {...rest}
+>{text !== undefined ? text : <slot />}</Tag>
+
+<style is:global>
+  [data-texteffect] {
+    display: inline-block;
+  }
+
+  [data-texteffect] .te-anim {
+    display: inline;
+  }
+
+  [data-texteffect] .te-unit {
+    display: inline-block;
+    white-space: pre;
+  }
+
+  /* Carries the intact string for assistive tech once the visible copy has
+     been split into aria-hidden unit spans. */
+  [data-texteffect] .te-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    [data-texteffect][data-motion] .te-unit {
+      will-change: opacity, transform, filter;
+      transition:
+        opacity 620ms cubic-bezier(0.22, 1, 0.36, 1),
+        transform 620ms cubic-bezier(0.22, 1, 0.36, 1),
+        filter 620ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* The only rules that hide anything, and only while armed. */
+    [data-texteffect][data-motion='armed'] .te-unit {
+      opacity: 0;
+    }
+
+    [data-texteffect][data-motion='armed'][data-preset='fade-up'] .te-unit {
+      transform: translateY(0.5em);
+    }
+
+    [data-texteffect][data-motion='armed'][data-preset='blur'] .te-unit {
+      filter: blur(8px);
+      transform: translateY(0.28em);
+    }
+
+    [data-texteffect][data-motion='in'] .te-unit {
+      opacity: 1;
+      filter: blur(0);
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  // Module scope: runs ONCE per page. Instances are found by data attribute.
+  const REVEAL_FAILSAFE_MS = 2500;
+
+  const num = (value: string | undefined, fallback: number): number => {
+    if (value === undefined || value === '') return fallback;
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : fallback;
+  };
+
+  /**
+   * Replace the plain text with per-unit spans plus a visually hidden copy of
+   * the original string. Returns false when there is nothing to animate, in
+   * which case the server-rendered text is left exactly as it is.
+   */
+  function arm(root: HTMLElement): boolean {
+    // Collapse the indentation Astro leaves around slotted text so the
+    // accessible name is the clean string.
+    const source = (root.textContent || '').replace(/\s+/g, ' ').trim();
+    if (source === '') return false;
+
+    // Array.from, never split(''), so surrogate pairs survive intact.
+    const units =
+      root.dataset.per === 'word' ? source.split(/(\s+)/) : Array.from(source);
+    const step = num(root.dataset.stagger, 0.018);
+    const lead = num(root.dataset.delay, 0);
+
+    const animated = document.createElement('span');
+    animated.className = 'te-anim';
+    animated.setAttribute('aria-hidden', 'true');
+
+    for (let i = 0; i < units.length; i += 1) {
+      if (units[i] === '') continue;
+      const span = document.createElement('span');
+      span.className = 'te-unit';
+      span.textContent = units[i];
+      span.style.transitionDelay = `${lead + i * step}s`;
+      animated.appendChild(span);
+    }
+
+    const label = document.createElement('span');
+    label.className = 'te-sr';
+    label.textContent = source;
+
+    root.replaceChildren(animated, label);
+    root.setAttribute('data-motion', 'armed');
+    return true;
+  }
+
+  function setup(root: HTMLElement) {
+    if (!arm(root)) return;
+
+    const once = root.dataset.once !== undefined;
+    const reveal = () => root.setAttribute('data-motion', 'in');
+    const failsafe = window.setTimeout(reveal, REVEAL_FAILSAFE_MS);
+
+    if (typeof IntersectionObserver === 'undefined') {
+      window.clearTimeout(failsafe);
+      reveal();
+      return;
+    }
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            window.clearTimeout(failsafe);
+            reveal();
+            if (once) io.disconnect();
+          } else if (!once) {
+            // Re-arm for the next entrance. Safe because the failsafe has
+            // already been cleared only on the reveal path, and the hidden
+            // state still dies with the reduced-motion query.
+            root.setAttribute('data-motion', 'armed');
+          }
+        }
+      },
+      { threshold: 0.06 }
+    );
+    io.observe(root);
+  }
+
+  // Reduced motion never arms, so the untouched server markup stands.
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document
+      .querySelectorAll<HTMLElement>('[data-texteffect]')
+      .forEach((root) => setup(root));
+  }
+</script>
