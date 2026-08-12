@@ -81,12 +81,21 @@
   --text-body-size: 17px;
   --text-small: 14px;
   --text-caption: 12px;
-  --text-meta: 11px;      /* mono meta rows — uppercase, tracked +0.08em */
+  --text-meta: 11px;      /* NEWSLETTER ONLY — mono meta rows, tracked +0.08em */
+
+  /* Site section labels. LANDING-PAGE.md:13-14 retires the mono meta row for
+     the website: labels become Archivo 700 at 12.5px / 0.16em uppercase, and
+     small text becomes Archivo 600. "Mono does not appear on the site at all."
+     Neither value exists in the vendored tokens. Minted here; reported for v3.
+     --text-meta and --tracking-meta stay for /newsletter, which keeps the
+     editorial treatment. */
+  --text-label: 12.5px;
+  --tracking-label: 0.16em;
 
   --leading-tight: 1.02;
   --leading-heading: 1.12;
   --leading-body: 1.55;
 
   --tracking-display: -0.01em;
-  --tracking-meta: 0.08em;
+  --tracking-meta: 0.08em; /* NEWSLETTER ONLY — pairs with --text-meta */
 }
