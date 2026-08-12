@@ -28,6 +28,11 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
 
+    {/* Browsers request /favicon.ico unprompted, so without this every page
+        load logs a 404. Points at the chapter mark already in public/images
+        rather than adding a second copy of the same artwork. */}
+    <link rel="icon" href="/images/colorstack-umn-logo.png" type="image/png" />
+
     {/* The two faces above the fold on every page: the Archivo display cut
         (LCP element on the home masthead) and the Lora body cut. The Lora
         italic and Plex Mono cuts ride on font-display: swap. UX-SPEC §8. */}
