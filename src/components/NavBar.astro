@@ -15,7 +15,7 @@ import { primaryNav, joinCta, chapter } from '../data/nav';
 <header class="nav-bar" data-nav>
   <div class="nav-bar-inner">
     <!-- Logo marks home. No border, no recolor, no crop (DONE-5). -->
-    <a class="nav-brand" href="/" aria-label={`${chapter.name} — home`}>
+    <a class="nav-brand" href="/" aria-label={`${chapter.name}, home`}>
       <img
         src="/images/colorstack-umn-logo.png"
         alt="ColorStack UMN logo"
@@ -171,7 +171,7 @@ import { primaryNav, joinCta, chapter } from '../data/nav';
     align-items: center;
     min-height: 44px;
     padding: var(--space-2) var(--space-5);
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-control);
     background: var(--accent-highlight);
     color: var(--text-on-gold);
     font-family: var(--font-display);
@@ -204,9 +204,10 @@ import { primaryNav, joinCta, chapter } from '../data/nav';
   }
 
   .nav-toggle-label {
-    font-family: var(--font-mono);
-    font-size: var(--text-meta);
-    letter-spacing: var(--tracking-meta);
+    font-family: var(--font-display);
+    font-size: var(--text-label);
+    font-weight: 600;
+    letter-spacing: var(--tracking-label);
     text-transform: uppercase;
   }
 
