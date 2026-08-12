@@ -77,54 +77,57 @@ const CHAPTER_EMAIL = 'colorstk@umn.edu';
 /* ── Photos ────────────────────────────────────────────────────────────── */
 
 /**
- * Every one of these is a generated placeholder. `design/LANDING-PAGE.md:25`
- * claims the real photos are already in the repo; they are not. See
- * `HANDOFF-LOG.md`. Swap the file, keep the alt text and objectPosition.
+ * All six are real chapter photos, supplied by the chapter on 2026-08-12 and
+ * converted to WebP. No placeholders remain on the landing page. Masters live
+ * in `assets-src/photos/` so a shot can be re-cropped without going back to a
+ * phone; see `assets-src/README.md` for the conversion command.
+ *
+ * Alt text describes what is actually in each frame, not what the reference
+ * assumed. These are identifiable chapter members in chapter spaces, supplied
+ * by the chapter for this purpose.
+ *
+ * To swap one: replace the master, re-run the conversion, update width and
+ * height here to the real output dimensions, and keep the alt text truthful.
+ * A `placeholder: true` flag is still supported by the Photo type for any
+ * future slot that needs one.
  */
 export const photos = {
   summitGroup: {
     src: '/images/summit-group.webp',
     alt: 'ColorStack UMN members gathered around a table at a national student conference, name badges on, smiling for a group photo',
-    width: 1920,
-    height: 1080,
+    width: 2400,
+    height: 1800,
     objectPosition: 'center 46%',
-    placeholder: true,
   },
   summitPortrait: {
     src: '/images/summit-portrait.webp',
-    alt: 'ColorStack UMN delegation in business attire at a national conference',
+    alt: 'The ColorStack UMN delegation posed together at a national conference, name badges on',
     width: 1400,
     height: 1750,
-    objectPosition: 'center 76%',
-    placeholder: true,
   },
   summitSignage: {
     src: '/images/summit-signage.webp',
-    alt: 'Welcome screen at the national conference venue',
-    width: 1600,
-    height: 1200,
-    placeholder: true,
+    alt: 'Stacked Up Summit 2026 welcome screen at the conference venue',
+    width: 2000,
+    height: 1500,
   },
   ideathon: {
     src: '/images/ideathon.webp',
-    alt: 'ColorStack UMN members working through the Ideathon on laptops',
-    width: 1600,
-    height: 1200,
-    placeholder: true,
+    alt: 'ColorStack UMN members working through the Ideathon on laptops, event screens behind them',
+    width: 2400,
+    height: 1600,
   },
   gameNightChess: {
     src: '/images/game-night-chess.webp',
-    alt: 'Members playing chess and Connect Four at ColorStack UMN game night',
-    width: 1600,
-    height: 1200,
-    placeholder: true,
+    alt: 'ColorStack UMN members playing chess and Connect Four around a table at game night',
+    width: 1440,
+    height: 956,
   },
   gameNightSignage: {
     src: '/images/game-night-signage.webp',
-    alt: 'Two ColorStack UMN members holding a hand-drawn whiteboard they made for game night',
-    width: 1600,
-    height: 1200,
-    placeholder: true,
+    alt: 'Two ColorStack UMN members beside the hand-drawn whiteboard they made for game night, reading "Destress with ColorStack, game night, Jeopardy and board games"',
+    width: 1440,
+    height: 956,
   },
 } as const satisfies Record<string, Photo>;
 

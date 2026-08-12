@@ -23,8 +23,8 @@ The work runs as an **orchestrated multi-agent loop**: one orchestrator decompos
 | `../CLAUDE.md` | Orchestrator constitution — non-negotiables, loop, ledger rules | root by contract |
 | `../HANDOFF-LOG.md` | **The ledger.** Slice status, blockers, deviations, dependency justifications | root by contract — a herdr pane tails it |
 | `history/RECON.md` | Audit of the pre-revamp site: what was salvageable and where | root |
-| `plans/` | One plan per slice, written before fan-out | here |
-| `envelopes/` | Ready-to-inject delegation envelopes | here |
+| `history/plans/` | One plan per slice, written before fan-out | here |
+| `history/envelopes/` | Ready-to-inject delegation envelopes | here |
 | `../.claude/agents/` | Planner / Implementer / Reviewer role definitions | **must stay there** — Claude Code discovers agents from `.claude/agents/` |
 
 Two files deliberately did **not** move into `docs/`: `HANDOFF-LOG.md` (the constitution names it at root, and the ledger pane tails that exact path) and `CLAUDE.md` (auto-loaded from root). `RECON.md` now lives at `docs/history/RECON.md`.
