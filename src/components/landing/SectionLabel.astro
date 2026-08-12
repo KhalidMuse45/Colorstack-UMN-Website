@@ -1,0 +1,42 @@
+---
+/**
+ * The site's section label. Archivo 700, 12.5px, 0.16em, uppercase,
+ * --maroon-light.
+ *
+ * `design/LANDING-PAGE.md:13` replaces the spec's mono `№ 03 — ...` meta row
+ * with exactly this treatment for the website. The mono row survives only on
+ * /newsletter. This component exists so the recipe lives in one place and the
+ * six call sites cannot drift.
+ */
+import type { HTMLAttributes, HTMLTag } from 'astro/types';
+
+type Props<Tag extends HTMLTag = 'span'> = Omit<HTMLAttributes<Tag>, 'as'> & {
+  as?: Tag;
+  /** Render on a dark ground: uses --gold-soft instead of --maroon-light. */
+  onDark?: boolean;
+  style?: string;
+};
+
+const { as = 'span', onDark = false, class: className, ...rest } = Astro.props;
+const Tag = as as any;
+---
+
+<Tag class:list={['section-label', onDark && 'on-dark', className]} {...rest}>
+  <slot />
+</Tag>
+
+<style>
+  .section-label {
+    display: inline-block;
+    font-family: var(--font-display);
+    font-size: var(--text-label);
+    font-weight: 700;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--maroon-light);
+  }
+
+  .on-dark {
+    color: var(--gold-soft);
+  }
+</style>

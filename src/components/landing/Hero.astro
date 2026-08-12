@@ -1,0 +1,136 @@
+---
+/**
+ * Hero. Section 2 of `design/LANDING-PAGE.md` "Section order":
+ * eyebrow, TextRoll wordmark, italic Lora line, two buttons.
+ *
+ * Sizes and copy come from `design/reference/LandingPage.dc.html:52-64`.
+ * Radii are --radius-control (10px). No pills: LANDING-PAGE.md:16.
+ *
+ * The h1 is the LCP element. TextRoll splits it at runtime and keeps a
+ * visually hidden copy of the intact string, so the accessible name stays
+ * "ColorStack UMN" and the text is present in the served HTML.
+ */
+import TextRoll from '../motion/TextRoll.astro';
+import Reveal from '../motion/Reveal.astro';
+import SectionLabel from './SectionLabel.astro';
+import { hero } from '../../data/landing';
+---
+
+<section id="top" class="hero">
+  <Reveal>
+    <SectionLabel class="hero-eyebrow">{hero.eyebrow}</SectionLabel>
+  </Reveal>
+
+  <h1 class="hero-title">
+    <TextRoll stagger={0.03} duration={700}>{hero.wordmark}</TextRoll>
+  </h1>
+
+  <Reveal class="hero-row" index={1}>
+    <p class="hero-lede">{hero.lede}</p>
+
+    <div class="hero-ctas">
+      {
+        hero.ctas.map((cta, i) => (
+          <a
+            href={cta.href}
+            class:list={['btn', i === 0 ? 'btn-gold' : 'btn-ghost']}
+            {...(cta.external ? { target: '_blank', rel: 'noopener' } : {})}
+          >
+            {cta.label}
+          </a>
+        ))
+      }
+    </div>
+  </Reveal>
+</section>
+
+<style>
+  .hero {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: clamp(64px, 10vw, 124px) var(--space-5) clamp(40px, 6vw, 64px);
+  }
+
+  .hero-eyebrow {
+    margin-bottom: clamp(20px, 3vw, 32px);
+  }
+
+  /* Fluid only on the hero. Everything else steps at breakpoints (UX-SPEC 3.2). */
+  .hero-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(46px, 10.5vw, 132px);
+    line-height: 0.96;
+    letter-spacing: -0.03em;
+    color: var(--maroon);
+  }
+
+  .hero-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: clamp(24px, 4vw, 56px);
+    align-items: end;
+    margin-top: clamp(26px, 3.4vw, 40px);
+  }
+
+  .hero-lede {
+    font-family: var(--font-body);
+    font-style: italic;
+    font-size: clamp(19px, 2.1vw, 25px);
+    line-height: 1.5;
+    max-width: 34ch;
+    text-wrap: pretty;
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    border-radius: var(--radius-control);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 16.5px;
+    text-decoration: none;
+  }
+
+  .btn-gold {
+    padding: var(--space-4) 30px;
+    background: var(--gold);
+    color: var(--text-on-gold);
+  }
+
+  .btn-ghost {
+    padding: 15px 28px;
+    color: var(--maroon);
+    border: 1.5px solid var(--maroon);
+  }
+
+  /* No scale or shrink transforms on buttons. UX-SPEC 6. */
+  @media (prefers-reduced-motion: no-preference) {
+    .btn-gold {
+      transition: background 240ms ease;
+    }
+
+    .btn-ghost {
+      transition:
+        background 240ms ease,
+        color 240ms ease;
+    }
+  }
+
+  .btn-gold:hover {
+    background: var(--gold-dark);
+  }
+
+  .btn-ghost:hover {
+    background: var(--maroon);
+    color: var(--cream);
+  }
+</style>

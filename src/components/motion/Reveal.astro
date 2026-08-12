@@ -1,0 +1,119 @@
+---
+/**
+ * Reveal. Fade plus a small rise when the element scrolls into view.
+ *
+ * NOT one of the nine bundle primitives. This is ours, and it is the Astro
+ * equivalent of the `data-reveal` / `data-wipe` attributes that
+ * `design/reference/LandingPage.dc.html` drives from its own page script.
+ * `design/UX-SPEC.md` §6 specifies the values: fade plus 16px rise, 0.8s on
+ * cubic-bezier(.22,1,.36,1), 0.15s stagger between siblings.
+ *
+ * Same contract as the nine:
+ *   the server renders the FINAL, visible state. The script only ever ADDS
+ *   the pre-animation state, and only when JS runs and the visitor has not
+ *   asked for reduced motion. No JS, reduced motion, a missing observer or a
+ *   thrown error all leave the content visible.
+ *
+ * `wipe` swaps the rise for a clip-path unfold, which is what the reference
+ * uses on full-bleed photography (UX-SPEC §6, "unfolding paper").
+ */
+import type { HTMLAttributes, HTMLTag } from 'astro/types';
+
+/**
+ * `as` must be a generic tag parameter. A bare `as?: string` member silently
+ * voids the whole Props interface in Astro: the component still compiles but
+ * nothing on it is type checked. See AnimatedGroup.astro for the case where
+ * that shipped a component accepting a nonsense preset.
+ */
+type Props<Tag extends HTMLTag = 'div'> = Omit<HTMLAttributes<Tag>, 'as'> & {
+  /** Element tag to render */
+  as?: Tag;
+  /** Clip-path unfold instead of a rise. For full-bleed media. */
+  wipe?: boolean;
+  /** Stagger index. Multiplied by 0.12s, capped at 4 steps like the reference. */
+  index?: number | string;
+  style?: string;
+};
+
+const { as = 'div', wipe = false, index = 0, class: className, style, ...rest } = Astro.props;
+
+const num = (v: unknown, d: number): number => {
+  const n = Number(v);
+  return Number.isFinite(n) ? n : d;
+};
+const step = Math.min(num(index, 0), 4) * 0.12;
+
+const Tag = as as any;
+const merged = [step > 0 ? `--rv-delay:${step}s` : '', style].filter(Boolean).join(';') || undefined;
+---
+
+<Tag data-reveal={wipe ? undefined : ''} data-wipe={wipe ? '' : undefined} class={className} style={merged} {...rest}>
+  <slot />
+</Tag>
+
+<style is:global>
+  /* Nothing here hides anything until the script adds data-rv="armed".
+     With no JS these selectors never match and the content is simply visible. */
+  @media (prefers-reduced-motion: no-preference) {
+    [data-reveal][data-rv],
+    [data-wipe][data-rv] {
+      transition:
+        opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+        clip-path 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+      transition-delay: var(--rv-delay, 0s);
+    }
+  }
+
+  [data-reveal][data-rv='armed'] {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  [data-wipe][data-rv='armed'] {
+    clip-path: inset(0 0 100% 0);
+  }
+</style>
+
+<script>
+  // Module scope: runs once per page and wires every instance by attribute.
+  (() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const nodes = document.querySelectorAll<HTMLElement>('[data-reveal],[data-wipe]');
+    if (!nodes.length) return;
+
+    const show = (el: HTMLElement) => {
+      el.dataset.rv = 'in';
+    };
+
+    try {
+      nodes.forEach((el) => {
+        el.dataset.rv = 'armed';
+      });
+
+      // From here the content is hidden, so every exit path must reveal.
+      const failsafe = window.setTimeout(() => nodes.forEach(show), 2500);
+
+      if (typeof IntersectionObserver === 'undefined') {
+        window.clearTimeout(failsafe);
+        nodes.forEach(show);
+        return;
+      }
+
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (!e.isIntersecting) return;
+            show(e.target as HTMLElement);
+            io.unobserve(e.target);
+          });
+        },
+        { rootMargin: '0px 0px -6% 0px', threshold: 0.06 }
+      );
+      nodes.forEach((el) => io.observe(el));
+    } catch {
+      nodes.forEach(show);
+    }
+  })();
+</script>
