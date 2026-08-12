@@ -84,6 +84,13 @@ Goal was navigability, not architecture. Nothing was rewritten, only relocated.
 
 **Deleted: `public/images/hudeifi-abdihakin.jpg`.** Referenced by nothing in `src/` or `public/`; the `index.html` that used it was removed in slice 1. It is also the only person-identifying image in the repo and this ledger already flagged its consent as unconfirmed, so deletion is the safe default rather than a loss. Recoverable with `git checkout <sha>^ -- public/images/hudeifi-abdihakin.jpg` if the chapter confirms consent and wants it back.
 
+### Verification pass on `main` (2026-08-12, post-merge)
+Ran the dev server against the merged `main` to confirm the landing page is genuinely working before opening new surface area. Everything already on `origin/main`: all seven local branches are fully merged, nothing was unpushed.
+
+Verified green: `astro check` 0/0/0, `guardrails.sh` exit 0, `astro build` 2 pages, `lint:links` 13 links scanned clean. All 22 `<img>` elements resolve (`naturalWidth > 0`); the blank tile that shows in a full-page capture of the marquee is the animation caught mid-cycle, not a missing asset. No horizontal overflow at 375 (`scrollWidth === clientWidth === 360`); the elements that measure past the viewport are all inside the marquee's `overflow: hidden` track, which is correct. Both routes 200.
+
+One real defect found and fixed: **`/favicon.ico` 404'd on every page load**, the only console error on the page. Browsers request that path unprompted whether or not anything links to it. `Base.astro` now declares `<link rel="icon">` pointing at `public/images/colorstack-umn-logo.png`, the mark already in the repo, rather than adding a second copy of the same artwork. Console is zero-error after. Worth knowing: this is a PNG, not a true multi-resolution `.ico`, which is fine for modern browsers but means the tab icon is downscaled from 1544px. If the chapter ever supplies proper icon artwork, swap it here and consider adding an `apple-touch-icon`.
+
 ### Two defects fixed during the landing build, undocumented in their commit
 Both were found by a parallel session and swept into `b4677ac` by a `git add -A`, so the commit message does not mention them. Recorded here because the code is right and the history under-describes it. Both re-verified independently afterwards.
 
