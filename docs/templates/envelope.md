@@ -17,7 +17,7 @@ FILES YOU MAY WRITE:
 
 FILES YOU MAY READ:
   src/styles/*.css, design/tokens/*.css, design/BRAND-SYSTEM.md,
-  design/reference/Chapter Notes Newsletter.html, .ai/plans/<slice-plan>.md,
+  design/reference/Chapter Notes Newsletter.html, docs/history/plans/<slice-plan>.md,
   <specific source files this unit must import or match>
 
 TOKENS:      Only names declared in src/styles/{colors,typography,spacing}.css.

@@ -14,7 +14,7 @@
 set -u
 fail=0
 files=$(git ls-files |
-  grep -Ev '^(design/|\.githooks/|\.ai/|\.claude/|\.github/|scripts/|CLAUDE\.md$|HANDOFF-LOG\.md$|RECON\.md$)')
+  grep -Ev '^(design/|\.githooks/|docs/history/|\.claude/|\.github/|scripts/|CLAUDE\.md$|HANDOFF-LOG\.md$)')
 for f in $files; do
   [ -f "$f" ] || continue
   if [ -f .guardrail-allow ] && grep -qxF "$f" .guardrail-allow; then continue; fi

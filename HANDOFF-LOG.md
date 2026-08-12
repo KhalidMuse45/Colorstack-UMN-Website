@@ -65,6 +65,20 @@
 | motion-port unit B | implementer (Claude, worktree) | in flight | `src/components/motion/{TextRoll,TextLoop,TextEffect}.astro` | corrected mid-run after the stale-worktree discovery |
 | motion-port integration | orchestrator | done | `src/components/motion/*` (6 of 9), `scripts/guardrails.sh` | see the guardrails gap below |
 
+| repo structure | orchestrator + deepseek pane + nemotron pane | done | `docs/**`, `src/components/chrome/**`, `.githooks/pre-commit`, `scripts/guardrails.sh`, `.github/CODEOWNERS`, `src/layouts/Base.astro` | Requested by the human so other developers and agents can navigate. Moves only, no remodularisation. See the note below |
+
+### Repository restructure (2026-08-12)
+Goal was navigability, not architecture. Nothing was rewritten, only relocated.
+
+- **Root is now 11 files.** `CLAUDE.md` and `HANDOFF-LOG.md` stay because the constitution pins them there; `README.md` stays as the entry point. Everything else that was prose moved into `docs/`.
+- **`.ai/` is gone.** Its live contents became `docs/AGENTS.md`, `docs/OWNERSHIP.md` and `docs/templates/envelope.md`; its finished-slice artefacts became `docs/history/{plans,envelopes,reviews}/`. `RECON.md` moved to `docs/history/RECON.md`.
+- **`docs/history/` is append-only.** Those files record what was true when written; their internal links were deliberately NOT repointed, and the link sweep was scoped to exclude them.
+- **`src/components/` now has `chrome/` and `motion/`.** Three chrome components moved, and their `../data/nav` imports became `../../data/nav`. `Base.astro` updated. This broke the build until fixed, which is the only real risk in a move like this.
+- **`docs/README.md` is the new map**, including a "where do I put a new file" table and the list of things that fail a commit. If a newcomer cannot find something in thirty seconds, that file is the bug.
+- **Guardrail exclusion repointed.** Both `.githooks/pre-commit` and `scripts/guardrails.sh` excluded `.ai/` because those documents quote brand violations in order to forbid them. They now exclude `docs/history/` instead. The `RECON.md$` term was dropped since it is covered by the directory rule. Both files must stay identical.
+
+**Deleted: `public/images/hudeifi-abdihakin.jpg`.** Referenced by nothing in `src/` or `public/`; the `index.html` that used it was removed in slice 1. It is also the only person-identifying image in the repo and this ledger already flagged its consent as unconfirmed, so deletion is the safe default rather than a loss. Recoverable with `git checkout <sha>^ -- public/images/hudeifi-abdihakin.jpg` if the chapter confirms consent and wants it back.
+
 ### Four bugs in the vendored React reference, found by testing, not carried across
 The bundle's `components/motion/*.jsx.txt` are the behavioural reference, not gospel.
 1. **`LiquidMenu` items were unreachable by keyboard.** The reference renders items *before* the trigger, so Tab from the trigger moves past them and straight out of the menu. Trigger moved ahead of the items; paint order is unaffected because both are absolutely positioned when enhanced.

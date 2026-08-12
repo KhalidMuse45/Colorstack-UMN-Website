@@ -2,7 +2,7 @@
 
 Who owns any path, how to claim new work, and how to extend a feature without
 crossing an ownership boundary. Derived from [`README.md`](README.md) (§2, §5, §6),
-[`../CONTRIBUTING.md`](../CONTRIBUTING.md), and
+[`CONTRIBUTING.md`](CONTRIBUTING.md), and
 [`../design/ORCHESTRATION.md`](../design/ORCHESTRATION.md) — if this file and
 those disagree, those win; fix this file.
 
@@ -31,10 +31,10 @@ those disagree, those win; fix this file.
 | `.githooks/` | orchestrator-owned glue | The brand guardrails that fail your commit (`CONTRIBUTING.md` "What will fail your commit"). |
 | `.github/` | orchestrator-owned glue | CI/CD workflows, CODEOWNERS, PR template (infra-multidev slice). |
 | `.claude/agents/` | orchestrator-owned glue | Planner / Implementer / Reviewer role definitions. Must stay at this path — Claude Code discovers agents there. |
-| `.ai/` | orchestrator-owned glue | Plans, envelopes, this file. Plans are written before fan-out; envelopes are handed out one per subagent. |
+| `docs/` | orchestrator-owned glue | Plans, envelopes, this file. Plans are written before fan-out; envelopes are handed out one per subagent. |
 | `CLAUDE.md` | orchestrator-owned glue | The constitution. Root by contract — auto-loaded. |
 | `HANDOFF-LOG.md` | orchestrator-owned glue | The ledger. Root by contract. **Everyone appends** — one line per delegated task, deviations with justification, blockers under `## Blocked`. Append-only; never rewrite history. |
-| `README.md`, `RECON.md`, `CONTRIBUTING.md` | orchestrator-owned glue | Root docs. `RECON.md` stays at root because the vendored brief specifies it there. |
+| `README.md`, `docs/` | orchestrator-owned glue | `README.md` is the entry point at root; every other document lives under `docs/`. `docs/history/` is append only. |
 | `.gitignore`, `.guardrail-allow` | orchestrator-owned glue | Repo plumbing and the guardrail carve-out list. |
 | `dist/`, `.logs/`, `node_modules/` | generated | Build output, pane logs, dependencies. Gitignored; never hand-edit. |
 
@@ -42,7 +42,7 @@ those disagree, those win; fix this file.
 
 1. Slices 2–10 and their status are in [`README.md`](README.md) §3. One slice in
    flight at a time on the integration branch.
-2. Work arrives as an **envelope** — copy [`envelopes/TEMPLATE.md`](envelopes/TEMPLATE.md),
+2. Work arrives as an **envelope** — copy [`templates/envelope.md`](templates/envelope.md),
    fill it in, one envelope per contributor or agent, never a second task in the
    same session.
 3. The envelope's **FILES YOU MAY WRITE** list is the whole grant. Creating a
