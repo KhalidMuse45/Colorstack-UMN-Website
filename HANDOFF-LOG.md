@@ -53,6 +53,11 @@
 | 2 chrome ci fix | orchestrator | done | `package.json`, `.github/workflows/ci.yml` | chrome links to unbuilt slice-5–9 routes 404'd the CI link check; spec forbids removing links/stubbing pages, so the seven routes are TEMPORARY lint:links skips — each must be deleted in the slice that builds its route (noted in ci.yml). Any other local 404 still fails |
 | 2 chrome review | reviewer (local subagent) | **FAIL → fixes → PASS WITH NOTES** | verdict only | notes carried to slice 3: mint a real 32px `--text-*` token (sheet links use `--space-6` as font-size); unify §6 reduced-motion interpretation (NavBar keeps state/drops motion, Footer drops the state) ; no-JS mobile users have footer-only nav; `<time datetime>` goes stale under the live clock; copyright line has no year. Runtime browser/axe/Lighthouse checks remain UNVERIFIED — slice 10 |
 
+> **Picking this project up?** Read [`docs/NEXT.md`](docs/NEXT.md) first. It is
+> the forward-looking list: what is blocked on the chapter, what is next, and
+> the conventions that fail a commit. This file is the historical record and
+> the rationale behind decisions; `NEXT.md` is what you act on.
+
 ## Slice: landing (bundle v2)
 
 | slice | agent | status | files touched | open question |

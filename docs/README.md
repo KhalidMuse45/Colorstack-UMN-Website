@@ -34,6 +34,7 @@ design/                 VENDORED. Do not edit.
 
 docs/                   everything written for humans and agents
   README.md               this file
+  NEXT.md                 WHAT IS LEFT. Read this first if you are picking the project up
   CONTRIBUTING.md         how to branch, commit, and open a PR
   AGENTS.md               how the multi-agent loop actually runs here
   OWNERSHIP.md            which role may write which paths
