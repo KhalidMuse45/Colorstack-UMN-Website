@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- @template name="Landing Page" description="ColorStack UMN home page — motion-led scroll narrative: rolling masthead, looping mission line, progressive-blur program carousel, photo grid, testimonials, split closer." -->
+<helmet>
+<script src="./ds-base.js"></script>
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#FBF5EC;color:#1F1A17;-webkit-font-smoothing:antialiased}
+a{color:#7A0019;text-decoration:none}
+a:hover{color:#5B0013}
+:focus-visible{outline:2px solid #FFCC33;outline-offset:2px}
+input:focus{outline:2px solid #FFCC33;outline-offset:2px}
+@media (prefers-reduced-motion: no-preference){
+[data-reveal]{opacity:0;transform:translateY(26px);transition:opacity 1s cubic-bezier(.22,1,.36,1),transform 1s cubic-bezier(.22,1,.36,1)}
+[data-reveal="in"]{opacity:1;transform:none}
+[data-wipe]{clip-path:inset(0 0 100% 0);transition:clip-path 1.2s cubic-bezier(.22,1,.36,1)}
+[data-wipe="in"]{clip-path:inset(0 0 0 0)}
+}
+@media (prefers-reduced-motion: reduce){*{transition-duration:.01ms !important;animation-duration:.01ms !important}}
+</style>
+</helmet>
+
+<a href="#main" style="position:absolute;left:-9999px;top:0;z-index:80;background:#7A0019;color:#FBF5EC;font-family:'Archivo',Helvetica,sans-serif;font-weight:700;font-size:14px;padding:12px 20px;border-radius:10px" style-focus="left:16px;top:16px">Skip to content</a>
+
+<header style="position:sticky;top:0;z-index:60;background:rgba(251,245,236,0.92);border-bottom:1px solid rgba(232,220,203,0.9)">
+  <nav style="max-width:1200px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap">
+    <a href="#top" style="display:flex;align-items:center;gap:12px">
+      <img src="./img/logo.png" alt="ColorStack UMN chapter logo" width="40" height="40" style="display:block;width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Archivo',Helvetica,sans-serif;font-weight:800;font-size:16px;letter-spacing:-0.015em;color:#7A0019">ColorStack UMN</span>
+    </a>
+    <div style="display:flex;align-items:center;gap:26px;flex-wrap:wrap;font-family:'Archivo',Helvetica,sans-serif;font-weight:600;font-size:15px">
+      <a href="#mission" style="color:#5C534E;padding:8px 0;transition:color 220ms ease" style-hover="color:#7A0019">Mission</a>
+      <a href="#what-we-do" style="color:#5C534E;padding:8px 0;transition:color 220ms ease" style-hover="color:#7A0019">What We Do</a>
+      <a href="#community" style="color:#5C534E;padding:8px 0;transition:color 220ms ease" style-hover="color:#7A0019">Community</a>
+      <a href="#voices" style="color:#5C534E;padding:8px 0;transition:color 220ms ease" style-hover="color:#7A0019">Voices</a>
+      <a href="#contact" style="color:#5C534E;padding:8px 0;transition:color 220ms ease" style-hover="color:#7A0019">Contact</a>
+      <a href="https://logicform.io/v/6a4aacba51ee6e65572aaa48" target="_blank" rel="noopener" style="background:#FFCC33;color:#7A0019;font-weight:700;padding:12px 22px;border-radius:10px;min-height:44px;display:inline-flex;align-items:center;transition:background 220ms ease" style-hover="background:#FFB71E">Join the List</a>
+    </div>
+  </nav>
+</header>
+
+<main id="main" style="display:block">
+
+  <section id="top" style="max-width:1200px;margin:0 auto;padding:clamp(64px,10vw,124px) 24px clamp(40px,6vw,64px)">
+    <span data-reveal="" style="display:inline-block;font-family:'Archivo',Helvetica,sans-serif;font-weight:700;font-size:12.5px;letter-spacing:0.16em;text-transform:uppercase;color:#900021;margin-bottom:clamp(20px,3vw,32px)">University of Minnesota · Twin Cities</span>
+    <h1 style="margin:0;font-family:'Archivo',Helvetica,sans-serif;font-weight:900;font-size:clamp(46px,10.5vw,132px);line-height:0.96;letter-spacing:-0.03em;color:#7A0019">
+      <x-import component-from-global-scope="ColorStackUMNDesignSystem_6ed6a9.TextRoll" stagger="0.03" duration="700" hint-size="100%,1.2em">ColorStack UMN</x-import>
+    </h1>
+    <div data-reveal="" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:clamp(24px,4vw,56px);align-items:end;margin-top:clamp(26px,3.4vw,40px)">
+      <p style="margin:0;font-family:'Lora',Georgia,serif;font-style:italic;font-size:clamp(19px,2.1vw,25px);line-height:1.5;max-width:34ch;text-wrap:pretty">A home for Black and Latinx computer science students at the U, where you find your people, sharpen your craft, and land the offer.</p>
+      <div style="display:flex;gap:14px;flex-wrap:wrap">
+        <a href="https://logicform.io/v/6a4aacba51ee6e65572aaa48" target="_blank" rel="noopener" style="font-family:'Archivo',Helvetica,sans-serif;font-weight:700;font-size:16.5px;background:#FFCC33;color:#7A0019;padding:16px 30px;border-radius:10px;min-height:44px;display:inline-flex;align-items:center;transition:background 240ms ease" style-hover="background:#FFB71E">Join the List</a>
+        <a href="#what-we-do" style="font-family:'Archivo',Helvetica,sans-serif;font-weight:700;font-size:16.5px;color:#7A0019;border:1.5px solid #7A0019;padding:15px 28px;border-radius:10px;min-height:44px;display:inline-flex;align-items:center;transition:background 240ms ease,color 240ms ease" style-hover="background:#7A0019;color:#FBF5EC">See What We Do</a>
+      </div>
+    </div>
+  </section>
+
+  <figure data-wipe="" style="margin:0;width:100%;background:#F3E9DA;overflow:hidden">
+    <img src="./img/summit-group.jpg" alt="ColorStack UMN members gathered around a table at a national student conference, name badges on, smiling for a group photo" style="display:block;width:100%;height:clamp(300px,48vw,600px);object-fit:cover;object-position:center 46%;filter:saturate(1.04) contrast(1.03) brightness(1.02)" data-photo="">
+  </figure>
+
+  <section style="background:#7A0019;color:#FFFFFF">
+    <div style="max-width:1200px;margin:0 auto;padding:clamp(52px,7vw,84px) 24px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:clamp(28px,4vw,48px)">
+        <div data-reveal="" style="display:flex;flex-direction:column;gap:8px">
+          <span style="font-family:'Archivo',Helvetica,sans-serif;font-weight:900;font-size:clamp(58px,8vw,104px);line-height:0.88;letter-spacing:-0.035em;color:#FFCC33">100+</span>
+          <span style="font-family:'Archivo',Helvetica,sans-serif;font-weight:600;font-size:15px;color:#FFDE7A">Members in the chapter</span>
+        </div>
+        <div data-reveal="" style="display:flex;flex-direction:column;gap:8px">
+          <span style="font-family:'Archivo',Helvetica,sans-serif;font-weight:900;font-size:clamp(58px,8vw,104px);line-height:0.88;letter-spacing:-0.035em;color:#FFCC33">10+</span>
+          <span style="font-family:'Archivo',Helvetica,sans-serif;font-weight:600;font-size:15px;color:#FFDE7A">Internship and full-time offers</span>
+        </div>
+        <div data-reveal="" style="display:flex;align-items:flex-end">
+          <p style="margin:0;font-family:'Lora',Georgia,serif;font-size:17.5px;line-height:1.6;color:#FBF5EC;max-width:38ch;text-wrap:pretty">Numbers matter, but the room matters more. Every offer on this list started with someone showing up to a Tuesday meeting and staying for the people.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="mission" style="max-width:1200px;margin:0 auto;padding:clamp(72px,10vw,140px) 24px">
+    <div data-reveal="" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:clamp(28px,5vw,72px)">
+      <div>
+        <span style="display:inline-block;font-family:'Archivo',Helvetica,sans-serif;font-weight:700;font-size:12.5px;letter-spacing:0.16em;text-transform:uppercase;color:#900021;margin-bottom:20px">Our mission</span>
+        <h2 style="margin:0;font-family:'Archivo',Helvetica,sans-serif;font-weight:800;font-size:clamp(31px,4.4vw,56px);line-height:1.05;letter-spacing:-0.025em;color:#7A0019;text-wrap:balance">We're building the room we wanted as freshmen.</h2>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:20px;justify-content:center">
+        <p style="margin:0;font-family:'Lora',Georgia,serif;font-size:18.5px;line-height:1.62;text-wrap:pretty">ColorStack UMN exists to increase the number of Black and Latinx students who graduate from the University of Minnesota with a computer science degree, and a career to walk into.</p>
+        <p style="margin:0;font-family:'Lora',Georgia,serif;font-size:18.5px;line-height:1.62;color:#5C534E;text-wrap:pretty">We do that three ways. We teach the technical skills the classroom skips, we open doors to recruiters and alumni who look like us, and we keep a community close enough that no one has to figure out sophomore year alone.</p>
+      </div>
+    </div>
+    <div data-reveal="" style="margin-top:clamp(44px,6vw,80px);padding-top:clamp(32px,4vw,48px);border-top:1px solid #E8DCCB;display:flex;flex-wrap:wrap;align-items:baseline;gap:clamp(10px,1.4vw,18px);font-family:'Archivo',Helvetica,sans-serif;font-weight:800;font-size:clamp(26px,4vw,50px);line-height:1.1;letter-spacing:-0.025em;color:#1F1A17">
+      <span>Building a space for</span>
+      <x-import component-from-global-scope="ColorStackUMNDesignSystem_6ed6a9.TextLoop" interval="2.2" hint-size="auto,1.2em" style="color:#7A0019">
+        <span>Black students.</span>
+        <span>Latinx students.</span>
+        <span>marginalized students.</span>
+        <span>low-income students.</span>
+        <span>first-generation students.</span>
+        <span>you.</span>
+      </x-import>
+    </div>
+  </section>
+
+  <section id="what-we-do" style="background:#FFFFFF;border-top:1px solid #E8DCCB;border-bottom:1px solid #E8DCCB;padding:clamp(72px,10vw,132px) 0">
+    <div style="max-width:1200px;margin:0 auto;padding:0 24px clamp(36px,5vw,56px)">
+      <span data-reveal="" style="display:inline-block;font-family:'Archivo',Helvetica,sans-serif;font-weight:700;font-size:12.5px;letter-spacing:0.16em;text-transform:uppercase;color:#900021;margin-bottom:18px">What we do</span>
+      <h2 data-reveal="" style="margin:0;max-width:20ch;font-family:'Archivo',Helvetica,sans-serif;font-weight:800;font-size:clamp(30px,4.2vw,52px);line-height:1.06;letter-spacing:-0.025em;color:#1F1A17;text-wrap:balance">Four things we run all year.</h2>
+      <p data-reveal="" style="margin:16px 0 0;font-family:'Archivo',Helvetica,sans-serif;font-weight:600;font-size:14px;color:#5C534E">Hover any photo to read more.</p>
+    </div>
+    <x-import component-from-global-scope="ColorStackUMNDesignSystem_6ed6a9.InfiniteSlider" gap="20" duration="58" hint-size="100%,440px">
+      <x-import component-from-global-scope="ColorStackUMNDesignSystem_6ed6a9.PhotoReveal" src="./img/ideathon.jpg" alt="ColorStack UMN members working through the Ideathon on laptops" height="400" width="clamp(280px,32vw,400px)" radius="14" blur-intensity="6" hint-size="340px,400px" style="flex:none">
+        <span style="display:block;font-family:'Archivo',Helvetica,sans-serif;font-weight:800;font-size:26px;letter-spacing:-0.02em;color:#FFFFFF">Workshops</span>
+        <span style="display:block;margin-top:8px;font-family:'Lora',Georgia,serif;font-size:16px;line-height:1.5;color:#F3E9DA">Git, interview data structures, résumé teardowns, mock technical screens, and project nights where you actually ship something.</span>
+      </x-import>
+      <x-import component-from-global-scope="ColorStackUMNDesignSystem_6ed6a9.PhotoReveal" src="./img/game-night-signage.jpg" alt="Two ColorStack UMN members holding a hand-drawn whiteboard they made for game night" height="400" width="clamp(280px,32vw,400px)" radius="14" blur-intensity="6" hint-size="340px,400px" style="flex:none">
+        <span style="display:block;font-family:'Archivo',Helvetica,sans-serif;font-weight:800;font-size:26px;letter-spacing:-0.02em;color:#FFFFFF">Leadership</span>
+        <span style="display:block;margin-top:8px;font-family:'Lora',Georgia,serif;font-size:16px;line-height:1.5;color:#F3E9DA">Every board seat is a student one. Members run events, manage budgets, pitch sponsors, and lead committees.</span>
+      </x-import>
+      <x-import component-from-global-scope="ColorStackUMNDesignSystem_6ed6a9.PhotoReveal" src="./img/summit-portrait.jpg" alt="ColorStack UMN delegation in business attire at a national conference" height="400" width="clamp(280px,32vw,400px)" radius="14" blur-intensity="6" object-position="center 76%" hint-size="340px,400px" style="flex:none">
+        <span style="display:block;font-family:'Archivo',Helvetica,sans-serif;font-weight:800;font-size:26px;letter-spacing:-0.02em;color:#FFFFFF">Professional Development</span>
+        <span style="display:block;margin-top:8px;font-family:'Lora',Georgia,serif;font-size:16px;line-height:1.5;color:#F3E9DA">Alumni and recruiter connections, conference delegations, and a referral network that has put members in front of hiring teams.</span>
+      </x-import>
+      <x-import component-from-global-scope="ColorStackUMNDesignSystem_6ed6a9.PhotoReveal" src="./img/game-night-chess.jpg" alt="Members playing chess and Connect Four at ColorStack UMN game night" height="400" width="clamp(280px,32vw,400px)" radius="14" blur-intensity="6" hint-size="340px,400px" style="flex:none">
+        <span style="display:block;font-family:'Archivo',Helvetica,sans-serif;font-weight:800;font-size:26px;letter-spacing:-0.02em;color:#FFFFFF">Community</span>
+        <span style="display:block;margin-top:8px;font-family:'Lora',Georgia,serif;font-size:16px;line-height:1.5;color:#F3E9DA">Game nights, potlucks, study halls before finals, and outreach with Twin Cities students who need to see someone who looks like them writing code.</span>
+      </x-import>
+    </x-import>
+  </section>
+
+  <section id="community" style="max-width:1200px;margin:0 auto;padding:clamp(72px,10vw,140px) 24px">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:clamp(32px,5vw,72px);align-items:center">
+      <div style="position:relative;padding:32px 32px 0 0;margin-bottom:18px">
+        <span aria-hidden="true" style="position:absolute;top:0;right:0;left:32px;bottom:32px;background:#FFCC33;border-radius:14px"></span>
+        <div data-wipe="" style="position:relative;background:#F3E9DA;border-radius:14px;overflow:hidden;height:clamp(300px,36vw,460px)">
+          <x-import component-from-global-scope="ColorStackUMNDesignSystem_6ed6a9.TextLoop" stack="true" interval="3.4" transition="900" hint-size="100%,100%" style="position:absolute;inset:0">
+            <img src="./img/summit-group.jpg" alt="ColorStack UMN members around a table at the national student conference" style="display:block;width:100%;height:100%;object-fit:cover;object-position:center 46%;filter:saturate(1.04) contrast(1.03) brightness(1.02)">
+            <img src="./img/summit-portrait.jpg" alt="ColorStack UMN delegation posing together at the conference" style="display:block;width:100%;height:100%;object-fit:cover;object-position:center 76%;filter:saturate(1.04) contrast(1.03) brightness(1.02)">
+            <img src="./img/summit-signage.jpg" alt="Stacked Up Summit 2026 welcome screen at the conference venue" style="display:block;width:100%;height:100%;object-fit:cover;filter:saturate(1.04) contrast(1.03) brightness(1.02)">
+            <img src="./img/ideathon.jpg" alt="Members working through the Ideathon on laptops" style="display:block;width:100%;height:100%;object-fit:cover;filter:saturate(1.04) contrast(1.03) brightness(1.02)">
+          </x-import>
+        </div>
+      </div>
+      <div data-reveal="" style="display:flex;flex-direction:column;gap:22px">
+        <span style="display:inline-block;font-family:'Archivo',Helvetica,sans-serif;font-weight:700;font-size:12.5px;letter-spacing:0.16em;text-transform:uppercase;color:#900021">Who we show up for</span>
+        <h2 style="margin:0;font-family:'Archivo',Helvetica,sans-serif;font-weight:800;font-size:clamp(28px,3.6vw,44px);line-height:1.08;letter-spacing:-0.025em;color:#7A0019;text-wrap:balance">If you're the first in your family to do this, you're in the right place.</h2>
+        <p style="margin:0;font-family:'Lora',Georgia,serif;font-size:18px;line-height:1.62;text-wrap:pretty">A lot of us are first-generation students. Nobody at home could explain what a résumé screen was, why you need a GitHub, or how internship recruiting starts a year early. We turn that hidden curriculum into something you can just <em>ask about</em>.</p>
+        <p style="margin:0;font-family:'Lora',Georgia,serif;font-size:18px;line-height:1.62;color:#5C534E;text-wrap:pretty">We also send a delegation to the national conference every year, and we chase the funding so cost never decides who gets to go.</p>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:#FBF5EC;padding:0 0 clamp(72px,10vw,132px)">
+    <div style="max-width:1200px;margin:0 auto;padding:0 24px clamp(32px,4vw,48px)">
+      <span data-reveal="" style="display:inline-block;font-family:'Archivo',Helvetica,sans-serif;font-weight:700;font-size:12.5px;letter-spacing:0.16em;text-transform:uppercase;color:#900021;margin-bottom:18px">In the room</span>
+      <h2 data-reveal="" style="margin:0;max-width:22ch;font-family:'Archivo',Helvetica,sans-serif;font-weight:800;font-size:clamp(30px,4.2vw,52px);line-height:1.06;letter-spacing:-0.025em;color:#1F1A17;text-wrap:balance">This is what a Tuesday looks like.</h2>
+    </div>
+    <div style="max-width:1200px;margin:0 auto;padding:0 24px">
+      <x-import component-from-global-scope="ColorStackUMNDesignSystem_6ed6a9.AnimatedGroup" preset="blur-slide" stagger="0.07" min-column-width="248" gap="20" hint-size="100%,320px">
+        <img src="./img/game-night-chess.jpg" alt="Members playing chess and Connect Four at game night" style="display:block;width:100%;height:clamp(210px,22vw,280px);object-fit:cover;border-radius:14px;filter:saturate(1.04) contrast(1.03) brightness(1.02)">
+        <img src="./img/game-night-signage.jpg" alt="Two members holding the whiteboard they drew for game night" style="display:block;width:100%;height:clamp(210px,22vw,280px);object-fit:cover;border-radius:14px;filter:saturate(1.04) contrast(1.03) brightness(1.02)">
+        <img src="./img/summit-portrait.jpg" alt="ColorStack UMN delegation posing together at a national conference" style="display:block;width:100%;height:clamp(210px,22vw,280px);object-fit:cover;object-position:center 76%;border-radius:14px;filter:saturate(1.04) contrast(1.03) brightness(1.02)">
+        <img src="./img/summit-signage.jpg" alt="Stacked Up Summit 2026 welcome screen at the conference venue" style="display:block;width:100%;height:clamp(210px,22vw,280px);object-fit:cover;border-radius:14px;filter:saturate(1.04) contrast(1.03) brightness(1.02)">
+      </x-import>
+    </div>
+  </section>
+
+  <section id="voices" style="background:#FFFFFF;border-top:1px solid #E8DCCB;border-bottom:1px solid #E8DCCB;padding:clamp(72px,10vw,132px) 0">
+    <div style="max-width:1200px;margin:0 auto;padding:0 24px clamp(36px,5vw,52px)">
+      <span data-reveal="" style="display:inline-block;font-family:'Archivo',Helvetica,sans-serif;font-weight:700;font-size:12.5px;letter-spacing:0.16em;text-transform:uppercase;color:#900021;margin-bottom:18px">Voices</span>
+      <h2 data-reveal="" style="margin:0;max-width:20ch;font-family:'Archivo',Helvetica,sans-serif;font-weight:800;font-size:clamp(30px,4.2vw,52px);line-height:1.06;letter-spacing:-0.025em;color:#1F1A17;text-wrap:balance">In their words.</h2>
+    </div>
+    <x-import component-from-global-scope="ColorStackUMNDesignSystem_6ed6a9.InfiniteSlider" gap="20" duration="64" reverse="true" hint-size="100%,300px">
+      <figure style="flex:none;width:clamp(300px,34vw,440px);margin:0;display:flex;flex-direction:column;justify-content:space-between;gap:22px;background:#FBF5EC;border:1px solid #E8DCCB;border-radius:14px;padding:32px 30px">
+        <blockquote style="margin:0;font-family:'Lora',Georgia,serif;font-style:italic;font-size:19px;line-height:1.5;color:#1F1A17;text-wrap:pretty">I came for the free pizza freshman year and stayed because it was the first CS space where I did not have to explain myself before I could ask a question.</blockquote>
+        <figcaption style="display:flex;flex-direction:column;gap:3px;font-family:'Archivo',Helvetica,sans-serif"><span style="font-weight:700;font-size:15px;color:#7A0019">Placeholder quote</span><span style="font-weight:500;font-size:14px;color:#5C534E">Replace · Member, Class of '27</span></figcaption>
+      </figure>
+      <figure style="flex:none;width:clamp(300px,34vw,440px);margin:0;display:flex;flex-direction:column;justify-content:space-between;gap:22px;background:#FBF5EC;border:1px solid #E8DCCB;border-radius:14px;padding:32px 30px">
+        <blockquote style="margin:0;font-family:'Lora',Georgia,serif;font-style:italic;font-size:19px;line-height:1.5;color:#1F1A17;text-wrap:pretty">The mock interviews were harder than the real one. By the time I sat down with a recruiter I had already been through it four times with people who wanted me to get it.</blockquote>
+        <figcaption style="display:flex;flex-direction:column;gap:3px;font-family:'Archivo',Helvetica,sans-serif"><span style="font-weight:700;font-size:15px;color:#7A0019">Placeholder quote</span><span style="font-weight:500;font-size:14px;color:#5C534E">Replace · SWE intern</span></figcaption>
+      </figure>
+      <figure style="flex:none;width:clamp(300px,34vw,440px);margin:0;display:flex;flex-direction:column;justify-content:space-between;gap:22px;background:#FBF5EC;border:1px solid #E8DCCB;border-radius:14px;padding:32px 30px">
+        <blockquote style="margin:0;font-family:'Lora',Georgia,serif;font-style:italic;font-size:19px;line-height:1.5;color:#1F1A17;text-wrap:pretty">Nobody in my family had done this. ColorStack turned a process I found intimidating into a set of steps I could actually follow, with people checking in on me the whole way.</blockquote>
+        <figcaption style="display:flex;flex-direction:column;gap:3px;font-family:'Archivo',Helvetica,sans-serif"><span style="font-weight:700;font-size:15px;color:#7A0019">Placeholder quote</span><span style="font-weight:500;font-size:14px;color:#5C534E">Replace · First-generation student</span></figcaption>
+      </figure>
+    </x-import>
+  </section>
+
+  <section id="get-in-touch" style="background:#7A0019;color:#FBF5EC">
+    <div style="max-width:1200px;margin:0 auto;padding:clamp(72px,10vw,132px) 24px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:clamp(32px,5vw,72px);align-items:center">
+        <div style="display:flex;flex-direction:column;gap:20px">
+          <h2 style="margin:0;font-family:'Archivo',Helvetica,sans-serif;font-weight:900;font-size:clamp(36px,5.4vw,74px);line-height:1.04;letter-spacing:-0.03em;color:#FFCC33">
+            <x-import component-from-global-scope="ColorStackUMNDesignSystem_6ed6a9.TextRoll" stagger="0.024" duration="700" hint-size="100%,1.2em">Come find your people.</x-import>
+          </h2>
+          <p data-reveal="" style="margin:0;font-family:'Lora',Georgia,serif;font-size:18.5px;line-height:1.62;max-width:40ch;text-wrap:pretty">Event invites, internship deadlines, and <em>Chapter Notes</em>, our monthly newsletter. Any major, any year, any background. Everyone is welcome at the table.</p>
+        </div>
+        <form action="https://logicform.io/v/6a4aacba51ee6e65572aaa48" method="get" target="_blank" data-reveal="" style="display:flex;flex-direction:column;gap:16px">
+          <label style="display:flex;flex-direction:column;gap:9px;font-family:'Archivo',Helvetica,sans-serif;font-weight:600;font-size:14px;color:#FFDE7A">Your UMN email
+            <input type="email" name="email" placeholder="you@umn.edu" style="font-family:'Lora',Georgia,serif;font-size:16px;color:#1F1A17;background:#FBF5EC;border:1px solid rgba(251,245,236,0.35);border-radius:10px;padding:16px 20px;min-height:44px">
+          </label>
+          <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">
+            <button type="submit" style="font-family:'Archivo',Helvetica,sans-serif;font-weight:700;font-size:16.5px;background:#FFCC33;color:#7A0019;border:none;padding:16px 32px;border-radius:10px;cursor:pointer;min-height:44px;transition:background 240ms ease" style-hover="background:#FFB71E">Sign me up</button>
+            <a href="mailto:colorstk@umn.edu" style="font-family:'Archivo',Helvetica,sans-serif;font-weight:600;font-size:15px;color:#FFDE7A;transition:color 220ms ease" style-hover="color:#FFCC33">Or just email us</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" style="max-width:1200px;margin:0 auto;padding:clamp(72px,10vw,132px) 24px">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:clamp(28px,5vw,72px)">
+      <div data-reveal="" style="display:flex;flex-direction:column;gap:20px">
+        <span style="display:inline-block;font-family:'Archivo',Helvetica,sans-serif;font-weight:700;font-size:12.5px;letter-spacing:0.16em;text-transform:uppercase;color:#900021">Contact us</span>
+        <h2 style="margin:0;font-family:'Archivo',Helvetica,sans-serif;font-weight:800;font-size:clamp(27px,3.2vw,40px);line-height:1.08;letter-spacing:-0.025em;color:#7A0019;text-wrap:balance">Recruiters, sponsors, and curious students, same inbox.</h2>
+        <p style="margin:0;font-family:'Lora',Georgia,serif;font-size:17.5px;line-height:1.62;color:#5C534E;text-wrap:pretty">Want to speak at a meeting, sponsor an event, or just find out when we meet? Write to <a href="mailto:colorstk@umn.edu" style="color:#7A0019;border-bottom:1.5px solid #FFCC33">colorstk@umn.edu</a> and a board member will get back to you.</p>
+      </div>
+      <div data-reveal="" style="display:flex;flex-direction:column">
+        <sc-for list="{{ channels }}" as="c" hint-placeholder-count="4">
+          <a href="{{ c.href }}" target="_blank" rel="noopener" style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:20px 4px;border-bottom:1px solid #E8DCCB;min-height:44px;transition:padding-left 260ms cubic-bezier(.22,1,.36,1)" style-hover="padding-left:12px">
+            <span style="display:flex;flex-direction:column;gap:4px">
+              <span style="font-family:'Archivo',Helvetica,sans-serif;font-weight:600;font-size:13.5px;color:#5C534E">{{ c.label }}</span>
+              <span style="font-family:'Archivo',Helvetica,sans-serif;font-weight:700;font-size:20px;color:#7A0019">{{ c.value }}</span>
+            </span>
+            <span style="font-family:'Archivo',Helvetica,sans-serif;font-weight:600;font-size:14px;color:#900021;flex:none">{{ c.marker }}</span>
+          </a>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));border-top:1px solid #E8DCCB">
+    <a href="https://logicform.io/v/6a4aacba51ee6e65572aaa48" target="_blank" rel="noopener" style="display:flex;flex-direction:column;justify-content:space-between;gap:clamp(40px,7vw,90px);padding:clamp(48px,7vw,96px) clamp(28px,4vw,64px);background:#FFCC33;color:#7A0019;min-height:clamp(280px,32vw,420px);transition:background 300ms ease" style-hover="background:#FFB71E">
+      <span style="font-family:'Archivo',Helvetica,sans-serif;font-weight:700;font-size:13px;letter-spacing:0.16em;text-transform:uppercase">Step one</span>
+      <span style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px">
+        <span style="font-family:'Archivo',Helvetica,sans-serif;font-weight:900;font-size:clamp(34px,4.6vw,64px);line-height:1;letter-spacing:-0.03em;text-wrap:balance">Join the list</span>
+        <span aria-hidden="true" style="font-family:'Archivo',Helvetica,sans-serif;font-weight:700;font-size:clamp(28px,3vw,44px);line-height:1">↗</span>
+      </span>
+    </a>
+    <a href="https://www.instagram.com/colorstackumn/" target="_blank" rel="noopener" style="display:flex;flex-direction:column;justify-content:space-between;gap:clamp(40px,7vw,90px);padding:clamp(48px,7vw,96px) clamp(28px,4vw,64px);background:#1F1A17;color:#FBF5EC;min-height:clamp(280px,32vw,420px);transition:background 300ms ease" style-hover="background:#5B0013">
+      <span style="font-family:'Archivo',Helvetica,sans-serif;font-weight:700;font-size:13px;letter-spacing:0.16em;text-transform:uppercase;color:#FFDE7A">Step two</span>
+      <span style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px">
+        <span style="font-family:'Archivo',Helvetica,sans-serif;font-weight:900;font-size:clamp(34px,4.6vw,64px);line-height:1;letter-spacing:-0.03em;color:#FBF5EC;text-wrap:balance">Come to a meeting</span>
+        <span aria-hidden="true" style="font-family:'Archivo',Helvetica,sans-serif;font-weight:700;font-size:clamp(28px,3vw,44px);line-height:1;color:#FFCC33">↗</span>
+      </span>
+    </a>
+  </section>
+
+</main>
+
+<footer style="background:#5B0013;color:#FBF5EC">
+  <div style="max-width:1200px;margin:0 auto;padding:clamp(40px,6vw,64px) 24px">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;padding-bottom:22px;border-bottom:1px solid rgba(251,245,236,0.3)">
+      <span style="font-family:'Archivo',Helvetica,sans-serif;font-weight:900;font-size:clamp(26px,3.6vw,44px);letter-spacing:-0.03em;color:#FBF5EC">ColorStack UMN</span>
+      <img src="./img/logo.png" alt="ColorStack UMN chapter logo" width="52" height="52" style="display:block;width:52px;height:52px;object-fit:contain">
+    </div>
+    <div style="display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;padding-top:22px;font-family:'Archivo',Helvetica,sans-serif;font-weight:600;font-size:14px">
+      <a href="mailto:colorstk@umn.edu" style="color:#FFDE7A" style-hover="color:#FFCC33">colorstk@umn.edu</a>
+      <a href="https://www.instagram.com/colorstackumn/" target="_blank" rel="noopener" style="color:#FFDE7A" style-hover="color:#FFCC33">Instagram ↗</a>
+      <a href="https://www.linkedin.com/company/colorstackumn" target="_blank" rel="noopener" style="color:#FFDE7A" style-hover="color:#FFCC33">LinkedIn ↗</a>
+      <span style="color:rgba(251,245,236,0.7)">A chapter of ColorStack, Inc. · {{ year }}</span>
+    </div>
+  </div>
+</footer>
+
+<div style="position:fixed;right:clamp(18px,3vw,36px);bottom:clamp(18px,3vw,36px);z-index:70">
+  <x-import component-from-global-scope="ColorStackUMNDesignSystem_6ed6a9.LiquidMenu" label="Get in touch" radius="76" size="62" blur="7" contrast="20" hint-size="62px,62px">
+    <a href="mailto:colorstk@umn.edu" aria-label="Email ColorStack UMN" style="display:grid;place-items:center;width:100%;height:100%;color:#FBF5EC;font-size:19px">✉</a>
+    <a href="https://www.instagram.com/colorstackumn/" target="_blank" rel="noopener" aria-label="ColorStack UMN on Instagram" style="display:grid;place-items:center;width:100%;height:100%;color:#FBF5EC;font-family:'Archivo',Helvetica,sans-serif;font-weight:700;font-size:14px">IG</a>
+    <a href="https://logicform.io/v/6a4aacba51ee6e65572aaa48" target="_blank" rel="noopener" aria-label="Join the mailing list" style="display:grid;place-items:center;width:100%;height:100%;color:#FBF5EC;font-family:'Archivo',Helvetica,sans-serif;font-weight:700;font-size:13px">Join</a>
+  </x-import>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;photoTreatment&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Light tint&quot;,&quot;Full color&quot;,&quot;Duotone&quot;],&quot;default&quot;:&quot;Light tint&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Imagery&quot;},&quot;revealMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Motion&quot;}}">
+class Component extends DCLogic {
+  componentDidMount() {
+    this.armed = new WeakSet();
+    this.arm();
+    this.paintPhotos();
+    this.failsafe = setTimeout(() => this.showAll(), 4000);
+  }
+  componentDidUpdate() { this.arm(); this.paintPhotos(); }
+  componentWillUnmount() {
+    clearTimeout(this.failsafe);
+    if (this.io) this.io.disconnect();
+  }
+  nodes() { return document.querySelectorAll('[data-reveal],[data-wipe]'); }
+  showAll() {
+    this.nodes().forEach(el => el.setAttribute(el.hasAttribute('data-wipe') ? 'data-wipe' : 'data-reveal', 'in'));
+  }
+  paintPhotos() {
+    const modes = {
+      'Light tint': { f: 'saturate(1.04) contrast(1.03) brightness(1.02)', b: 'normal', g: '#F3E9DA' },
+      'Full color': { f: 'none', b: 'normal', g: 'transparent' },
+      'Duotone': { f: 'grayscale(1) contrast(1.06) brightness(1.05)', b: 'multiply', g: '#C6887F' }
+    };
+    const t = modes[this.props.photoTreatment] || modes['Light tint'];
+    document.querySelectorAll('[data-photo]').forEach(img => {
+      img.style.filter = t.f;
+      img.style.mixBlendMode = t.b;
+      if (img.parentElement) img.parentElement.style.background = t.g;
+    });
+  }
+  arm() {
+    const wants = this.props.revealMotion !== false;
+    const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!wants || reduced || !('IntersectionObserver' in window)) { this.showAll(); return; }
+    if (!this.io) {
+      this.io = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (!e.isIntersecting) return;
+          const el = e.target;
+          el.setAttribute(el.hasAttribute('data-wipe') ? 'data-wipe' : 'data-reveal', 'in');
+          this.io.unobserve(el);
+        });
+      }, { rootMargin: '0px 0px -6% 0px', threshold: 0.06 });
+    }
+    this.nodes().forEach(el => {
+      if (this.armed.has(el)) return;
+      this.armed.add(el);
+      const kin = el.parentElement ? Array.from(el.parentElement.children).filter(c => c.hasAttribute('data-reveal') || c.hasAttribute('data-wipe')) : [];
+      const i = kin.indexOf(el);
+      if (i > 0) el.style.transitionDelay = Math.min(i, 4) * 0.12 + 's';
+      this.io.observe(el);
+    });
+  }
+  renderVals() {
+    return {
+      year: new Date().getFullYear(),
+      channels: [
+        { label: 'Email', value: 'colorstk@umn.edu', marker: 'Fastest', href: 'mailto:colorstk@umn.edu' },
+        { label: 'Instagram', value: '@colorstackumn', marker: '↗', href: 'https://www.instagram.com/colorstackumn/' },
+        { label: 'LinkedIn', value: 'ColorStack UMN', marker: '↗', href: 'https://www.linkedin.com/company/colorstackumn' },
+        { label: 'Mailing list', value: 'Chapter Notes', marker: 'Monthly ↗', href: 'https://logicform.io/v/6a4aacba51ee6e65572aaa48' }
+      ]
+    };
+  }
+}
+
+</script>
+</body>
+</html>

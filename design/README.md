@@ -8,6 +8,8 @@ You are rebuilding **colorstackumn.org**. Everything you need is in this folder.
 
 **Just need to stand the repo up?** `SETUP.md` is slice 0 — prerequisites through the first commit, with a verification gate at the end.
 
+**Building the landing page?** `LANDING-PAGE.md` is the current spec for it and **supersedes `UX-SPEC.md` wherever they disagree** — the site is no longer editorial in style. Reference implementation: `reference/LandingPage.dc.html`.
+
 **Order of operations:**
 1. Read `UX-SPEC.md` end to end. It is the authoritative spec — IA, page-by-page layout, tokens, fonts, motion, a11y, and hard brand rules.
 2. Read `BRAND-SYSTEM.md` for brand voice, logo rules, and rationale behind the visual direction.
@@ -78,14 +80,16 @@ PULL-FROM-DESIGN-CHAT.md    how the parent session ingests + re-pulls this bundl
 CLAUDE.md                   orchestrator constitution (auto-loads in Claude Code)
 ORCHESTRATION.md            pane contract, delegation envelope, slice sequence, gates
 REPO-RECON.md               read-only recon brief → produces RECON.md
+LANDING-PAGE.md             landing-page addendum — supersedes UX-SPEC for the site
 SETUP.md                    slice 0: scaffold, tokens, fonts, guardrails, first commit
 agents/planner.md           plan-only role
 agents/implementer.md       scoped-write role
 agents/reviewer.md          verdict-only role
 UX-SPEC.md                  full UX + visual specification
 BRAND-SYSTEM.md             brand voice, color/type rationale, logo rules
+components/motion/          nine dependency-free React motion primitives (.jsx.txt — see RESTORE.md)
 tokens/                     styles.css + colors/typography/spacing — copy into the project
-reference/                  Chapter Notes newsletter (visual north star, reference only)
+reference/                  Chapter Notes newsletter + LandingPage.dc.html (reference only; no photos — already in the repo)
 assets/                     chapter logo + national brand reference sheets
 ```
 

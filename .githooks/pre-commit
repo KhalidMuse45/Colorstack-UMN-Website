@@ -24,7 +24,23 @@ for f in $files; do
           ;;
       esac
       grep -n "outline: *none" "$f" && { echo "FAIL $f — outline:none"; fail=1; }
-      grep -niE "linear-gradient|radial-gradient|backdrop-filter" "$f" && { echo "FAIL $f — gradient/glassmorphism"; fail=1; }
+      # Glassmorphism / gradient rule, narrowed per LANDING-PAGE.md
+      # "One repo change you must make first". Inside src/components/motion/ the
+      # ported primitives legitimately need backdrop-filter (ProgressiveBlur) and
+      # linear-gradient as a MASK (ProgressiveBlur layers, InfiniteSlider edge
+      # fade). The allowance is mask-only: a decorative gradient in that folder
+      # still fails, because the line must also mention "mask" to pass.
+      case "$f" in
+        src/components/motion/*)
+          grep -niE 'radial-gradient' "$f" &&
+            { echo "FAIL $f — radial-gradient"; fail=1; }
+          grep -niE 'linear-gradient' "$f" | grep -vi 'mask' &&
+            { echo "FAIL $f — linear-gradient outside a mask (decorative gradients still banned here)"; fail=1; }
+          ;;
+        *)
+          grep -niE "linear-gradient|radial-gradient|backdrop-filter" "$f" && { echo "FAIL $f — gradient/glassmorphism"; fail=1; }
+          ;;
+      esac
       ;;
   esac
   case "$f" in
