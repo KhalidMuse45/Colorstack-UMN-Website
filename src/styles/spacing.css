@@ -9,9 +9,20 @@
   --space-7: 48px;
   --space-8: 64px;
 
-  /* Radii — brand shapes are pill-heavy (logo bars are pill slabs) */
+  /* Radii.
+     The website is NOT pill-heavy — LANDING-PAGE.md:16 retires the pill and
+     mandates 10px on controls, 14px on media and cards. The vendored
+     design/tokens/spacing.css still ships only 6/12/999 and still comments
+     "pill-heavy", so the two radii the spec requires have no token upstream.
+     Minted here (our copy only; design/ stays vendored) and reported for v3.
+     Use --radius-control and --radius-media for anything on the site. */
+  --radius-control: 10px;  /* buttons, inputs, nav CTA, skip link */
+  --radius-media: 14px;    /* photos, tiles, cards, popout plates */
+
   --radius-sm: 6px;
   --radius-md: 12px;
+  /* Newsletter and print only. The site must not use this — the landing-page
+     definition of done fails on any 999px / rounded-full in site code. */
   --radius-pill: 999px;
 
   /* Shadows — flat brand; use sparingly */
