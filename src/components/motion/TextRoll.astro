@@ -1,0 +1,225 @@
+---
+/**
+ * TextRoll — characters roll up into place when the element scrolls into view.
+ *
+ * Port of design/components/motion/TextRoll.jsx.txt (on branch
+ * chore/design-bundle-v2). Props follow types.d.ts.
+ *
+ * PROGRESSIVE ENHANCEMENT
+ * The server renders the plain, intact string. It is visible, selectable and
+ * searchable with no JS, and it is the accessible name as-is. The script only
+ * splits it into per-character spans once it knows JS runs AND the visitor has
+ * not asked for reduced motion. Because the split is what introduces the
+ * aria-hidden animated copy, the no-JS and reduced-motion paths never pay the
+ * accessibility cost of the effect.
+ *
+ * The hidden pre-animation state lives behind BOTH [data-motion="armed"] and
+ * a prefers-reduced-motion: no-preference query, so there is no reachable
+ * state in which text is stranded at opacity: 0. A 2.5s failsafe reveals the
+ * text if the observer never fires.
+ *
+ * WHY is:global
+ * The character spans are built at runtime, so they never receive Astro's
+ * scoping attribute and scoped selectors would not match them. Every rule
+ * below is namespaced under [data-textroll] instead.
+ */
+import type { HTMLAttributes, HTMLTag } from 'astro/types';
+
+/**
+ * `as` has to be a generic tag parameter, not a plain `as?: string`. A bare
+ * string `as` member silently voids the whole Props interface in Astro: the
+ * component keeps compiling but NOTHING on it is type checked any more, so a
+ * mistyped prop sails straight through `astro check`.
+ */
+type Props<Tag extends HTMLTag = 'span'> = Omit<HTMLAttributes<Tag>, 'as'> & {
+  /** Element tag to render */
+  as?: Tag;
+  /** Text to roll. Falls back to the default slot. */
+  text?: string;
+  /** Per-character duration in ms */
+  duration?: number | string;
+  /** Seconds between characters */
+  stagger?: number | string;
+  /** Seconds before the first character rolls */
+  delay?: number | string;
+  /** String only. It is merged with a custom property, so an object style
+   *  would stringify to garbage; narrowing it here makes that a build error. */
+  style?: string;
+};
+
+const {
+  text,
+  duration = 620,
+  stagger = 0.032,
+  delay = 0,
+  as: tagName = 'span',
+  class: className,
+  style,
+  ...rest
+} = Astro.props;
+
+/** Astro can hand a numeric prop over as a string. Coerce, never trust. */
+const num = (value: unknown, fallback: number): number => {
+  if (value === undefined || value === null || value === '') return fallback;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+};
+
+const dur = num(duration, 620);
+const step = num(stagger, 0.032);
+const lead = num(delay, 0);
+
+const Tag = tagName as any;
+const inlineStyle = [`--troll-dur:${dur}ms`, style].filter(Boolean).join(';');
+---
+
+<Tag
+  class:list={['troll', className]}
+  style={inlineStyle}
+  data-textroll
+  data-stagger={step}
+  data-delay={lead}
+  {...rest}
+>{text !== undefined ? text : <slot />}</Tag>
+
+<style is:global>
+  [data-textroll] {
+    display: inline-block;
+  }
+
+  [data-textroll] .troll-anim {
+    display: inline-block;
+  }
+
+  /* The mask clips the glyph while it is still below the baseline. */
+  [data-textroll] .troll-mask {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: bottom;
+    white-space: pre;
+  }
+
+  [data-textroll] .troll-char {
+    display: inline-block;
+    white-space: pre;
+    transform-origin: center bottom;
+  }
+
+  /* Carries the intact string for assistive tech once the visible copy has
+     been split into aria-hidden character spans. */
+  [data-textroll] .troll-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    [data-textroll][data-motion] .troll-char {
+      transition:
+        transform var(--troll-dur, 620ms) cubic-bezier(0.22, 1, 0.36, 1),
+        opacity var(--troll-dur, 620ms) ease-out;
+    }
+
+    /* The ONLY rule that hides anything. Requires the script to have armed
+       the element, and dies with the media query if the visitor switches to
+       reduced motion mid-session. */
+    [data-textroll][data-motion='armed'] .troll-char {
+      opacity: 0;
+      transform: translateY(105%) rotate(9deg);
+    }
+
+    [data-textroll][data-motion='in'] .troll-char {
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  // Module scope: this runs ONCE per page, not once per instance. Every
+  // instance is found by its data attribute and wired independently.
+  const REVEAL_FAILSAFE_MS = 2500;
+
+  const num = (value: string | undefined, fallback: number): number => {
+    if (value === undefined || value === '') return fallback;
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : fallback;
+  };
+
+  /**
+   * Replace the plain text with per-character spans plus a visually hidden
+   * copy of the original string. Returns false when there is nothing to roll,
+   * in which case the server-rendered text is left exactly as it is.
+   */
+  function arm(root: HTMLElement): boolean {
+    // Collapse the indentation Astro leaves around slotted text so the
+    // accessible name is the clean string.
+    const source = (root.textContent || '').replace(/\s+/g, ' ').trim();
+    if (source === '') return false;
+
+    // Array.from, never split(''), so surrogate pairs survive intact.
+    const chars = Array.from(source);
+    const step = num(root.dataset.stagger, 0.032);
+    const lead = num(root.dataset.delay, 0);
+
+    const animated = document.createElement('span');
+    animated.className = 'troll-anim';
+    animated.setAttribute('aria-hidden', 'true');
+
+    for (let i = 0; i < chars.length; i += 1) {
+      const mask = document.createElement('span');
+      mask.className = 'troll-mask';
+      const glyph = document.createElement('span');
+      glyph.className = 'troll-char';
+      glyph.textContent = chars[i];
+      glyph.style.transitionDelay = `${lead + i * step}s`;
+      mask.appendChild(glyph);
+      animated.appendChild(mask);
+    }
+
+    const label = document.createElement('span');
+    label.className = 'troll-sr';
+    label.textContent = source;
+
+    root.replaceChildren(animated, label);
+    root.setAttribute('data-motion', 'armed');
+    return true;
+  }
+
+  function setup(root: HTMLElement) {
+    if (!arm(root)) return;
+
+    const reveal = () => root.setAttribute('data-motion', 'in');
+    const failsafe = window.setTimeout(reveal, REVEAL_FAILSAFE_MS);
+
+    if (typeof IntersectionObserver === 'undefined') {
+      window.clearTimeout(failsafe);
+      reveal();
+      return;
+    }
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          window.clearTimeout(failsafe);
+          reveal();
+          io.disconnect();
+        }
+      },
+      { threshold: 0.06 }
+    );
+    io.observe(root);
+  }
+
+  // Reduced motion never arms, so the untouched server markup stands.
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document
+      .querySelectorAll<HTMLElement>('[data-textroll]')
+      .forEach((root) => setup(root));
+  }
+</script>

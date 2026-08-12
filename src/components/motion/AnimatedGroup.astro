@@ -20,7 +20,23 @@
  * whitespace-children trap (LANDING-PAGE.md:68) that produced empty grid
  * cells in the original build.
  */
-interface Props {
+import type { HTMLAttributes, HTMLTag } from 'astro/types';
+
+/**
+ * `as` has to be a generic tag parameter, not a plain `as?: string`. A bare
+ * string `as` member silently voids the whole Props interface in Astro: the
+ * component keeps compiling but NOTHING on it is type checked any more, so a
+ * mistyped prop sails straight through `astro check`.
+ *
+ * This was not theoretical here. With the old `interface Props { as?: string }`
+ * this component accepted `preset="TOTALLY-BOGUS-PRESET"` with a clean
+ * `astro check`, which would have silently fallen through to the `{ opacity: 0 }`
+ * default branch and hidden a whole photo grid. Verified by planting the bogus
+ * value before and after this change.
+ */
+type Props<Tag extends HTMLTag = 'div'> = Omit<HTMLAttributes<Tag>, 'as'> & {
+  /** Element tag to render */
+  as?: Tag;
   /** Hidden-state treatment for each child */
   preset?: 'blur-slide' | 'rise' | 'scale' | 'fade';
   /** Seconds between children */
@@ -33,11 +49,10 @@ interface Props {
   gap?: number | string;
   /** Animate only the first time it enters view */
   once?: boolean | string;
-  /** Element tag to render */
-  as?: string;
-  class?: string;
+  /** String only. It is merged with custom properties, so an object style
+   *  would stringify to garbage; narrowing it here makes that a build error. */
   style?: string;
-}
+};
 
 const {
   preset = 'blur-slide',
@@ -50,7 +65,7 @@ const {
   class: className,
   style,
   ...rest
-}: Props = Astro.props;
+} = Astro.props;
 
 /* Numeric props can arrive as strings from a template (LANDING-PAGE.md:77),
    where an unconverted value silently drops out of the CSS. Coerce, and fall

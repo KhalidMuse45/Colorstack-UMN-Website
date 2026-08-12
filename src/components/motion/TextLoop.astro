@@ -1,0 +1,234 @@
+---
+/**
+ * TextLoop — cycles through its children on a timer.
+ *
+ * Port of design/components/motion/TextLoop.jsx.txt (on branch
+ * chore/design-bundle-v2). Props follow types.d.ts.
+ *
+ * Two modes:
+ *   default  inline-grid, every phrase in one cell, so the box is as wide as
+ *            the longest phrase and does not jitter as they rotate.
+ *   stack    absolutely positioned children for a photo roll, so the box
+ *            keeps the height its parent gave it.
+ *
+ * PROGRESSIVE ENHANCEMENT
+ * The collapse-into-one-cell layout is part of the armed state, not the base
+ * state. Without JS, or under reduced motion, children stay in normal flow:
+ * every phrase is readable in sequence, and a stacked photo roll shows its
+ * first image with the rest clipped by the container. Nothing is hidden by
+ * CSS that the script did not first opt into, so no child can be stranded at
+ * opacity: 0.
+ *
+ * Styles are is:global to stay consistent with the other primitives and
+ * because the frame class is applied at runtime. Every rule is namespaced
+ * under [data-textloop].
+ */
+import type { HTMLAttributes } from 'astro/types';
+
+type Props = HTMLAttributes<'div'> & {
+  /** Seconds each child stays on screen */
+  interval?: number | string;
+  /** Absolutely stack children so the box does not resize. Use for images. */
+  stack?: boolean | string;
+  /** Crossfade duration in ms */
+  transition?: number | string;
+  /** String only. It is merged with a custom property, so an object style
+   *  would stringify to garbage; narrowing it here makes that a build error. */
+  style?: string;
+};
+
+const {
+  interval = 2.6,
+  stack = false,
+  transition = 520,
+  class: className,
+  style,
+  ...rest
+} = Astro.props;
+
+/** Astro can hand a numeric prop over as a string. Coerce, never trust. */
+const num = (value: unknown, fallback: number): number => {
+  if (value === undefined || value === null || value === '') return fallback;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+};
+
+// An author writing stack="true" or a bare stack in markup hands over a string.
+const stacked = stack === true || stack === 'true' || stack === '';
+const seconds = num(interval, 2.6);
+const dur = num(transition, 520);
+
+// A stacked roll holds images or blocks, so it needs a block-level root. The
+// inline rotator has to be able to sit inside a heading or a paragraph.
+const Root = stacked ? 'div' : 'span';
+const inlineStyle = [`--tloop-dur:${dur}ms`, style].filter(Boolean).join(';');
+---
+
+<Root
+  class:list={['tloop', className]}
+  style={inlineStyle}
+  data-textloop
+  data-interval={seconds}
+  data-stack={stacked ? '' : undefined}
+  {...rest}
+><slot /></Root>
+
+<style is:global>
+  /* Base / unarmed. Children stay in normal flow and stay readable. */
+  [data-textloop][data-stack] {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Armed. The script has confirmed JS and motion, so the frames may now
+     collapse into a single cell and take turns. */
+  [data-textloop][data-motion='in'] {
+    display: inline-grid;
+    grid-template-areas: 'a';
+    align-items: baseline;
+    vertical-align: baseline;
+  }
+
+  [data-textloop][data-motion='in'] > .tloop-frame {
+    grid-area: 1 / 1;
+    display: block;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  [data-textloop][data-stack][data-motion='in'] {
+    display: block;
+  }
+
+  [data-textloop][data-stack][data-motion='in'] > .tloop-frame {
+    position: absolute;
+    inset: 0;
+  }
+
+  [data-textloop][data-motion='in'] > .tloop-frame[data-loop-active] {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    [data-textloop][data-motion='in'] > .tloop-frame {
+      transform: translateY(14px);
+      filter: blur(6px);
+      transition:
+        opacity var(--tloop-dur, 520ms) cubic-bezier(0.22, 1, 0.36, 1),
+        transform var(--tloop-dur, 520ms) cubic-bezier(0.22, 1, 0.36, 1),
+        filter var(--tloop-dur, 520ms) ease-out;
+    }
+
+    [data-textloop][data-motion='in'] > .tloop-frame[data-loop-active] {
+      transform: none;
+      filter: blur(0);
+    }
+  }
+</style>
+
+<script>
+  // Module scope: runs ONCE per page. Every instance gets its own timer and
+  // its own closure, so two loops on a page never share state.
+  const teardown: Array<() => void> = [];
+
+  function setup(root: HTMLElement) {
+    // root.children, never root.childNodes. The newlines an author leaves
+    // between sibling elements are text nodes, and counting them as frames is
+    // exactly the blank-frame bug this component shipped with once already.
+    const frames = Array.from(root.children) as HTMLElement[];
+    // One frame has nothing to rotate. Leave it in normal flow, unarmed.
+    if (frames.length < 2) return;
+
+    const parsed = Number(root.dataset.interval);
+    const ms = Math.max(400, (Number.isFinite(parsed) ? parsed : 2.6) * 1000);
+
+    let index = 0;
+    let paused = false;
+    let timer = 0;
+
+    frames.forEach((frame, i) => {
+      frame.classList.add('tloop-frame');
+      if (i === 0) {
+        frame.setAttribute('data-loop-active', '');
+      } else {
+        frame.setAttribute('aria-hidden', 'true');
+      }
+    });
+
+    root.setAttribute('data-motion', 'in');
+
+    const advance = () => {
+      frames[index].removeAttribute('data-loop-active');
+      frames[index].setAttribute('aria-hidden', 'true');
+      index = (index + 1) % frames.length;
+      frames[index].setAttribute('data-loop-active', '');
+      frames[index].removeAttribute('aria-hidden');
+    };
+
+    const start = () => {
+      if (timer !== 0) return;
+      timer = window.setInterval(() => {
+        if (!paused) advance();
+      }, ms);
+    };
+
+    const stop = () => {
+      if (timer === 0) return;
+      window.clearInterval(timer);
+      timer = 0;
+    };
+
+    // Pause on hover and on keyboard focus, so a reader can hold a phrase.
+    root.addEventListener('mouseenter', () => {
+      paused = true;
+    });
+    root.addEventListener('mouseleave', () => {
+      paused = false;
+    });
+    root.addEventListener('focusin', () => {
+      paused = true;
+    });
+    root.addEventListener('focusout', () => {
+      paused = false;
+    });
+
+    if (typeof IntersectionObserver === 'undefined') {
+      start();
+      teardown.push(stop);
+      return;
+    }
+
+    // Only burn a timer while the loop is actually on screen.
+    const io = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) start();
+        else stop();
+      }
+    });
+    io.observe(root);
+    teardown.push(() => {
+      io.disconnect();
+      stop();
+    });
+  }
+
+  // Reduced motion never arms, so children stay in normal flow and nothing
+  // auto-rotates.
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document
+      .querySelectorAll<HTMLElement>('[data-textloop]')
+      .forEach((root) => setup(root));
+
+    // Drop every interval if the document is swapped out from under us.
+    // Harmless when view transitions are not in play: the event never fires.
+    document.addEventListener('astro:before-swap', () => {
+      while (teardown.length > 0) {
+        const fn = teardown.pop();
+        if (fn) fn();
+      }
+    });
+  }
+</script>
