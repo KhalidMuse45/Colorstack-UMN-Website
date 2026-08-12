@@ -247,11 +247,15 @@ const colophon = [
     padding-top: var(--space-3);
     border-top: 1px solid var(--hairline);
     font-family: var(--font-display);
-    font-size: var(--text-label);
+    font-size: var(--text-small);
     font-weight: 600;
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
     color: var(--text-muted);
+    /* Deliberately NOT uppercase. This row carries the chapter name, and
+       text-transform would render the wordmark as an all-caps spelling, which
+       contradicts "capital C, capital S, always". The guardrail greps source,
+       not rendered output, so it cannot catch that. The reference footer
+       (reference/LandingPage.dc.html:264) sets this row in Archivo 600 at
+       14px with no transform either. */
   }
 
   .footer__clock {

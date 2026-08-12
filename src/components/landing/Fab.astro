@@ -1,0 +1,44 @@
+---
+/**
+ * Fixed gooey CTA, bottom right. `design/LANDING-PAGE.md:41` and
+ * `design/reference/LandingPage.dc.html:273-279`.
+ *
+ * Offset is 44px, NOT the reference's clamp(18px,3vw,36px). At 375px that
+ * clamp resolves to 18px and the open fan extends about 38px past the
+ * trigger's right edge, pushing the rightmost item off screen. Measured
+ * during the motion port; recorded in HANDOFF-LOG.md.
+ */
+import LiquidMenu from '../motion/LiquidMenu.astro';
+import { MAILING_LIST, contact } from '../../data/landing';
+---
+
+<div class="fab">
+  <LiquidMenu label="Get in touch" radius={76} size={62} blur={7} contrast={20}>
+    <a href={`mailto:${contact.email}`} aria-label={`Email ColorStack UMN at ${contact.email}`}>✉</a>
+    <a
+      href="https://www.instagram.com/colorstackumn/"
+      target="_blank"
+      rel="noopener"
+      aria-label="ColorStack UMN on Instagram">IG</a
+    >
+    <a href={MAILING_LIST} target="_blank" rel="noopener" aria-label="Join the ColorStack UMN mailing list">Join</a>
+  </LiquidMenu>
+</div>
+
+<style>
+  .fab {
+    position: fixed;
+    right: 44px;
+    bottom: 44px;
+    z-index: 70;
+  }
+
+  /* Do NOT shrink `right` at small widths. 375px is exactly where the fan
+     overflows, so tightening the offset there is backwards. Only `bottom`
+     relaxes, which costs nothing horizontally. */
+  @media (max-width: 640px) {
+    .fab {
+      bottom: var(--space-6);
+    }
+  }
+</style>

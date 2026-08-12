@@ -91,6 +91,13 @@ const inlineStyle = [`--troll-dur:${dur}ms`, style].filter(Boolean).join(';');
     display: inline-block;
   }
 
+  /* Words are the unbreakable unit. Each glyph below is an inline-block, so
+     without this the browser happily breaks a line mid-word. */
+  [data-textroll] .troll-word {
+    display: inline-block;
+    white-space: nowrap;
+  }
+
   /* The mask clips the glyph while it is still below the baseline. */
   [data-textroll] .troll-mask {
     display: inline-block;
@@ -161,8 +168,6 @@ const inlineStyle = [`--troll-dur:${dur}ms`, style].filter(Boolean).join(';');
     const source = (root.textContent || '').replace(/\s+/g, ' ').trim();
     if (source === '') return false;
 
-    // Array.from, never split(''), so surrogate pairs survive intact.
-    const chars = Array.from(source);
     const step = num(root.dataset.stagger, 0.032);
     const lead = num(root.dataset.delay, 0);
 
@@ -170,15 +175,39 @@ const inlineStyle = [`--troll-dur:${dur}ms`, style].filter(Boolean).join(';');
     animated.className = 'troll-anim';
     animated.setAttribute('aria-hidden', 'true');
 
-    for (let i = 0; i < chars.length; i += 1) {
-      const mask = document.createElement('span');
-      mask.className = 'troll-mask';
-      const glyph = document.createElement('span');
-      glyph.className = 'troll-char';
-      glyph.textContent = chars[i];
-      glyph.style.transitionDelay = `${lead + i * step}s`;
-      mask.appendChild(glyph);
-      animated.appendChild(mask);
+    // Group characters into words. Each glyph is an inline-block, so without
+    // a word wrapper the browser may break a line BETWEEN ANY TWO LETTERS.
+    // That shipped as "Come find you / r people." on the CTA headline.
+    // Words are the unbreakable unit; the plain space text nodes between them
+    // are the only break opportunities, exactly as in normal text.
+    const tokens = source.split(/(\s+)/).filter((t) => t !== '');
+    let i = 0;
+
+    for (const token of tokens) {
+      if (/^\s+$/.test(token)) {
+        animated.appendChild(document.createTextNode(' '));
+        continue;
+      }
+
+      const word = document.createElement('span');
+      word.className = 'troll-word';
+
+      // Array.from again, per token, so surrogate pairs survive the regroup.
+      for (const ch of Array.from(token)) {
+        const mask = document.createElement('span');
+        mask.className = 'troll-mask';
+        const glyph = document.createElement('span');
+        glyph.className = 'troll-char';
+        glyph.textContent = ch;
+        // Index runs across the whole string, not per word, so the stagger
+        // stays continuous and does not restart at each space.
+        glyph.style.transitionDelay = `${lead + i * step}s`;
+        i += 1;
+        mask.appendChild(glyph);
+        word.appendChild(mask);
+      }
+
+      animated.appendChild(word);
     }
 
     const label = document.createElement('span');

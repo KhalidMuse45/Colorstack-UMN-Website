@@ -1,0 +1,88 @@
+---
+/**
+ * In the room. Section 8 of the LANDING-PAGE section order: an AnimatedGroup
+ * photo grid. `design/reference/LandingPage.dc.html:160-173`.
+ *
+ * blur-slide is the most aggressive hidden state of the nine primitives
+ * (blur 12px, translateY -46px, rotateX 52deg), so a failure here is a whole
+ * grid gone. It only arms when JS runs and motion is allowed, and it reveals
+ * on a 2.5s failsafe regardless.
+ */
+import AnimatedGroup from '../motion/AnimatedGroup.astro';
+import Reveal from '../motion/Reveal.astro';
+import SectionLabel from './SectionLabel.astro';
+import { inTheRoom } from '../../data/landing';
+---
+
+<section class="in-room">
+  <div class="in-room-head">
+    <Reveal>
+      <SectionLabel class="in-room-label">{inTheRoom.label}</SectionLabel>
+    </Reveal>
+    <Reveal index={1}>
+      <h2 class="in-room-title">{inTheRoom.headline}</h2>
+    </Reveal>
+  </div>
+
+  <div class="in-room-grid">
+    <AnimatedGroup preset="blur-slide" stagger={0.07} minColumnWidth={248} gap={20}>
+      {
+        inTheRoom.grid.map((p) => (
+          <img
+            src={p.src}
+            alt={p.alt}
+            width={p.width}
+            height={p.height}
+            loading="lazy"
+            decoding="async"
+            class="grid-img"
+            style={p.objectPosition ? `object-position:${p.objectPosition}` : undefined}
+          />
+        ))
+      }
+    </AnimatedGroup>
+  </div>
+</section>
+
+<style>
+  .in-room {
+    background: var(--surface-page);
+    padding: 0 0 clamp(72px, 10vw, 132px);
+  }
+
+  .in-room-head {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--space-5) clamp(32px, 4vw, 48px);
+  }
+
+  .in-room-label {
+    margin-bottom: 18px;
+  }
+
+  .in-room-title {
+    max-width: 22ch;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(30px, 4.2vw, 52px);
+    line-height: 1.06;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+
+  .in-room-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--space-5);
+  }
+
+  .grid-img {
+    display: block;
+    width: 100%;
+    height: clamp(210px, 22vw, 280px);
+    object-fit: cover;
+    border-radius: var(--radius-media);
+    filter: var(--photo-tint);
+  }
+</style>

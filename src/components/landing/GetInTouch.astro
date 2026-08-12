@@ -1,0 +1,156 @@
+---
+/**
+ * Get in touch. Section 10 of the LANDING-PAGE section order: maroon band,
+ * TextRoll headline, mailing-list form.
+ * `design/reference/LandingPage.dc.html:196-216`.
+ *
+ * This is the conversion point of the whole page, so the form is a real form
+ * that works with JavaScript disabled: a plain GET to the Logicform endpoint,
+ * which is the same endpoint every other CTA on the page uses. The constant
+ * lives in src/data/landing.ts so the four call sites cannot drift.
+ *
+ * The label wraps the input rather than using `for`, so the hit area includes
+ * the text and no id has to stay unique across the page.
+ */
+import TextRoll from '../motion/TextRoll.astro';
+import Reveal from '../motion/Reveal.astro';
+import { getInTouch } from '../../data/landing';
+---
+
+<section id="get-in-touch" class="git">
+  <div class="git-inner">
+    <div class="git-copy">
+      <h2 class="git-title">
+        <TextRoll stagger={0.024} duration={700}>{getInTouch.headline}</TextRoll>
+      </h2>
+      <Reveal>
+        <p class="git-body">{getInTouch.body}</p>
+      </Reveal>
+    </div>
+
+    <Reveal as="form" class="git-form" action={getInTouch.formAction} method="get" target="_blank" index={1}>
+      <label class="git-label">
+        {getInTouch.fieldLabel}
+        <input type="email" name="email" placeholder={getInTouch.placeholder} required autocomplete="email" />
+      </label>
+      <div class="git-actions">
+        <button type="submit">{getInTouch.submit}</button>
+        <a href={getInTouch.altHref}>{getInTouch.altLabel}</a>
+      </div>
+    </Reveal>
+  </div>
+</section>
+
+<style>
+  .git {
+    background: var(--maroon);
+    color: var(--cream);
+  }
+
+  .git-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: clamp(72px, 10vw, 132px) var(--space-5);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: clamp(32px, 5vw, 72px);
+    align-items: center;
+  }
+
+  .git-copy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  .git-title {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(36px, 5.4vw, 74px);
+    line-height: 1.04;
+    letter-spacing: -0.03em;
+    color: var(--gold);
+  }
+
+  .git-body {
+    font-family: var(--font-body);
+    font-size: 18.5px;
+    line-height: 1.62;
+    max-width: 40ch;
+    text-wrap: pretty;
+  }
+
+  .git-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .git-label {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-small);
+    color: var(--gold-soft);
+  }
+
+  .git-label input {
+    font-family: var(--font-body);
+    font-size: 16px;
+    color: var(--ink);
+    background: var(--cream);
+    border: 1px solid var(--hairline-inverse);
+    border-radius: var(--radius-control);
+    padding: var(--space-4) var(--space-5);
+    min-height: 44px;
+  }
+
+  .git-actions {
+    display: flex;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .git-actions button {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 16.5px;
+    background: var(--gold);
+    color: var(--text-on-gold);
+    border: none;
+    padding: var(--space-4) var(--space-6);
+    border-radius: var(--radius-control);
+    cursor: pointer;
+    min-height: 44px;
+  }
+
+  .git-actions a {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--gold-soft);
+    text-decoration: none;
+  }
+
+  .git-actions a:hover {
+    color: var(--gold);
+    text-decoration: underline;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .git-actions button {
+      transition: background 240ms ease;
+    }
+
+    .git-actions a {
+      transition: color 220ms ease;
+    }
+  }
+
+  .git-actions button:hover {
+    background: var(--gold-dark);
+  }
+</style>

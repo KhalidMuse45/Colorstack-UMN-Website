@@ -201,6 +201,28 @@ const placeholderLabel = alt.trim() !== '' ? alt : 'Photo not yet supplied';
     transform: none;
   }
 
+  /* The blur exists to make the caption legible, so it fades WITH the caption.
+     Left always-on it is just a smudge over the lower half of every photo,
+     which is how it first shipped on the programs carousel.
+
+     :global is required: .progressive-blur is a child component's root element
+     and carries that component's scope hash, not this one's, so a plain
+     descendant selector would compile to something that never matches.
+
+     Un-armed keeps both blur and caption visible, which is the correct
+     no-JS and reduced-motion state: the caption is permanently shown there
+     and still needs its backing. */
+  .photo-reveal[data-motion='armed'] :global(.progressive-blur) {
+    opacity: 0;
+  }
+
+  .photo-reveal[data-motion='armed']:hover :global(.progressive-blur),
+  .photo-reveal[data-motion='armed']:focus-visible :global(.progressive-blur),
+  .photo-reveal[data-motion='armed']:focus-within :global(.progressive-blur),
+  .photo-reveal[data-motion='armed'][data-caption='on'] :global(.progressive-blur) {
+    opacity: 1;
+  }
+
   @media (prefers-reduced-motion: no-preference) {
     .pr-caption {
       transition:

@@ -1,0 +1,99 @@
+---
+/**
+ * Mission. Section 5 of the LANDING-PAGE section order: headline plus two
+ * paragraphs, then the TextLoop rotator sitting on a hairline.
+ * `design/reference/LandingPage.dc.html:88-110`.
+ *
+ * The hairline above the rotator is the one place LANDING-PAGE.md:17 still
+ * sanctions a rule on the site: "hairline only as an internal divider".
+ */
+import TextLoop from '../motion/TextLoop.astro';
+import Reveal from '../motion/Reveal.astro';
+import SectionLabel from './SectionLabel.astro';
+import { mission } from '../../data/landing';
+---
+
+<section id="mission" class="mission">
+  <Reveal class="mission-grid">
+    <div>
+      <SectionLabel class="mission-label">{mission.label}</SectionLabel>
+      <h2 class="mission-title">{mission.headline}</h2>
+    </div>
+    <div class="mission-body">
+      {mission.body.map((p, i) => <p class:list={[i > 0 && 'muted']}>{p}</p>)}
+    </div>
+  </Reveal>
+
+  <Reveal class="rotator" index={1}>
+    <span>{mission.rotatorPrefix}</span>
+    <TextLoop interval={2.2} class="rotator-loop">
+      {mission.rotator.map((word) => <span>{word}</span>)}
+    </TextLoop>
+  </Reveal>
+</section>
+
+<style>
+  .mission {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: clamp(72px, 10vw, 140px) var(--space-5);
+  }
+
+  .mission-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: clamp(28px, 5vw, 72px);
+  }
+
+  .mission-label {
+    margin-bottom: var(--space-5);
+  }
+
+  .mission-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(31px, 4.4vw, 56px);
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    color: var(--maroon);
+    text-wrap: balance;
+  }
+
+  .mission-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    justify-content: center;
+  }
+
+  .mission-body p {
+    font-family: var(--font-body);
+    font-size: 18.5px;
+    line-height: 1.62;
+    text-wrap: pretty;
+  }
+
+  .mission-body .muted {
+    color: var(--text-muted);
+  }
+
+  .rotator {
+    margin-top: clamp(44px, 6vw, 80px);
+    padding-top: clamp(32px, 4vw, 48px);
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: clamp(10px, 1.4vw, 18px);
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(26px, 4vw, 50px);
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+  }
+
+  .rotator-loop {
+    color: var(--maroon);
+  }
+</style>

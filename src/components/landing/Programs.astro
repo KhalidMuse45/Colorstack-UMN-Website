@@ -1,0 +1,111 @@
+---
+/**
+ * What we do. Section 6 of the LANDING-PAGE section order: an InfiniteSlider
+ * of four PhotoReveal tiles. `design/reference/LandingPage.dc.html:112-136`.
+ *
+ * LANDING-PAGE.md:102 calls this the highest-risk slice, because the slider's
+ * measurement logic is subtle and a bad measure shows up as a seam at the
+ * wrap point. The port fixed two reference bugs here: the reference duplicates
+ * children exactly once, which only covers the loop when the original set is
+ * already wider than the container, and Astro emits each component's script
+ * inline among the track items where it was being cloned and counted.
+ *
+ * The hint line is deliberate. The captions only appear on hover, focus or
+ * tap, so without it a visitor has no reason to interact with the tiles.
+ */
+import InfiniteSlider from '../motion/InfiniteSlider.astro';
+import PhotoReveal from '../motion/PhotoReveal.astro';
+import Reveal from '../motion/Reveal.astro';
+import SectionLabel from './SectionLabel.astro';
+import { whatWeDo, programs } from '../../data/landing';
+---
+
+<section id="what-we-do" class="programs">
+  <div class="programs-head">
+    <Reveal>
+      <SectionLabel class="programs-label">{whatWeDo.label}</SectionLabel>
+    </Reveal>
+    <Reveal index={1}>
+      <h2 class="programs-title">{whatWeDo.headline}</h2>
+    </Reveal>
+    <Reveal index={2}>
+      <p class="programs-hint">{whatWeDo.hint}</p>
+    </Reveal>
+  </div>
+
+  <InfiniteSlider gap={20} duration={58}>
+    {
+      programs.map((prog) => (
+        <PhotoReveal
+          src={prog.photo.src}
+          alt={prog.photo.alt}
+          height={400}
+          width="clamp(280px,32vw,400px)"
+          radius={14}
+          blurIntensity={6}
+          objectPosition={prog.photo.objectPosition ?? 'center'}
+          style="flex:none"
+        >
+          <span class="tile-title">{prog.title}</span>
+          <span class="tile-body">{prog.body}</span>
+        </PhotoReveal>
+      ))
+    }
+  </InfiniteSlider>
+</section>
+
+<style>
+  .programs {
+    background: var(--paper);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: clamp(72px, 10vw, 132px) 0;
+  }
+
+  .programs-head {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--space-5) clamp(36px, 5vw, 56px);
+  }
+
+  .programs-label {
+    margin-bottom: 18px;
+  }
+
+  .programs-title {
+    max-width: 20ch;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(30px, 4.2vw, 52px);
+    line-height: 1.06;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+
+  .programs-hint {
+    margin-top: var(--space-4);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-small);
+    color: var(--text-muted);
+  }
+
+  .tile-title {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 26px;
+    letter-spacing: -0.02em;
+    color: var(--paper);
+  }
+
+  .tile-body {
+    display: block;
+    margin-top: var(--space-2);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--photo-ground);
+  }
+</style>
