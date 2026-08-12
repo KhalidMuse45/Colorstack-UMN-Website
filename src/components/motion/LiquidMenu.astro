@@ -1,0 +1,332 @@
+---
+/**
+ * LiquidMenu. Gooey floating action menu.
+ * Port of design/components/motion/LiquidMenu.jsx.txt, props per types.d.ts.
+ *
+ * PROGRESSIVE ENHANCEMENT CONTRACT
+ * Server HTML is three plain, visible, focusable links stacked in a column.
+ * The `+` trigger ships with the `hidden` attribute because a trigger that
+ * nothing can open is worse than no trigger. The script removes `hidden` and
+ * sets [data-enhanced], which is the only thing that collapses the stack into
+ * the fan. No JS, or a script error, leaves three usable links on screen.
+ *
+ * The gooey merge is an SVG filter (feGaussianBlur + feColorMatrix), so it
+ * trips none of the gradient or glassmorphism guardrails. If a browser
+ * ignores `filter: url(...)` the
+ * menu degrades to three plain circular links and stays fully operable.
+ * feBlend composites the unfiltered SourceGraphic back over the goo, so glyphs
+ * and the gold focus ring stay crisp rather than being smeared by the blur.
+ *
+ * ACCESSIBILITY
+ * Real <button> trigger with an accessible label, aria-expanded reflecting
+ * state, aria-controls pointing at the item container. Collapsed items are
+ * removed from the tab order by both visibility:hidden and an explicit
+ * tabindex=-1. Escape closes and returns focus to the trigger. Tab is never
+ * intercepted, so focus is not trapped: tabbing past the last item closes the
+ * menu on focusout and moves on into the page.
+ *
+ * Astro cannot wrap slot children at build time, so the items are enumerated
+ * at runtime from root.children (elements only, never childNodes).
+ */
+interface Props {
+  /** Blur radius feeding the gooey filter */
+  blur?: number | string;
+  /** Alpha contrast, higher tightens the merge */
+  contrast?: number | string;
+  /** Fill for the trigger and every item. Token reference, not a literal. */
+  fill?: string;
+  /** Accessible label for the trigger */
+  label?: string;
+  /** Px the items travel when open */
+  radius?: number | string;
+  /** Trigger diameter in px */
+  size?: number | string;
+  class?: string;
+  style?: string;
+}
+
+const {
+  blur = 7,
+  contrast = 20,
+  fill = 'var(--maroon)',
+  label = 'Get in touch',
+  radius = 74,
+  size = 60,
+  class: className,
+  style,
+  ...rest
+} = Astro.props;
+
+const num = (v: unknown, d: number): number => {
+  if (v === undefined || v === null || v === '') return d;
+  const parsed = Number(v);
+  return Number.isFinite(parsed) ? parsed : d;
+};
+
+const blurN = num(blur, 7);
+const contrastN = num(contrast, 20);
+const radiusN = num(radius, 74);
+const sizeN = num(size, 60);
+
+/* Frontmatter runs once per instance at build time, so this is unique per
+   mounted menu and stable in the static output. Two menus on one page cannot
+   collide on the filter id or the aria-controls target. */
+const uid = `liquid-${Math.random().toString(36).slice(2, 10)}`;
+const filterId = `${uid}-goo`;
+const itemsId = `${uid}-items`;
+
+const ownStyle = `--lm-size:${sizeN}px;--lm-fill:${fill}`;
+const mergedStyle = [ownStyle, style].filter(Boolean).join(';');
+---
+
+<div
+  data-liquid-menu
+  data-radius={String(radiusN)}
+  class={className}
+  style={mergedStyle}
+  {...rest}
+>
+  <svg class="lm-defs" width="0" height="0" aria-hidden="true" focusable="false">
+    <defs>
+      {/* The region is widened well past the default box: items travel
+          `radius` px outside the trigger and would otherwise be clipped by
+          the filter region rather than drawn. */}
+      <filter id={filterId} x="-150%" y="-150%" width="400%" height="400%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation={blurN} result="b" />
+        <feColorMatrix
+          in="b"
+          mode="matrix"
+          values={`1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 ${contrastN} -9`}
+          result="g"
+        />
+        <feBlend in="SourceGraphic" in2="g" />
+      </filter>
+    </defs>
+  </svg>
+
+  <div class="lm-layer" style={`filter:url(#${filterId})`}>
+    {/* The trigger precedes the items in the DOM so that Tab moves from the
+        trigger INTO the menu it just opened. The React reference paints the
+        trigger last, which puts the items behind it in tab order and makes
+        Tab leave the menu instead of entering it. Paint order is unaffected
+        when enhanced: both are absolutely positioned, and the items should
+        sit above the trigger anyway. */}
+    <button class="lm-trigger" type="button" aria-label={label} aria-expanded="false" aria-controls={itemsId} hidden>
+      <span class="lm-plus" aria-hidden="true">+</span>
+    </button>
+
+    <div class="lm-items" id={itemsId}>
+      <slot />
+    </div>
+  </div>
+</div>
+
+{/* Slotted links are scoped to the calling component, so these selectors are
+    global and namespaced under [data-liquid-menu]. */}
+<style is:global>
+  [data-liquid-menu] {
+    position: relative;
+    /* Only the controls themselves take pointer events. The box around them
+       never sits over page content swallowing a tap. */
+    pointer-events: none;
+  }
+
+  [data-liquid-menu] .lm-defs {
+    position: absolute;
+  }
+
+  [data-liquid-menu] .lm-layer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  /* Shared circle treatment for the trigger and every slotted item, so the
+     call site does not have to restate colours inline. */
+  [data-liquid-menu] .lm-items > *,
+  [data-liquid-menu] .lm-trigger {
+    display: grid;
+    place-items: center;
+    width: var(--lm-size);
+    height: var(--lm-size);
+    /* A circle, not a pill: the gooey merge only reads as liquid on round
+       shapes, and 50% is a shape, not a corner radius. No pill token is
+       referenced anywhere in this file. */
+    border-radius: 50%;
+    border: 0;
+    background: var(--lm-fill);
+    color: var(--cream);
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-decoration: none;
+    pointer-events: auto;
+  }
+
+  [data-liquid-menu] .lm-items {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  [data-liquid-menu] .lm-trigger {
+    cursor: pointer;
+    font-size: var(--text-h2);
+    line-height: 1;
+  }
+
+  [data-liquid-menu] .lm-trigger[hidden] {
+    display: none;
+  }
+
+  [data-liquid-menu] .lm-plus {
+    pointer-events: none;
+  }
+
+  /* ---- Enhanced: the stack collapses into the trigger and fans out ---- */
+
+  [data-liquid-menu][data-enhanced] {
+    width: var(--lm-size);
+    height: var(--lm-size);
+  }
+
+  [data-liquid-menu][data-enhanced] .lm-layer {
+    display: block;
+    position: absolute;
+    inset: 0;
+  }
+
+  [data-liquid-menu][data-enhanced] .lm-items {
+    display: block;
+    position: absolute;
+    inset: 0;
+  }
+
+  [data-liquid-menu][data-enhanced] .lm-items > * {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translate(0, 0) scale(0.5);
+    opacity: 0;
+    /* visibility:hidden takes the collapsed items out of the tab order even
+       if the tabindex bookkeeping in the script were to fail. */
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  [data-liquid-menu][data-enhanced][data-open='true'] .lm-items > * {
+    transform: translate(var(--lm-x, 0px), var(--lm-y, 0px)) scale(0.82);
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  [data-liquid-menu][data-enhanced] .lm-trigger {
+    position: absolute;
+    inset: 0;
+  }
+
+  [data-liquid-menu][data-enhanced][data-open='true'] .lm-plus {
+    transform: rotate(45deg);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    [data-liquid-menu][data-enhanced] .lm-items > * {
+      transition:
+        transform 520ms cubic-bezier(0.34, 1.5, 0.5, 1),
+        opacity 240ms ease-out,
+        visibility 520ms;
+    }
+
+    [data-liquid-menu][data-enhanced][data-open='true'] .lm-items > * {
+      transition-delay: calc(var(--lm-i, 0) * 45ms);
+    }
+
+    [data-liquid-menu] .lm-plus {
+      transition: transform 420ms cubic-bezier(0.34, 1.5, 0.5, 1);
+    }
+  }
+</style>
+
+<script>
+  // Runs once per page. Each menu is wired from its own root element.
+  const menus = document.querySelectorAll<HTMLElement>('[data-liquid-menu]');
+
+  menus.forEach((root) => {
+    const container = root.querySelector<HTMLElement>('.lm-items');
+    const trigger = root.querySelector<HTMLButtonElement>('.lm-trigger');
+    if (!container || !trigger) return;
+
+    // Elements only. childNodes would count the newlines between the links.
+    const items = Array.from(container.children) as HTMLElement[];
+    if (items.length === 0) return;
+
+    const radius = Number(root.dataset.radius) || 74;
+    const count = items.length;
+    const spread = count === 1 ? 0 : Math.PI / 2.6;
+    const start = -Math.PI / 2 - spread / 2;
+
+    items.forEach((item, i) => {
+      const angle = count === 1 ? -Math.PI / 2 : start + (spread / (count - 1)) * i;
+      item.style.setProperty('--lm-x', `${(Math.cos(angle) * radius).toFixed(2)}px`);
+      item.style.setProperty('--lm-y', `${(Math.sin(angle) * radius).toFixed(2)}px`);
+      item.style.setProperty('--lm-i', String(i));
+    });
+
+    // Collapsed items must not be reachable by Tab. visibility:hidden already
+    // does this; tabindex is the explicit second lock, and it also covers the
+    // window during the close transition before visibility flips.
+    const setReachable = (on: boolean) => {
+      items.forEach((item) => {
+        if (on) {
+          item.removeAttribute('tabindex');
+          item.removeAttribute('aria-hidden');
+        } else {
+          item.setAttribute('tabindex', '-1');
+          item.setAttribute('aria-hidden', 'true');
+        }
+      });
+    };
+
+    const isOpen = () => root.dataset.open === 'true';
+
+    const setOpen = (open: boolean) => {
+      root.dataset.open = String(open);
+      trigger.setAttribute('aria-expanded', String(open));
+      setReachable(open);
+    };
+
+    const close = (returnFocus: boolean) => {
+      if (!isOpen()) return;
+      setOpen(false);
+      if (returnFocus) trigger.focus();
+    };
+
+    // Enhancement is not gated on reduced motion: this is interactive UI, not
+    // a scroll reveal. Only the transitions are gated, in the stylesheet.
+    root.dataset.enhanced = '';
+    setOpen(false);
+    trigger.hidden = false;
+
+    trigger.addEventListener('click', () => setOpen(!isOpen()));
+
+    root.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key !== 'Escape' || !isOpen()) return;
+      e.preventDefault();
+      close(true);
+    });
+
+    // Focus is never trapped. Tabbing out of the menu simply closes it, and
+    // focus continues into the page from wherever it landed.
+    root.addEventListener('focusout', (e: FocusEvent) => {
+      const next = e.relatedTarget;
+      if (next instanceof Node && root.contains(next)) return;
+      close(false);
+    });
+
+    document.addEventListener('click', (e: MouseEvent) => {
+      if (!isOpen()) return;
+      if (e.target instanceof Node && root.contains(e.target)) return;
+      close(false);
+    });
+  });
+</script>

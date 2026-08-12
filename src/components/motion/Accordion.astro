@@ -1,0 +1,250 @@
+---
+/**
+ * Accordion. Animated height with a rotating chevron.
+ * Port of design/components/motion/Accordion.jsx.txt, props per types.d.ts.
+ *
+ * Not used on the landing page (LANDING-PAGE.md:40); available for FAQ pages.
+ *
+ * USAGE
+ * Each direct child is one row. Inside it, mark the trigger element with
+ * `data-acc-title` and the panel element with `data-acc-body`.
+ *
+ * PROGRESSIVE ENHANCEMENT CONTRACT
+ * The server renders every row fully expanded: titles and bodies are plain,
+ * visible, readable content, which is the right no-JS shape for an FAQ. The
+ * script builds the real <button> triggers, wires aria-expanded and
+ * aria-controls, and only then sets [data-enhanced], which is the sole thing
+ * that collapses anything. No JS, or a script error before the attribute is
+ * set, leaves the full text on the page.
+ *
+ * Astro cannot wrap slot children at build time, so the triggers and the
+ * height-animating panel wrapper are constructed at runtime from
+ * root.children (elements only, never childNodes).
+ */
+interface Props {
+  /** Allow several rows open at once */
+  allowMultiple?: boolean | string;
+  /** Index open on first render, -1 for all closed */
+  defaultOpen?: number | string;
+  class?: string;
+  style?: string;
+}
+
+const {
+  allowMultiple = false,
+  defaultOpen = -1,
+  class: className,
+  style,
+  ...rest
+} = Astro.props;
+
+const num = (v: unknown, d: number): number => {
+  if (v === undefined || v === null || v === '') return d;
+  const parsed = Number(v);
+  return Number.isFinite(parsed) ? parsed : d;
+};
+
+const allowMultipleN = allowMultiple !== false && allowMultiple !== 'false';
+const defaultOpenN = num(defaultOpen, -1);
+---
+
+<div
+  data-accordion
+  data-allow-multiple={String(allowMultipleN)}
+  data-default-open={String(defaultOpenN)}
+  class={className}
+  style={style}
+  {...rest}
+>
+  <slot />
+</div>
+
+{/* Rows are slotted, so they carry the caller's scope hash. Selectors are
+    global and namespaced under [data-accordion]. */}
+<style is:global>
+  [data-accordion] {
+    display: flex;
+    flex-direction: column;
+  }
+
+  [data-accordion] > * {
+    border-bottom: 1px solid var(--line);
+  }
+
+  /* Built by the script. Nothing below exists in the server HTML. */
+  [data-accordion] .acc-trigger {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    width: 100%;
+    min-height: 44px;
+    padding: var(--space-4) var(--space-1);
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  [data-accordion] .acc-chevron {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: var(--space-5);
+    height: var(--space-5);
+    color: var(--maroon-light);
+    font-family: var(--font-display);
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  [data-accordion] .acc-title {
+    flex: 1;
+    min-width: 0;
+  }
+
+  [data-accordion] .acc-panel {
+    overflow: hidden;
+  }
+
+  [data-accordion] .acc-panel > * {
+    padding: 0 var(--space-1) var(--space-5) var(--space-7);
+  }
+
+  /* Collapse only once the script has taken over. */
+  [data-accordion][data-enhanced] .acc-panel {
+    height: 0;
+    opacity: 0;
+    /* Takes the collapsed body's links out of the tab order. */
+    visibility: hidden;
+  }
+
+  [data-accordion][data-enhanced] [data-acc-open='true'] .acc-panel {
+    height: var(--acc-h, auto);
+    opacity: 1;
+    visibility: visible;
+  }
+
+  [data-accordion][data-enhanced] [data-acc-open='true'] .acc-chevron {
+    transform: rotate(90deg);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    [data-accordion][data-enhanced] .acc-panel {
+      transition:
+        height 420ms cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 320ms ease-out,
+        visibility 420ms;
+    }
+
+    [data-accordion][data-enhanced] .acc-chevron {
+      transition: transform 320ms cubic-bezier(0.34, 1.4, 0.5, 1);
+    }
+  }
+</style>
+
+<script>
+  // Runs once per page. Every accordion is wired from its own root element.
+  const accordions = document.querySelectorAll<HTMLElement>('[data-accordion]');
+
+  accordions.forEach((root, rootIndex) => {
+    // Elements only. childNodes would treat the newlines between rows as rows.
+    const rows = Array.from(root.children) as HTMLElement[];
+    if (rows.length === 0) return;
+
+    const allowMultiple = root.dataset.allowMultiple === 'true';
+    const defaultOpen = Number(root.dataset.defaultOpen);
+
+    type Row = { row: HTMLElement; trigger: HTMLButtonElement; panel: HTMLElement };
+    const built: Row[] = [];
+
+    try {
+      rows.forEach((row, i) => {
+        const parts = Array.from(row.children) as HTMLElement[];
+        const title = row.querySelector<HTMLElement>('[data-acc-title]') || parts[0];
+        const body = row.querySelector<HTMLElement>('[data-acc-body]') || parts[1];
+        if (!title || !body) return;
+
+        const panelId = `acc-${rootIndex}-${i}`;
+
+        const trigger = document.createElement('button');
+        trigger.type = 'button';
+        trigger.className = 'acc-trigger';
+        trigger.setAttribute('aria-controls', panelId);
+
+        const chevron = document.createElement('span');
+        chevron.className = 'acc-chevron';
+        chevron.setAttribute('aria-hidden', 'true');
+        chevron.textContent = '›';
+        trigger.appendChild(chevron);
+
+        // A <button> may only contain phrasing content, so a heading title
+        // keeps its element and the button goes inside it. Anything else is
+        // moved into the button. childNodes is correct here: this is a
+        // relocation that must preserve text, not an enumeration of items.
+        if (/^H[1-6]$/.test(title.tagName)) {
+          while (title.firstChild) trigger.appendChild(title.firstChild);
+          title.appendChild(trigger);
+        } else {
+          const holder = document.createElement('span');
+          holder.className = 'acc-title';
+          title.parentNode?.insertBefore(trigger, title);
+          holder.appendChild(title);
+          trigger.appendChild(holder);
+        }
+
+        // Wrap the body so height can animate without padding leaking at 0.
+        const panel = document.createElement('div');
+        panel.className = 'acc-panel';
+        panel.id = panelId;
+        body.parentNode?.insertBefore(panel, body);
+        panel.appendChild(body);
+
+        built.push({ row, trigger, panel });
+      });
+
+      if (built.length === 0) return;
+
+      const measure = (entry: Row) => {
+        const inner = entry.panel.firstElementChild as HTMLElement | null;
+        if (inner) entry.panel.style.setProperty('--acc-h', `${inner.scrollHeight}px`);
+      };
+
+      const setOpen = (entry: Row, open: boolean) => {
+        if (open) measure(entry);
+        entry.row.dataset.accOpen = String(open);
+        entry.trigger.setAttribute('aria-expanded', String(open));
+      };
+
+      built.forEach((entry, i) => {
+        setOpen(entry, i === defaultOpen);
+        entry.trigger.addEventListener('click', () => {
+          const next = entry.row.dataset.accOpen !== 'true';
+          if (next && !allowMultiple) {
+            built.forEach((other) => {
+              if (other !== entry) setOpen(other, false);
+            });
+          }
+          setOpen(entry, next);
+        });
+
+        // Keep an open panel's height correct as its content reflows.
+        if ('ResizeObserver' in window) {
+          const inner = entry.panel.firstElementChild;
+          if (inner) {
+            new ResizeObserver(() => {
+              if (entry.row.dataset.accOpen === 'true') measure(entry);
+            }).observe(inner);
+          }
+        }
+      });
+
+      // Collapse only after every row is wired and measurable.
+      root.dataset.enhanced = '';
+    } catch {
+      // Never leave rows half-built and collapsed. Fall back to full text.
+      delete root.dataset.enhanced;
+    }
+  });
+</script>

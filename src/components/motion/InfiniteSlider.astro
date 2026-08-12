@@ -1,0 +1,363 @@
+---
+/**
+ * InfiniteSlider - seamless looping marquee for cards, logos, or quotes.
+ *
+ * Port of design/components/motion/InfiniteSlider.jsx.txt. Prop names and
+ * defaults come from design/components/motion/types.d.ts.
+ *
+ * PROGRESSIVE ENHANCEMENT
+ * The slot is rendered exactly once, so every item is real markup in the built
+ * HTML. Un-armed, the track is a horizontally scrollable row: no JS, or
+ * prefers-reduced-motion, or a measurement that never resolves all leave every
+ * item present, visible, and reachable (the container carries tabindex="0" so
+ * the scroll region has keyboard access). The script only removes that
+ * affordance once it has actually started the loop.
+ *
+ * THE LOOP
+ * Astro cannot map over slot children at build time, so the duplicate set is
+ * cloned in JS from root.children - elements only, never childNodes, which
+ * would sweep up the newlines between siblings as text nodes. Clones are
+ * aria-hidden and have every focusable descendant pushed out of the tab order.
+ *
+ * THE SEAM
+ * The travel distance is measured as the horizontal delta between the first
+ * original and the first clone, read from getBoundingClientRect (fractional,
+ * unlike offsetLeft). That delta IS the repeat period by construction: it
+ * already contains the gap, any margins, and any subpixel item width, so there
+ * is nothing left to round wrong. Re-measured on rAF, at 400ms, on every image
+ * load or error, and via ResizeObserver; restarts preserve currentTime so a
+ * re-measure never shows as a jump.
+ *
+ * The linear-gradient below is the edge-fade mask, not decoration.
+ */
+
+export interface Props {
+  /** Px between items */
+  gap?: number | string;
+  /** Seconds for one full loop - higher is slower */
+  duration?: number | string;
+  /** Travel right instead of left */
+  reverse?: boolean | string;
+  /** Pause the loop while the pointer is over it */
+  pauseOnHover?: boolean | string;
+  /** Soft mask at both edges */
+  fade?: boolean | string;
+  class?: string;
+  style?: string | Record<string, string | number>;
+  [key: string]: any;
+}
+
+const {
+  gap = 24,
+  duration = 40,
+  reverse = false,
+  pauseOnHover = true,
+  fade = true,
+  class: className,
+  style,
+  ...rest
+} = Astro.props;
+
+/** Numeric coercion: Astro can hand any of these over as a string. */
+function num(v: number | string | undefined | null, d: number): number {
+  if (v === undefined || v === null || v === '') return d;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : d;
+}
+
+function bool(v: boolean | string | undefined, d: boolean): boolean {
+  if (v === undefined || v === null) return d;
+  if (v === true || v === 'true' || v === '') return true;
+  if (v === false || v === 'false') return false;
+  return d;
+}
+
+function css(v?: string | Record<string, string | number>): string {
+  if (!v) return '';
+  if (typeof v === 'string') return v.trim().replace(/;+$/, '');
+  return Object.entries(v)
+    .map(([k, val]) => `${k.replace(/[A-Z]/g, (m) => '-' + m.toLowerCase())}:${val}`)
+    .join(';');
+}
+
+const gapPx = num(gap, 24);
+const durationSec = num(duration, 40);
+const isReverse = reverse === 'reverse' ? true : bool(reverse, false);
+const isPauseOnHover = bool(pauseOnHover, true);
+const isFade = bool(fade, true);
+
+const rootStyle = [`--slider-gap:${gapPx}px`, css(style)].filter(Boolean).join(';');
+---
+
+<div
+  class:list={['slider', className]}
+  style={rootStyle}
+  tabindex="0"
+  data-slider
+  data-fade={isFade ? 'true' : 'false'}
+  data-duration={String(durationSec)}
+  data-reverse={isReverse ? 'true' : 'false'}
+  data-pause={isPauseOnHover ? 'true' : 'false'}
+  {...rest}
+>
+  <div class="slider-track" data-slider-track><slot /></div>
+</div>
+
+<style>
+  /* Un-armed: a plain scrollable row. This is what no-JS and reduced-motion
+     visitors get, and it keeps every item reachable. */
+  .slider {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .slider[data-motion='armed'] {
+    overflow: hidden;
+  }
+
+  .slider:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+
+  .slider[data-fade='true'] {
+    -webkit-mask-image: linear-gradient(90deg, rgb(0 0 0 / 0), rgb(0 0 0 / 1) 7%, rgb(0 0 0 / 1) 93%, rgb(0 0 0 / 0));
+    mask-image: linear-gradient(90deg, rgb(0 0 0 / 0), rgb(0 0 0 / 1) 7%, rgb(0 0 0 / 1) 93%, rgb(0 0 0 / 0));
+  }
+
+  .slider-track {
+    display: flex;
+    width: max-content;
+    gap: var(--slider-gap);
+  }
+
+  /* Slotted children belong to the caller's scope, so this needs :global.
+     Items must never shrink or the measured span stops matching the layout. */
+  .slider-track > :global(*) {
+    flex: none;
+  }
+
+  .slider[data-motion='armed'] .slider-track {
+    will-change: transform;
+  }
+</style>
+
+<script>
+  // Module scoped: runs once per page. Several sliders can share a page, so
+  // everything below is per-instance state inside the loop.
+  (() => {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    document.querySelectorAll('[data-slider]').forEach((node) => {
+      if (!(node instanceof HTMLElement)) return;
+      const root = node;
+      const track = root.querySelector('[data-slider-track]');
+      if (!(track instanceof HTMLElement)) return;
+
+      const durationMs = (Number(root.dataset.duration) || 40) * 1000;
+      const isReverse = root.dataset.reverse === 'true';
+      const pauseOnHover = root.dataset.pause === 'true';
+
+      let anim: Animation | null = null;
+      let span = 0;
+      let originals: HTMLElement[] = [];
+      let sets = 0;
+      let frame = 0;
+      let pointerIn = false;
+      let focusIn = false;
+      let observer: ResizeObserver | null = null;
+
+      /** Back to the plain scrollable row. Always a safe place to land. */
+      const disarm = () => {
+        if (anim) {
+          anim.cancel();
+          anim = null;
+        }
+        span = 0;
+        root.removeAttribute('data-motion');
+        root.setAttribute('tabindex', '0');
+        track.style.transform = '';
+      };
+
+      // Astro emits a component's own <script> inline, at the component's
+      // position, so a slotted PhotoReveal drops a display:none <script> in
+      // among the items. It must not be cloned or counted. Filtering by tag is
+      // deterministic; filtering by computed display is not, because a real
+      // item may legitimately be hidden at one breakpoint.
+      const NON_ITEM = ['SCRIPT', 'STYLE', 'TEMPLATE', 'LINK', 'META', 'TITLE'];
+      const isItem = (el: Element) => !NON_ITEM.includes(el.tagName);
+
+      /** Append one more copy of the original item set to the end of the track. */
+      const cloneSet = () => {
+        const frag = document.createDocumentFragment();
+        originals.forEach((el) => {
+          const copy = el.cloneNode(true);
+          if (!(copy instanceof HTMLElement)) return;
+          copy.setAttribute('aria-hidden', 'true');
+          copy.setAttribute('data-slider-clone', '');
+          // aria-hidden content must not hold tab stops. Pointer events are
+          // left alone so hover reveals still work on the duplicate set.
+          if (copy.hasAttribute('tabindex')) copy.setAttribute('tabindex', '-1');
+          copy
+            .querySelectorAll('[tabindex], a[href], button, input, select, textarea, iframe, [contenteditable]')
+            .forEach((f) => f.setAttribute('tabindex', '-1'));
+          frag.appendChild(copy);
+        });
+        track.appendChild(frag);
+        sets += 1;
+      };
+
+      /**
+       * Collect the real items once, then lay down the first duplicate set.
+       * root.children, never childNodes: the newlines between slotted siblings
+       * are text nodes and would clone in as blank slots.
+       */
+      const seed = () => {
+        if (sets > 0) return true;
+        originals = Array.from(track.children).filter(
+          (el): el is HTMLElement => el instanceof HTMLElement && isItem(el)
+        );
+        if (originals.length === 0) return false;
+        cloneSet();
+        return true;
+      };
+
+      /**
+       * One duplicate set is only enough when the original set is wider than
+       * the viewport. Narrow sets need more copies, or empty track runs in from
+       * the right edge at the wrap. Keep appending sets until the content
+       * behind the wrap point covers the container.
+       */
+      const ensureCoverage = () => {
+        if (!(span > 1)) return;
+        const need = span + root.clientWidth + 1;
+        while (track.getBoundingClientRect().width < need && sets < 12) cloneSet();
+      };
+
+      /**
+       * Repeat period = first clone's left edge minus the first original's.
+       * Read off the elements themselves, never off an index, so nothing else
+       * sitting in the track can throw the parity out, and it stays the
+       * one-set period however many sets get appended. Both rects sit in the
+       * same transformed space, so the running animation does not skew the
+       * delta. Fractional by construction: rounding here is exactly what
+       * produces a 1px seam.
+       */
+      const measure = () => {
+        const first = originals[0];
+        if (!first) return 0;
+        const firstClone = track.querySelector(':scope > [data-slider-clone]');
+        if (!(firstClone instanceof HTMLElement)) return 0;
+        return firstClone.getBoundingClientRect().left - first.getBoundingClientRect().left;
+      };
+
+      const apply = (next: number) => {
+        if (!(next > 1)) return;
+        if (anim && Math.abs(next - span) < 0.5) return;
+        if (typeof track.animate !== 'function') {
+          disarm();
+          return;
+        }
+        const carry = anim ? Number(anim.currentTime) || 0 : 0;
+        const wasPaused = anim ? anim.playState === 'paused' : false;
+        if (anim) anim.cancel();
+        span = next;
+        const from = isReverse ? -span : 0;
+        const to = isReverse ? 0 : -span;
+        anim = track.animate(
+          [
+            { transform: `translate3d(${from}px,0,0)` },
+            { transform: `translate3d(${to}px,0,0)` },
+          ],
+          { duration: durationMs, iterations: Infinity, easing: 'linear' }
+        );
+        // Carrying currentTime over means a re-measure is invisible.
+        anim.currentTime = carry % durationMs;
+        if (wasPaused || pointerIn || focusIn) anim.pause();
+      };
+
+      const schedule = () => {
+        if (frame) cancelAnimationFrame(frame);
+        frame = requestAnimationFrame(() => {
+          frame = 0;
+          try {
+            const next = measure();
+            apply(next);
+            ensureCoverage();
+          } catch {
+            disarm();
+          }
+        });
+      };
+
+      const arm = () => {
+        if (reduce.matches || typeof track.animate !== 'function') {
+          disarm();
+          return;
+        }
+        if (!seed()) return;
+        root.setAttribute('data-motion', 'armed');
+        root.removeAttribute('tabindex');
+        schedule();
+      };
+
+      try {
+        arm();
+
+        // Late layout: one more frame, one more at 400ms, plus every image
+        // that has not decoded yet. Images without intrinsic size are the
+        // usual cause of a seam.
+        window.setTimeout(schedule, 400);
+        track.querySelectorAll('img').forEach((img) => {
+          if (img.complete) return;
+          img.addEventListener('load', schedule, { once: true });
+          img.addEventListener('error', schedule, { once: true });
+        });
+
+        if (typeof ResizeObserver !== 'undefined') {
+          observer = new ResizeObserver(schedule);
+          observer.observe(track);
+          Array.from(track.children)
+            .filter(isItem)
+            .forEach((c) => observer && observer.observe(c));
+        }
+
+        // Failsafe: if nothing measurable has turned up, hand the row back as
+        // a scrollable region rather than leaving it half-armed.
+        window.setTimeout(() => {
+          if (!anim) disarm();
+        }, 2500);
+
+        if (pauseOnHover) {
+          root.addEventListener('pointerenter', () => {
+            pointerIn = true;
+            if (anim) anim.pause();
+          });
+          root.addEventListener('pointerleave', () => {
+            pointerIn = false;
+            if (anim && !focusIn) anim.play();
+          });
+        }
+
+        // Focus always pauses, hover setting or not: a tile that scrolls out
+        // from under the keyboard focus ring is unusable.
+        root.addEventListener('focusin', () => {
+          focusIn = true;
+          if (anim) anim.pause();
+        });
+        root.addEventListener('focusout', () => {
+          focusIn = false;
+          if (anim && !(pauseOnHover && pointerIn)) anim.play();
+        });
+
+        reduce.addEventListener('change', () => {
+          if (reduce.matches) disarm();
+          else arm();
+        });
+      } catch {
+        disarm();
+      }
+    });
+  })();
+</script>
