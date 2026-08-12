@@ -30,6 +30,13 @@
   --hairline: rgba(31, 26, 23, 0.3);   /* editorial rules on light bg */
   --hairline-inverse: rgba(251, 245, 236, 0.35); /* rules on maroon */
 
+  /* Photo treatment — LANDING-PAGE.md:16 replaces the spec's maroon duotone
+     with a light tint. The ground shows through while a photo loads and
+     behind any transparent edge. Neither value exists in the vendored
+     tokens; both are mandated by the landing-page addendum. Reported for v3. */
+  --photo-ground: #F3E9DA;
+  --photo-tint: saturate(1.04) contrast(1.03) brightness(1.02);
+
   /* Semantic aliases */
   --surface-page: var(--cream);
   --surface-card: var(--paper);
