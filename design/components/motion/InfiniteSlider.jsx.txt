@@ -1,0 +1,87 @@
+import React from 'react';
+
+/** Seamless marquee. Children are duplicated; the track loops with no visible seam. */
+export function InfiniteSlider({
+  gap = 24, duration = 40, reverse = false, pauseOnHover = true, fade = true,
+  children, style, ...rest
+}) {
+  const n = (v, d) => (v === undefined || v === null || v === '' ? d : Number(v));
+  const bool = v => v === true || v === 'true' || v === '';
+  const gapN = n(gap, 24), durN = n(duration, 40);
+  const rev = reverse === undefined ? false : bool(reverse) || reverse === 'reverse';
+  const pause = pauseOnHover === undefined ? true : bool(pauseOnHover);
+  const showFade = fade === undefined ? true : bool(fade);
+  const trackRef = React.useRef(null);
+  const animRef = React.useRef(null);
+  const [span, setSpan] = React.useState(0);
+  const items = React.Children.toArray(children).filter(c => c !== null && c !== undefined && !(typeof c === 'string' && c.trim() === ''));
+
+  React.useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const boxes = () => {
+      const out = [];
+      const walk = el => {
+        if (!el) return;
+        const w = el.getBoundingClientRect().width;
+        if (w > 0) { out.push(w); return; }
+        Array.from(el.children).forEach(walk);
+      };
+      Array.from(track.children).forEach(walk);
+      return out;
+    };
+    const measure = () => {
+      const all = boxes();
+      if (!all.length) { setSpan(0); return; }
+      const per = all.length / 2;
+      const half = all.slice(0, Math.round(per)).reduce((w, x) => w + x + gapN, 0);
+      setSpan(half > gapN ? half : 0);
+    };
+    measure();
+    const raf = requestAnimationFrame(measure);
+    const late = setTimeout(measure, 400);
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(measure) : null;
+    if (ro) { ro.observe(track); Array.from(track.children).forEach(c => ro.observe(c)); }
+    return () => { cancelAnimationFrame(raf); clearTimeout(late); if (ro) ro.disconnect(); };
+  }, [items.length, gapN]);
+
+  React.useEffect(() => {
+    const track = trackRef.current;
+    if (!track || !span) return;
+    if (animRef.current) animRef.current.cancel();
+    if (reduced() || !track.animate) return;
+    const from = rev ? -span : 0;
+    const to = rev ? 0 : -span;
+    animRef.current = track.animate(
+      [{ transform: `translate3d(${from}px,0,0)` }, { transform: `translate3d(${to}px,0,0)` }],
+      { duration: durN * 1000, iterations: Infinity, easing: 'linear' }
+    );
+    return () => animRef.current && animRef.current.cancel();
+  }, [span, durN, rev]);
+
+  const hover = playing => { if (pause && animRef.current) animRef.current[playing ? 'play' : 'pause'](); };
+
+  return (
+    <div
+      style={{
+        overflow: 'hidden', width: '100%',
+        ...(showFade ? { WebkitMaskImage: 'linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)', maskImage: 'linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)' } : null),
+        ...style,
+      }}
+      onMouseEnter={() => hover(false)}
+      onMouseLeave={() => hover(true)}
+      {...rest}
+    >
+      <div ref={trackRef} style={{ display: 'flex', gap: gapN, width: 'max-content', willChange: 'transform' }}>
+        {items.map((c, i) => <React.Fragment key={`a${i}`}>{c}</React.Fragment>)}
+        {items.map((c, i) => (
+          <div key={`b${i}`} aria-hidden="true" style={{ display: 'contents' }}>{c}</div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function reduced() {
+  return typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}

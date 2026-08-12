@@ -1,0 +1,37 @@
+import React from 'react';
+
+/** Layered blur that ramps from clear to blurred across its box — for legible captions over photos. */
+export function ProgressiveBlur({
+  blurIntensity = 3, layers = 6, direction = 'bottom', visible = true, style, ...rest
+}) {
+  const n = Math.max(2, Number(layers) || 6);
+  const base = Number(blurIntensity) || 3;
+  const toward = direction === 'top' ? 'to bottom' : 'to top';
+  const show = visible === false || visible === 'false' ? 0 : 1;
+  return (
+    <div
+      style={{
+        position: 'absolute', pointerEvents: 'none', opacity: show,
+        transition: 'opacity 260ms cubic-bezier(.22,1,.36,1)', ...style,
+      }}
+      aria-hidden="true"
+      {...rest}
+    >
+      {Array.from({ length: n }, (_, i) => {
+        const p = j => Math.max(0, Math.min(100, (j / n) * 100));
+        const mask = `linear-gradient(${toward}, rgba(0,0,0,0) ${p(i)}%, rgba(0,0,0,1) ${p(i + 1)}%, rgba(0,0,0,1) ${p(i + 2)}%, rgba(0,0,0,0) ${p(i + 3)}%)`;
+        const blur = `blur(${base * Math.pow(1.6, i)}px)`;
+        return (
+          <div
+            key={i}
+            style={{
+              position: 'absolute', inset: 0,
+              backdropFilter: blur, WebkitBackdropFilter: blur,
+              maskImage: mask, WebkitMaskImage: mask,
+            }}
+          />
+        );
+      })}
+    </div>
+  );
+}

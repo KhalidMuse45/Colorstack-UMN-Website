@@ -1,0 +1,50 @@
+import React from 'react';
+
+/** Cycles through its children on a timer. Works for text or images. */
+export function TextLoop({
+  interval = 2.6, stack = false, transition = 520, children, style, ...rest
+}) {
+  const items = React.Children.toArray(children).filter(c => c !== null && c !== undefined && !(typeof c === 'string' && c.trim() === ''));
+  const stacked = stack === true || stack === 'true' || stack === '';
+  const [i, setI] = React.useState(0);
+  const n = items.length;
+  const ms = Math.max(400, Number(interval || 2.6) * 1000);
+  const dur = Number(transition || 520);
+  const paused = React.useRef(false);
+
+  React.useEffect(() => {
+    if (n < 2) return;
+    const id = setInterval(() => { if (!paused.current) setI(p => (p + 1) % n); }, ms);
+    return () => clearInterval(id);
+  }, [n, ms]);
+
+  const motionOff = typeof window !== 'undefined' && window.matchMedia
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const frame = (child, idx) => {
+    const active = idx === i;
+    const base = {
+      transition: motionOff ? 'none' : `opacity ${dur}ms cubic-bezier(.22,1,.36,1), transform ${dur}ms cubic-bezier(.22,1,.36,1), filter ${dur}ms ease-out`,
+      opacity: active ? 1 : 0,
+      transform: active ? 'none' : 'translateY(14px)',
+      filter: active ? 'blur(0px)' : 'blur(6px)',
+      pointerEvents: active ? 'auto' : 'none',
+    };
+    return stacked
+      ? <div key={idx} aria-hidden={!active} style={{ position: 'absolute', inset: 0, ...base }}>{child}</div>
+      : <span key={idx} aria-hidden={!active} style={{ gridArea: '1 / 1', display: 'block', ...base }}>{child}</span>;
+  };
+
+  return (
+    <div
+      onMouseEnter={() => { paused.current = true; }}
+      onMouseLeave={() => { paused.current = false; }}
+      style={stacked
+        ? { position: 'relative', overflow: 'hidden', width: '100%', height: '100%', ...style }
+        : { display: 'inline-grid', gridTemplateAreas: '"a"', alignItems: 'baseline', verticalAlign: 'baseline', ...style }}
+      {...rest}
+    >
+      {items.map(frame)}
+    </div>
+  );
+}

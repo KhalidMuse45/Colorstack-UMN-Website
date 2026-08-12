@@ -1,0 +1,72 @@
+import React from 'react';
+
+let uid = 0;
+
+/**
+ * Gooey floating action menu. The trigger and the children merge and separate
+ * through an SVG blur/contrast filter, so the buttons look like liquid.
+ */
+export function LiquidMenu({
+  blur = 7, contrast = 20, fill = 'var(--maroon)', label = 'Get in touch',
+  radius = 74, size = 60, children, style, ...rest
+}) {
+  const n = (v, d) => (v === undefined || v === null || v === '' ? d : Number(v));
+  const blurN = n(blur, 7), contrastN = n(contrast, 20), radiusN = n(radius, 74), sizeN = n(size, 60);
+  const [open, setOpen] = React.useState(false);
+  const id = React.useMemo(() => `liquid-${++uid}`, []);
+  const items = React.Children.toArray(children).filter(React.isValidElement);
+  const count = Math.max(items.length, 1);
+
+  const seat = i => {
+    if (!open) return { x: 0, y: 0 };
+    const spread = count === 1 ? 0 : Math.PI / 2.6;
+    const start = -Math.PI / 2 - spread / 2;
+    const a = count === 1 ? -Math.PI / 2 : start + (spread / (count - 1)) * i;
+    return { x: Math.cos(a) * radiusN, y: Math.sin(a) * radiusN };
+  };
+
+  return (
+    <div style={{ position: 'relative', width: sizeN, height: sizeN, ...style }} {...rest}>
+      <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden="true">
+        <defs>
+          <filter id={id}>
+            <feGaussianBlur in="SourceGraphic" stdDeviation={blurN} result="b" />
+            <feColorMatrix in="b" mode="matrix" values={`1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 ${contrastN} -9`} result="g" />
+            <feBlend in="SourceGraphic" in2="g" />
+          </filter>
+        </defs>
+      </svg>
+      <div style={{ position: 'absolute', inset: 0, filter: `url(#${id})` }}>
+        {items.map((child, i) => {
+          const { x, y } = seat(i);
+          return (
+            <span
+              key={i}
+              style={{
+                position: 'absolute', inset: 0, display: 'grid', placeItems: 'center',
+                borderRadius: '50%', background: fill,
+                transform: `translate(${x}px, ${y}px) scale(${open ? 0.82 : 0.5})`,
+                opacity: open ? 1 : 0,
+                pointerEvents: open ? 'auto' : 'none',
+                transition: `transform 520ms cubic-bezier(.34,1.5,.5,1) ${open ? i * 45 : 0}ms, opacity 240ms ease-out`,
+              }}
+            >{child}</span>
+          );
+        })}
+        <button
+          type="button"
+          aria-expanded={open}
+          aria-label={label}
+          onClick={() => setOpen(o => !o)}
+          style={{
+            position: 'absolute', inset: 0, borderRadius: '50%', border: 'none', cursor: 'pointer',
+            background: fill, color: 'var(--cream)', fontFamily: 'var(--font-display)',
+            fontSize: 26, fontWeight: 700, lineHeight: 1, display: 'grid', placeItems: 'center',
+            transform: open ? 'rotate(45deg)' : 'none',
+            transition: 'transform 420ms cubic-bezier(.34,1.5,.5,1)',
+          }}
+        >+</button>
+      </div>
+    </div>
+  );
+}

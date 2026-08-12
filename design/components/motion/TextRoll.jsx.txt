@@ -1,0 +1,63 @@
+import React from 'react';
+
+/** Rolls each character up into place on mount. */
+export function TextRoll({
+  text, duration = 620, stagger = 0.032, delay = 0, as: Tag = 'span', children, style, ...rest
+}) {
+  const source = typeof text === 'string' ? text : flatten(children);
+  const [on, setOn] = React.useState(false);
+  const ref = React.useRef(null);
+
+  React.useEffect(() => {
+    if (reduced()) { setOn(true); return; }
+    const el = ref.current;
+    let io;
+    const failsafe = setTimeout(() => setOn(true), 2200);
+    if (el && typeof IntersectionObserver !== 'undefined') {
+      io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setOn(true); io.disconnect(); } }, { threshold: 0.06 });
+      io.observe(el);
+    } else {
+      setOn(true);
+    }
+    return () => { clearTimeout(failsafe); if (io) io.disconnect(); };
+  }, []);
+
+  const chars = Array.from(source);
+  const dur = Number(duration || 620);
+  const step = Number(stagger || 0.032);
+  const lead = Number(delay || 0);
+
+  return (
+    <Tag ref={ref} style={{ display: 'inline-block', ...style }} {...rest}>
+      <span aria-hidden="true" style={{ display: 'inline-block' }}>
+        {chars.map((c, i) => (
+          <span key={i} style={{ display: 'inline-block', overflow: 'hidden', verticalAlign: 'bottom', whiteSpace: 'pre' }}>
+            <span
+              style={{
+                display: 'inline-block', whiteSpace: 'pre',
+                transformOrigin: 'center bottom',
+                transition: reduced() ? 'none' : `transform ${dur}ms cubic-bezier(.22,1,.36,1), opacity ${dur}ms ease-out`,
+                transitionDelay: `${lead + i * step}s`,
+                transform: on ? 'none' : 'translateY(105%) rotate(9deg)',
+                opacity: on ? 1 : 0,
+              }}
+            >{c}</span>
+          </span>
+        ))}
+      </span>
+      <span style={srOnly}>{source}</span>
+    </Tag>
+  );
+}
+
+const srOnly = { position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)', whiteSpace: 'nowrap' };
+function reduced() {
+  return typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+function flatten(node) {
+  if (node == null || node === false) return '';
+  if (typeof node === 'string' || typeof node === 'number') return String(node);
+  if (Array.isArray(node)) return node.map(flatten).join('');
+  if (node.props) return flatten(node.props.children);
+  return '';
+}
