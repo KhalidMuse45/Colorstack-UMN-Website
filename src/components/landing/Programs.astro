@@ -15,24 +15,37 @@
  */
 import InfiniteSlider from '../motion/InfiniteSlider.astro';
 import PhotoReveal from '../motion/PhotoReveal.astro';
-import Reveal from '../motion/Reveal.astro';
+import ScrollScene from '../motion/ScrollScene.astro';
 import SectionLabel from './SectionLabel.astro';
 import { whatWeDo, programs } from '../../data/landing';
 ---
 
 <section id="what-we-do" class="programs">
+  {/*
+    Scroll-linked rather than one-shot, and `settle` rather than `rise`, so
+    this block eases DOWN into place from above while the mission's rotator is
+    still held on screen above it. Read together the two sections overlap
+    instead of resetting: belief is still visible as the answer to it arrives.
+
+    The three ranges are staggered so label, headline and hint resolve in
+    sequence across the crossing rather than together.
+  */}
   <div class="programs-head">
-    <Reveal>
+    <ScrollScene effect="settle" range="entry 0% cover 30%">
       <SectionLabel class="programs-label">{whatWeDo.label}</SectionLabel>
-    </Reveal>
-    <Reveal index={1}>
+    </ScrollScene>
+    <ScrollScene effect="settle" range="entry 5% cover 38%">
       <h2 class="programs-title">{whatWeDo.headline}</h2>
-    </Reveal>
-    <Reveal index={2}>
+    </ScrollScene>
+    <ScrollScene effect="settle" range="entry 10% cover 46%">
       <p class="programs-hint">{whatWeDo.hint}</p>
-    </Reveal>
+    </ScrollScene>
   </div>
 
+  {/* The evidence beat. `grow` opens the strip rather than sliding it in,
+     so the photographs feel like they are being shown rather than
+     delivered. Range runs late so it resolves after the headline above. */}
+  <ScrollScene effect="grow" range="entry 15% cover 55%">
   <InfiniteSlider gap={20} duration={58}>
     {
       programs.map((prog) => (
@@ -52,6 +65,7 @@ import { whatWeDo, programs } from '../../data/landing';
       ))
     }
   </InfiniteSlider>
+  </ScrollScene>
 </section>
 
 <style>
