@@ -111,8 +111,13 @@ const mergedStyle = [ownStyle, style].filter(Boolean).join(';');
         Tab leave the menu instead of entering it. Paint order is unaffected
         when enhanced: both are absolutely positioned, and the items should
         sit above the trigger anyway. */}
+    {/* The trigger face is a slot so a call site can put a mark or an icon in
+        it without this component knowing anything about the brand. Falls back
+        to the `+` when nothing is supplied. Whatever goes in is decorative:
+        the accessible name comes from `label` on the button itself, so a
+        slotted image should carry an empty alt rather than repeat it. */}
     <button class="lm-trigger" type="button" aria-label={label} aria-expanded="false" aria-controls={itemsId} hidden>
-      <span class="lm-plus" aria-hidden="true">+</span>
+      <slot name="trigger"><span class="lm-plus" aria-hidden="true">+</span></slot>
     </button>
 
     <div class="lm-items" id={itemsId}>
@@ -172,6 +177,19 @@ const mergedStyle = [ownStyle, style].filter(Boolean).join(';');
     cursor: pointer;
     font-size: var(--text-h2);
     line-height: 1;
+    /* A slotted mark fills the circle edge to edge, so the button has to clip
+       it. Without this a square logo sits as a square on top of a round
+       button and the gooey merge has a corner to catch on. */
+    overflow: hidden;
+    padding: 0;
+  }
+
+  /* A slotted image is the face of the button, not a glyph inside it. */
+  [data-liquid-menu] .lm-trigger :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   [data-liquid-menu] .lm-trigger[hidden] {
