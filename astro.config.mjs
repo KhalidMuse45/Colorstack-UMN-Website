@@ -11,4 +11,11 @@ export default defineConfig({
   // advertise it, so keep the two consistent.
   integrations: [sitemap({ filter: (page) => !page.includes('/motion-lab') })],
   prefetch: false,
+  build: {
+    // The two emitted stylesheets each downloaded in under a millisecond but
+    // blocked the initial render for a round trip apiece. Inlining trades
+    // those round trips for a larger HTML document, which is the right side
+    // of the trade at this page weight.
+    inlineStylesheets: 'always',
+  },
 });
