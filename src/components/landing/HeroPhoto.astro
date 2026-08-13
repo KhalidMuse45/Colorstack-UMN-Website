@@ -20,6 +20,8 @@ const photo = hero.photo;
 <Reveal as="figure" wipe class="hero-photo">
   <img
     src={photo.src}
+    srcset="/images/summit-group-800.webp 800w, /images/summit-group-1600.webp 1600w, /images/summit-group.webp 2400w"
+    sizes="100vw"
     alt={photo.alt}
     width={photo.width}
     height={photo.height}
