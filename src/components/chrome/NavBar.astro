@@ -15,13 +15,26 @@ import { primaryNav, joinCta, chapter } from '../../data/nav';
 <header class="nav-bar" data-nav>
   <div class="nav-bar-inner">
     <!-- Logo marks home. No border, no recolor, no crop (DONE-5). -->
-    <a class="nav-brand" href="/" aria-label={`${chapter.name}, home`}>
+    {/*
+      The mark alone read as a favicon dropped into the corner, and left about
+      670px of dead space before the links. Setting the chapter name beside it
+      turns it into a wordmark and gives the bar something to hold.
+
+      The name comes from `chapter.name` so the casing is enforced in one
+      place, and it is set in Archivo: the iCiel Gotham face is logo-artwork
+      only and is not in this repository.
+
+      aria-label is gone because the link now has real text. Keeping both
+      would make a screen reader announce the name twice.
+    */}
+    <a class="nav-brand" href="/">
       <img
         src="/images/colorstack-umn-logo.png"
-        alt="ColorStack UMN logo"
+        alt=""
         width="1544"
         height="1534"
       />
+      <span class="nav-wordmark">{chapter.name}</span>
     </a>
 
     <nav class="nav-primary" aria-label="Primary">
@@ -116,15 +129,35 @@ import { primaryNav, joinCta, chapter } from '../../data/nav';
     gap: var(--space-3);
     max-width: 1200px;
     margin: 0 auto;
-    padding: var(--space-2) var(--space-5);
+    /* 60px was cramped for a bar carrying a wordmark and five targets.
+       A static change, so it cannot cause a runtime layout shift. */
+    padding: var(--space-3) var(--space-5);
   }
 
   .nav-brand {
     display: inline-flex;
     align-items: center;
+    gap: var(--space-3);
     min-width: 44px;
     min-height: 44px;
     line-height: 0;
+    text-decoration: none;
+  }
+
+  .nav-brand:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 4px;
+    border-radius: var(--radius-control);
+  }
+
+  .nav-wordmark {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 17px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--maroon);
+    white-space: nowrap;
   }
 
   .nav-brand img {
@@ -144,11 +177,14 @@ import { primaryNav, joinCta, chapter } from '../../data/nav';
     padding: 0;
   }
 
-  /* Link treatment (§6): underline + --gold-soft highlighter swipe, drawn
-     with pseudo-elements because gradients are off-brand and banned. The
-     ::before sits behind the text (default paint order), the ::after is
-     the underline. Static states live outside the motion gate; the movement
-     is the only thing that is gated. */
+  /* Link treatment (§6): a hairline rule that draws in from the left on
+     hover and focus.
+     This used to also drop a solid --gold-soft block behind the label. It
+     read as a highlighter swipe rather than as navigation, and it was the
+     single element that most made the bar feel cheap. BRAND-SYSTEM's own
+     language is hairline rules rather than heavy fills, so the block is gone
+     and the rule does the work alone.
+     Static states live outside the motion gate; only the movement is gated. */
   .nav-link {
     position: relative;
     z-index: 0;
@@ -164,16 +200,6 @@ import { primaryNav, joinCta, chapter } from '../../data/nav';
     text-decoration: none;
   }
 
-  .nav-link::before {
-    content: '';
-    position: absolute;
-    z-index: -1;
-    inset: var(--space-2) var(--space-2) var(--space-1);
-    background: var(--gold-soft);
-    transform: scaleX(0);
-    transform-origin: left;
-  }
-
   .nav-link::after {
     content: '';
     position: absolute;
@@ -186,8 +212,6 @@ import { primaryNav, joinCta, chapter } from '../../data/nav';
     transform-origin: left;
   }
 
-  .nav-link:hover::before,
-  .nav-link:focus-visible::before,
   .nav-link:hover::after,
   .nav-link:focus-visible::after {
     transform: scaleX(1);
@@ -267,7 +291,6 @@ import { primaryNav, joinCta, chapter } from '../../data/nav';
         opacity 0.24s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    .nav-link::before,
     .nav-link::after {
       transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
     }
