@@ -84,6 +84,36 @@ Goal was navigability, not architecture. Nothing was rewritten, only relocated.
 
 **Deleted: `public/images/hudeifi-abdihakin.jpg`.** Referenced by nothing in `src/` or `public/`; the `index.html` that used it was removed in slice 1. It is also the only person-identifying image in the repo and this ledger already flagged its consent as unconfirmed, so deletion is the safe default rather than a loss. Recoverable with `git checkout <sha>^ -- public/images/hudeifi-abdihakin.jpg` if the chapter confirms consent and wants it back.
 
+### Landing polish recon (2026-08-13) — measured, not guessed
+
+Ran the audits `docs/NEXT.md` section 2 asked for. Measured against the **production build** (`astro preview`), not the dev server, because dev has no minification and injects a toolbar.
+
+**Lighthouse, mobile, navigation mode:** Accessibility **100**, Best Practices **100**, SEO **92**, Agentic Browsing **100**. 53 passed, 1 failed. The single failure is `link-text` on a "Learn more" link pointing at `docs.astro.build` — that is the **Astro dev toolbar**, not our markup. Confirmed absent from `dist/`, so it cannot reach production. Treat Lighthouse as clean.
+
+**Keyboard traversal:** clean, no ticket needed. 34 focusable elements, "Skip to content" is the first tab stop, zero positive `tabindex`, nothing zero-width-but-focusable.
+
+**CLS: 0.00.** The `width`/`height` discipline on images is working.
+
+**LCP: 4378 ms against the 2000 ms budget in `UX-SPEC.md` section 8.** Measured at 390x844, Slow 4G, 4x CPU. This is the one real defect, and **the cause is not what `docs/NEXT.md` predicted.** NEXT.md assumed the 404KB hero file was too heavy and suggested a smaller variant to cut download. The trace says download was **3 ms**. The breakdown:
+
+| Subpart | Time | Share |
+| --- | --- | --- |
+| TTFB | 10 ms | 0.2% |
+| Resource load delay | 656 ms | 15.0% |
+| Resource load duration | 623 ms | 14.2% |
+| **Element render delay** | **3089 ms** | **70.5%** |
+
+The LCP element is `summit-group.webp` (the hero photo), confirmed by node id, not the `TextRoll` h1. Two real contributors sit inside that render delay:
+
+1. **535 ms of main-thread image decode**, because a 2400px-wide file is decoded into a 390px viewport. That is a ~6x oversupply and it is CPU cost, not network cost, so it reproduces on any device regardless of bandwidth.
+2. **A 388 ms layout update across 399 of 399 nodes.** DOM is only 410 elements total, so size is not the problem; the per-character `.troll-char` spans that `TextRoll` emits are what makes one layout pass that expensive.
+
+Separately, two render-blocking stylesheets cost an estimated **1097 ms of FCP**, each downloading in under 1 ms. Almost all of that is round trip, not bytes.
+
+**Honesty note on the numbers.** These came off a local http/1.1 server under synthetic throttling. The *CPU-bound* findings (decode, layout) transfer to real devices unchanged. The *queuing* findings (the stylesheet round trips) are exaggerated by http/1.1 on localhost and will be smaller on GitHub Pages over h2. The stylesheet ticket is therefore worth doing but should not be sold as a guaranteed 1.1s win.
+
+**Delegation.** Two tickets fanned out to opencode panes, each in its own `git worktree` so they cannot collide on one checkout — the failure mode this log already records under the parallel-session note. `node_modules` is a directory junction into the main checkout rather than a per-worktree `npm ci`, which is safe only because all three trees sit on the same commit and therefore the same `package-lock.json`. Ticket A (hero `srcset`, deepseek v4 flash) on `polish/hero-srcset`; ticket B (`inlineStylesheets`, nemotron 3 ultra) on `polish/inline-css`. Both stack into `revamp/landing-polish`.
+
 ### Verification pass on `main` (2026-08-12, post-merge)
 Ran the dev server against the merged `main` to confirm the landing page is genuinely working before opening new surface area. Everything already on `origin/main`: all seven local branches are fully merged, nothing was unpushed.
 
