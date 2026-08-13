@@ -221,6 +221,24 @@ const merged = [`--nr-dur:${dur}s`, `--nr-blur:${smear}px`, style]
     };
 
     /**
+     * How long a reel may sit parked on 0 before the true value is planted
+     * with no animation.
+     *
+     * Parking at 0 is what makes the count read as a climb, but while parked
+     * the band literally says "0+ Members in the chapter". That is a false
+     * chapter statistic on a sponsor-facing page, which is the one class of
+     * mistake CLAUDE.md treats as non-negotiable, so the window it can be seen
+     * for has to be short rather than merely unlikely.
+     *
+     * 1.2s, not the 8s this first shipped with. The normal path is nowhere
+     * near it: the observer fires and the spin starts ~120ms after build. This
+     * only catches the cases where a spin never arrives at all, and costs
+     * nothing when it fires, because spin() re-parks to 0 and climbs anyway if
+     * the reader scrolls the band into view later.
+     */
+    const PARK_FAILSAFE_MS = 1200;
+
+    /**
      * Replace the text with reels. Returns false when there is nothing to
      * spin, in which case the server text is left exactly as rendered.
      */
@@ -325,7 +343,7 @@ const merged = [`--nr-dur:${dur}s`, `--nr-blur:${smear}px`, style]
             r.style.transform = `translateY(${r.dataset.nrLanded || 0}em)`;
             r.removeAttribute('data-nr-fast');
           });
-        }, 8000);
+        }, PARK_FAILSAFE_MS);
       }
 
       return true;
@@ -389,6 +407,50 @@ const merged = [`--nr-dur:${dur}s`, `--nr-blur:${smear}px`, style]
           )
         );
       });
+
+      /**
+       * Guarantee the landing, whatever the transition did.
+       *
+       * This is the important one. Parking on 0 means a reel that fails to
+       * animate does not merely look wrong, it *reads* a different number:
+       * the band says "0+ Members in the chapter". Observed for real, with the
+       * inline style correctly set to translateY(-31em) while the computed
+       * transform stayed at 0 indefinitely, so the reel sat on 000 forever.
+       *
+       * The parked failsafe does not cover this, because spin() clears
+       * data-nr-parked on entry and thereby disarms it. So the spin has to
+       * carry its own backstop: once the travel time has certainly elapsed,
+       * compare the computed position against the intended one and, if the
+       * reel is not there, plant it with the transition switched off.
+       *
+       * Costs nothing when the animation works, which is nearly always. When
+       * it does not, a correct number appears without a flourish instead of a
+       * false statistic staying on screen.
+       */
+      timers.push(
+        window.setTimeout(
+          () => {
+            reels.forEach((r) => {
+              const want = num(r.dataset.nrLanded, 0);
+              const em = parseFloat(getComputedStyle(r).fontSize) || 1;
+              const m = /matrix\([^)]*,\s*([-0-9.]+)\)\s*$/.exec(
+                getComputedStyle(r).transform
+              );
+              const nowEm = m ? parseFloat(m[1]) / em : 0;
+              // A whole digit out is a failure, not easing overshoot.
+              if (Math.abs(nowEm - want) > 0.5) {
+                r.style.transition = 'none';
+                r.style.transitionDelay = '0s';
+                r.style.transform = `translateY(${want}em)`;
+                r.removeAttribute('data-nr-fast');
+                void r.offsetHeight;
+                r.style.transition = '';
+              }
+            });
+          },
+          last * 1000 + durMs + 260
+        )
+      );
 
       // Glimmer rides the lock-in, not the travel.
       timers.push(
