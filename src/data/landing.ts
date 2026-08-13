@@ -65,7 +65,7 @@ export interface Channel {
 /* ── Shared ────────────────────────────────────────────────────────────── */
 
 /**
- * The mailing-list endpoint. `HANDOFF-LOG.md` carried this as an open question
+ * The mailing-list endpoint. `docs/CONTENT-NEEDED.md` carried this as an open question
  * ("Mailing-list endpoint unknown, same list as the newsletter?"). The landing
  * reference answers it: the hero CTA, the nav CTA, the form and the closer all
  * post to this same Logicform. Resolved, single constant so it cannot drift.
@@ -150,7 +150,7 @@ export const hero = {
 /**
  * Confirmed real by the chapter on 2026-08-12.
  *
- * Flagged in `HANDOFF-LOG.md` and repeated here because this band is the most
+ * Flagged in `docs/CONTENT-NEEDED.md` and repeated here because this band is the most
  * sponsor-facing claim on the page: the retired site advertised "50+ Active
  * Members" and "25+ Offers Secured". Members doubling is plausible; offers
  * falling from 25+ to 10+ is not obviously so. Worth one more look before

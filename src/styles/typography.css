@@ -17,9 +17,9 @@
    static and needs one file per weight.
 
    iCiel Gotham has NO @font-face here on purpose: the binary is absent from
-   the bundle (design/BUNDLE.md, "known bundle gaps") and the chapter mark is
+   the vendored design drop and the chapter mark is
    a PNG, so nothing needs the face. --font-logo stays declared below so that
-   restoring it later is a one-block change. Logged in HANDOFF-LOG.md.
+   restoring it later is a one-block change. Logged in docs/CONTENT-NEEDED.md.
    ─────────────────────────────────────────────────────────────────────── */
 
 @font-face {

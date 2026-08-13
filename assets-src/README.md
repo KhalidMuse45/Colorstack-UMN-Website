@@ -11,9 +11,8 @@ re-framing a shot means going back to the master, not upscaling a WebP.
 
 ## Regenerating a WebP from a master
 
-`scripts/gen-placeholders.mjs` only produces the abstract placeholders. For a
-real photo, convert it directly with the `sharp` that already ships under
-Astro's image pipeline:
+Convert a master directly with the `sharp` that already ships under Astro's
+image pipeline:
 
 ```bash
 node -e "
@@ -51,7 +50,7 @@ generated placeholders remain on `/`.
 
 Drop the master in `photos/`, convert it with the command above, add the entry
 to `src/data/landing.ts` with truthful alt text and the real output dimensions,
-and log it in `HANDOFF-LOG.md`.
+and log it in `docs/CONTENT-NEEDED.md`.
 
 ## A note on the people in these photos
 

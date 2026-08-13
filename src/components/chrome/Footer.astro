@@ -6,11 +6,19 @@
  * it into Base.astro after both chrome units land.
  *
  * Shape (UX-SPEC §2): hairline top rule, 4 columns (Chapter / Explore /
- * Connect / Colophon), then a mono meta row closed by a live-updating clock.
+ * Connect / Contributors), then a mono meta row closed by a live-updating
+ * clock. Column 4 was a Colophon of build facts; it is now people credit,
+ * because build trivia is developer-facing noise on a public chapter page.
  * Reference for the meta row is the newsletter footer: mono 11px, uppercased
  * in CSS (never in source text), +0.08em tracking, 1px hairline above.
  */
-import { chapter, exploreNav, connectNav, isExternal } from '../../data/nav';
+import {
+  chapter,
+  exploreNav,
+  connectNav,
+  contributorNav,
+  isExternal,
+} from '../../data/nav';
 
 interface FooterLink {
   href: string;
@@ -37,13 +45,11 @@ const clockDate = new Date();
 const clockSeed = clockDate.toLocaleTimeString('en-GB', { hour12: false });
 const clockISO = clockDate.toISOString();
 
-// Colophon facts, sourced from README's Tech Stack / RECON — no invented
-// numbers, no founding year (decision logged in the envelope).
-const colophon = [
-  'Static Astro, zero client JS by default',
-  'Self-hosted Archivo / Lora / IBM Plex Mono',
-  'Served from GitHub Pages',
-];
+const contributorLinks: FooterLink[] = contributorNav.map((l) => ({
+  ...l,
+  external: isExternal(l.href),
+  newTab: l.href.startsWith('http'),
+}));
 ---
 
 <footer class="site-footer">
@@ -94,10 +100,27 @@ const colophon = [
         </ul>
       </nav>
 
-      <section class="footer__col" aria-label="Colophon">
-        <p class="footer__heading">Colophon</p>
-        {colophon.map((line) => <p class="footer__colophon">{line}</p>)}
-      </section>
+      <nav class="footer__col" aria-label="Contributors">
+        <p class="footer__heading">Contributors</p>
+        <ul class="footer__links">
+          {
+            contributorLinks.map((link) => (
+              <li>
+                <a
+                  class="footer__link"
+                  href={link.href}
+                  target={link.newTab ? '_blank' : undefined}
+                  rel={link.newTab ? 'noopener noreferrer' : undefined}
+                  >{link.label}
+                  {link.external && (
+                    <span class="footer__marker" aria-hidden="true">↗</span>
+                  )}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
     </div>
 
     <div class="footer__meta">
@@ -226,16 +249,6 @@ const colophon = [
     font-family: var(--font-display);
     font-size: var(--text-small);
     margin-left: var(--space-1);
-  }
-
-  .footer__colophon {
-    margin: 0;
-    color: var(--text-muted);
-    font-size: var(--text-small);
-  }
-
-  .footer__colophon + .footer__colophon {
-    margin-top: var(--space-2);
   }
 
   /* ── mono meta row — newsletter footer device ─────────────────────────── */

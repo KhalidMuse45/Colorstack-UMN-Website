@@ -1,6 +1,6 @@
 #!/bin/sh
 # Brand guardrails — scans ONLY files staged for this commit.
-# Skips the vendored bundle, orchestration docs, and paths in .guardrail-allow.
+# Skips the vendored design drop and CI files.
 #
 # The four token files copied from design/tokens/ are the ONE place a literal
 # hex is legal. Everywhere else — including src/styles/base.css — it is
@@ -9,10 +9,9 @@ fail=0
 # Excluded: the vendored bundle, the hook itself, and the agent/orchestration
 # docs — those legitimately quote violations in order to forbid them.
 files=$(git diff --cached --name-only --diff-filter=ACM |
-  grep -Ev '^(design/|\.githooks/|docs/history/|\.claude/|\.github/|scripts/|CLAUDE\.md$|HANDOFF-LOG\.md$)')
+  grep -Ev '^(design/|\.githooks/|\.claude/|\.github/|scripts/|CLAUDE\.md$)')
 for f in $files; do
   [ -f "$f" ] || continue
-  if [ -f .guardrail-allow ] && grep -qxF "$f" .guardrail-allow; then continue; fi
   case "$f" in
     *.css|*.astro|*.jsx|*.tsx|*.svelte|*.vue)
       case "$f" in
@@ -54,5 +53,5 @@ for f in $files; do
       ;;
   esac
 done
-[ "$fail" = 1 ] && echo "--> fix it, or allowlist the path in .guardrail-allow and log why in HANDOFF-LOG.md"
+[ "$fail" = 1 ] && echo "--> fix it, or explain the exception in the pull request"
 exit $fail

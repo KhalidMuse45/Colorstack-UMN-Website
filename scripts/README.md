@@ -26,16 +26,18 @@ file, and the offending line). It exits 1 if any of:
 
 Exclusions mirror the hook exactly and add the CI files:
 
-- `design/` — vendored bundle (quotes violations to forbid them)
-- `.githooks/`, `docs/history/`, `.claude/`, `.github/`, `scripts/` — hooks, agent and
-  orchestration docs, CI config, this script
-- `CLAUDE.md`, `HANDOFF-LOG.md`
-- any path allowlisted in `.guardrail-allow` (exact match, one per line)
+- `design/` — vendored drop (quotes violations in order to forbid them)
+- `.githooks/`, `.claude/`, `.github/`, `scripts/` — hooks, CI config, this script
+- `CLAUDE.md`
 
-The four token files stay in the scan but skip only the hex check — color
+The four token files stay in the scan but skip only the hex check: colour
 tokens are the sanctioned home of literal hexes.
 
+The script also refuses to report success if it scans an implausibly small
+number of files. Run from a git worktree under the wrong `bash`, `git ls-files`
+can return nothing, in which case the loop scans nothing and the script would
+otherwise exit 0 and report a pass it never performed.
+
 CI wires this in `.github/workflows/ci.yml`, after `npm run build`, against the
-tracked tree. If a legitimately-needed violation ever lands, allowlist the path
-in `.guardrail-allow` **and** log the why in `HANDOFF-LOG.md` — never edit the
-script to silence a flag.
+tracked tree. If a legitimately-needed violation ever lands, explain it in the
+pull request. Never edit the script to silence a flag.
