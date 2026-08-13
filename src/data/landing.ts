@@ -143,34 +143,6 @@ export const hero = {
     { href: '#what-we-do', label: 'See What We Do' },
   ] as Cta[],
   photo: photos.summitGroup as Photo,
-  /**
-   * Extra frames for the hero's ambient crossfade, in order, after
-   * `hero.photo`. `hero.photo` is the LCP element and always shows first and
-   * last; nothing here is ever the first paint.
-   *
-   * These are chosen for the crop, not for variety. The hero band is
-   * full-bleed at `clamp(300px, 48vw, 600px)`, so on a laptop the frame is
-   * roughly 2.4:1 and everything above and below the middle third is thrown
-   * away. Both of these are landscape (3:2) and survive that:
-   *   - ideathon, 2400x1600, members at laptops with the event screens behind
-   *     them. The room reads as busy even after the crop.
-   *   - gameNightChess, 1440x956, members around a table. The social half of
-   *     the chapter, and the subject already sits across the middle band.
-   *
-   * Deliberately left out:
-   *   - summitPortrait is 1400x1750, portrait. A 2.4:1 crop of a posed group
-   *     keeps a strip of torsos and loses the faces.
-   *   - summitSignage is a welcome screen with no people in it. The hero is
-   *     meant to say the community is alive; a lobby monitor does not.
-   *   - gameNightSignage is a photo *of hand lettering*. Cropped to a wide
-   *     band the words become unreadable fragments, and its alt text quotes
-   *     those words, so the frame stops being the thing it describes.
-   *
-   * Add to this list only after checking the same three things: landscape
-   * orientation, a subject that lives in the middle band, and no text that a
-   * crop would truncate.
-   */
-  ambient: [photos.ideathon, photos.gameNightChess] as Photo[],
 };
 
 /* ── 2. Stat band ──────────────────────────────────────────────────────── */
