@@ -15,10 +15,12 @@ import Reveal from '../motion/Reveal.astro';
 import { hero } from '../../data/landing';
 
 const photo = hero.photo;
+const ambient = hero.ambient ?? [];
 ---
 
-<Reveal as="figure" wipe class="hero-photo">
+<Reveal as="figure" wipe class="hero-photo" data-hero-photo>
   <img
+    class="hero-photo__img is-base"
     src={photo.src}
     srcset="/images/summit-group-800.webp 800w, /images/summit-group-1600.webp 1600w, /images/summit-group.webp 2400w"
     sizes="100vw"
@@ -30,21 +32,147 @@ const photo = hero.photo;
     decoding="async"
     style={photo.objectPosition ? `object-position:${photo.objectPosition}` : undefined}
   />
+  {/* Read by the script only. Keeps the frame list in the data layer instead
+      of hardcoded in JS, and costs one attribute rather than N requests. */}
+  <script
+    is:inline
+    type="application/json"
+    data-hero-frames
+    set:html={JSON.stringify(
+      ambient.map((p) => ({ src: p.src, pos: p.objectPosition ?? null }))
+    )}
+  />
 </Reveal>
 
 <style>
   .hero-photo {
+    position: relative;
     margin: 0;
     width: 100%;
     background: var(--photo-ground);
     overflow: hidden;
   }
 
-  .hero-photo img {
+  .hero-photo__img {
     display: block;
     width: 100%;
     height: clamp(300px, 48vw, 600px);
     object-fit: cover;
     filter: var(--photo-tint);
   }
+
+  /* The base image stays in flow and defines the band height, so a crossfade
+     can never shift layout. Added frames stack on top of it. */
+  .hero-photo__img.is-frame {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-photo__img.is-frame {
+      transition: opacity 2s ease-in-out;
+    }
+  }
+
+  .hero-photo__img.is-frame[data-on] {
+    opacity: 1;
+  }
 </style>
+
+<script>
+  (() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const figure = document.querySelector<HTMLElement>('[data-hero-photo]');
+    if (!figure) return;
+    const holder = figure.querySelector<HTMLScriptElement>('[data-hero-frames]');
+    const base = figure.querySelector<HTMLImageElement>('.is-base');
+    if (!holder || !base) return;
+
+    let frames: Array<{ src: string; pos: string | null }> = [];
+    try {
+      frames = JSON.parse(holder.textContent || '[]');
+    } catch {
+      return;
+    }
+    if (!frames.length) return;
+
+    const HOLD_MS = 7000; // how long a frame rests before handing over
+    const FADE_MS = 2000; // length of the crossfade itself
+
+    /**
+     * Build the extra frames. Only ever called from idle time after `load`,
+     * so these requests cannot compete with the LCP image for bandwidth.
+     * Putting them in the markup as lazy images would NOT have been enough:
+     * the hero is in the viewport, so the browser would fetch them during the
+     * initial load anyway.
+     */
+    const build = () => {
+      const nodes = frames.map((f) => {
+        const img = document.createElement('img');
+        img.className = 'hero-photo__img is-frame';
+        img.src = f.src;
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        // Decorative duplicates of an idea the base image already names, so
+        // they carry no accessible name. A screen reader should not announce
+        // three photos where a sighted visitor experiences one.
+        img.alt = '';
+        img.setAttribute('aria-hidden', 'true');
+        if (f.pos) img.style.objectPosition = f.pos;
+        figure.appendChild(img);
+        return img;
+      });
+
+      const order: Array<HTMLImageElement | null> = [null, ...nodes];
+      let i = 0;
+      let timer = 0;
+      let running = false;
+
+      const step = () => {
+        const prev = order[i];
+        i = (i + 1) % order.length;
+        const next = order[i];
+        if (next) next.setAttribute('data-on', '');
+        // Hold the outgoing frame until the incoming one has covered it,
+        // otherwise the base photo flashes through the gap between them.
+        if (prev) window.setTimeout(() => prev.removeAttribute('data-on'), FADE_MS);
+      };
+
+      const start = () => {
+        if (running) return;
+        running = true;
+        timer = window.setInterval(step, HOLD_MS);
+      };
+      const stop = () => {
+        running = false;
+        if (timer) window.clearInterval(timer);
+        timer = 0;
+      };
+
+      // Do not burn a timer while the hero is off screen.
+      if (typeof IntersectionObserver === 'undefined') {
+        start();
+        return;
+      }
+      const io = new IntersectionObserver(
+        (entries) => entries.forEach((e) => (e.isIntersecting ? start() : stop())),
+        { threshold: 0.15 }
+      );
+      io.observe(figure);
+    };
+
+    const idle = () => {
+      const ric = (window as any).requestIdleCallback as
+        | ((cb: () => void, opts?: { timeout: number }) => number)
+        | undefined;
+      if (ric) ric(build, { timeout: 3000 });
+      else window.setTimeout(build, 1200);
+    };
+
+    if (document.readyState === 'complete') idle();
+    else window.addEventListener('load', idle, { once: true });
+  })();
+</script>
