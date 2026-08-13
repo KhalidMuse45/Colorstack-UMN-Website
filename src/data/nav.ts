@@ -40,6 +40,16 @@ export const connectNav: NavLink[] = [
   { href: 'https://www.linkedin.com/company/colorstackumn/', label: 'LinkedIn' },
 ];
 
+/** Footer column 4. The people who built this site, credited by name and
+ *  linked to their GitHub profile. External, so same ↗ treatment as Connect.
+ *  Names and handles come from the owner; no roles or dates are claimed
+ *  because nothing in this repo sources them. */
+export const contributorNav: NavLink[] = [
+  { href: 'https://github.com/Mulla759', label: 'Abdullahi Abdi' },
+  { href: 'https://github.com/hudeifi', label: 'Hudeifi Abdihakin' },
+  { href: 'https://github.com/KhalidMuse45', label: 'Khalid Muse' },
+];
+
 /** True for anything that leaves the site and should get the ↗ marker. */
 export const isExternal = (href: string): boolean =>
   href.startsWith('http') || href.startsWith('mailto:');
