@@ -35,7 +35,7 @@ Spawn → inject → wait → collect:
   herdr pane split 3-1 --direction down
   herdr pane run 3-N "claude"
   herdr agent prompt 3-N "<the delegation envelope from ORCHESTRATION.md §3>" --wait
-  herdr agent wait 3-N --status done --timeout 900
+  herdr agent wait 3-N --until done --timeout 900000
   herdr pane read 3-N --source recent --lines 200
 
 Rules:

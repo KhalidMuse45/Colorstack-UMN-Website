@@ -84,6 +84,22 @@ Goal was navigability, not architecture. Nothing was rewritten, only relocated.
 
 **Deleted: `public/images/hudeifi-abdihakin.jpg`.** Referenced by nothing in `src/` or `public/`; the `index.html` that used it was removed in slice 1. It is also the only person-identifying image in the repo and this ledger already flagged its consent as unconfirmed, so deletion is the safe default rather than a loss. Recoverable with `git checkout <sha>^ -- public/images/hudeifi-abdihakin.jpg` if the chapter confirms consent and wants it back.
 
+### Landing polish outcome (2026-08-13)
+
+**LCP 4378ms → 1744ms, under the 2000ms budget.** Render delay 3089ms → 185ms, CLS still 0.00, and the RenderBlocking insight is gone from the trace entirely. Same rig throughout: production build, 390x844, Slow 4G, 4x CPU.
+
+Three changes, each on its own branch, stacked into `revamp/landing-polish`:
+
+1. **`polish/reveal-abovefold` did essentially all of it.** Reveals no longer arm when the element is already on screen. Worth 2361ms on its own.
+2. **`polish/inline-css`** removed both render-blocking stylesheets. Raw `dist/index.html` grows 47,401 → 84,355 bytes, which reads as a bad trade until measured gzipped: the landing page goes from 16,920 bytes across three requests to 16,265 in one. Smaller, and two round trips shorter. **Caveat:** inlined CSS is not shared or cached across navigations. Fine at two routes; re-measure if this becomes a many-page site with repeat visitors.
+3. **`polish/hero-srcset`** added 800w/1600w variants. Honest accounting: **this did not move LCP.** It was scoped against the theory in `docs/NEXT.md` that the 404KB file was too heavy, and that theory was wrong. Kept because it is still a real reduction in bytes and decode work (at DPR 3 the browser now takes the 243KB variant, at DPR 1 the 89KB one), but it is not what fixed the budget.
+
+**Fifth bug in the vendored React reference: `ProgressiveBlur`'s ramp runs the wrong way.** `design/components/motion/ProgressiveBlur.jsx.txt:9` computes `toward = direction === 'top' ? 'to bottom' : 'to top'`. Layer `i` is masked to the i-th band along that line and carries `blur(base * 1.6^i)`, so band 0 is the weakest and the last band the strongest. With `to top`, 0% is the bottom, which puts the weakest blur under the caption and the strongest hard against the sharp photo above it. On a tile at `blurIntensity: 6` the top band is a 63px blur butted directly against an unblurred photo, so it rendered as a visible seam across the tile with a flat smudge beneath. Our port was faithful, so the bug came across intact. Fixed by naming the direction of travel instead: `direction: 'bottom'` now ramps `to bottom`, clear at the top edge and deepening into the caption. Route upstream for v3 along with the other four.
+
+**Process note on delegating to free models.** Two opencode panes, each in its own worktree. DeepSeek V4 Flash completed both tickets it was given and its work passed review. Nemotron 3 Ultra made the correct one-line edit, then span for twenty minutes and **reverted its own work**, committing nothing and reporting nothing about it. That was caught only because `dist/index.html` came out byte-identical to the baseline; the pane itself showed no sign. **Verify delegated work against the filesystem and the build output, never against the agent's own report.** The ticket was then done by hand in a minute.
+
+Also: `CLAUDE.md` documents `herdr agent wait <pane> --status done`. There is no `--status` flag; it is `--until`, and it accepts `idle`, `working`, `blocked`, `done`, `unknown`. Corrected in the constitution.
+
 ### Landing polish recon (2026-08-13) — measured, not guessed
 
 Ran the audits `docs/NEXT.md` section 2 asked for. Measured against the **production build** (`astro preview`), not the dev server, because dev has no minification and injects a toolbar.
