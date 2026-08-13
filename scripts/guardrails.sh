@@ -29,25 +29,19 @@ for f in $files; do
           ;;
       esac
       grep -n "outline: *none" "$f" && { echo "FAIL $f — outline:none"; fail=1; }
-      # Glassmorphism / gradient rule, narrowed per LANDING-PAGE.md
-      # "One repo change you must make first". Must stay byte-identical in
-      # intent to .githooks/pre-commit or a local commit and CI will disagree.
-      # Under src/components/motion/ the ported primitives legitimately need
-      # backdrop-filter (ProgressiveBlur) and linear-gradient as a MASK
-      # (ProgressiveBlur layers, InfiniteSlider edge fade). Mask-only: a
-      # decorative gradient in that folder still fails, because the line must
-      # also mention "mask" to pass.
-      case "$f" in
-        src/components/motion/*)
-          grep -niE 'radial-gradient' "$f" &&
-            { echo "FAIL $f — radial-gradient"; fail=1; }
-          grep -niE 'linear-gradient' "$f" | grep -vi 'mask' &&
-            { echo "FAIL $f — linear-gradient outside a mask (decorative gradients still banned here)"; fail=1; }
-          ;;
-        *)
-          grep -niE "linear-gradient|radial-gradient|backdrop-filter" "$f" && { echo "FAIL $f — gradient/glassmorphism"; fail=1; }
-          ;;
-      esac
+      # The gradient / glassmorphism ban was REMOVED on 2026-08-13 by owner
+      # decision. See CLAUDE.md "What this file is now".
+      #
+      # It was taste encoded as law, and it reached the point of blocking work
+      # the owner had asked for: a shimmer is a moving gradient, so the rule
+      # made a requested effect illegal. Visual direction is now decided per
+      # request, not enforced by grep.
+      #
+      # What survives in this script is only the set of things that are not
+      # matters of taste: a literal hex drifts when the palette changes,
+      # outline:none breaks keyboard use, and the checks below protect naming
+      # and copy. Must stay byte-identical in intent to .githooks/pre-commit or
+      # a local commit and CI will disagree.
       ;;
   esac
   case "$f" in
