@@ -32,6 +32,19 @@ type Props = HTMLAttributes<'div'> & {
   stack?: boolean | string;
   /** Crossfade duration in ms */
   transition?: number | string;
+  /**
+   * Slot-machine mode. Instead of crossfading, each phrase is split into
+   * per-character reels: the outgoing glyphs roll up out of a clipping mask
+   * while the incoming ones roll up into it, staggered left to right.
+   *
+   * Text only. A stacked photo roll has no characters to split, so `roll` and
+   * `stack` are mutually exclusive and `stack` wins.
+   */
+  roll?: boolean | string;
+  /** Seconds between adjacent glyphs in roll mode */
+  rollStagger?: number | string;
+  /** Seconds one glyph takes to travel in roll mode */
+  rollDuration?: number | string;
   /** String only. It is merged with a custom property, so an object style
    *  would stringify to garbage; narrowing it here makes that a build error. */
   style?: string;
@@ -41,6 +54,9 @@ const {
   interval = 2.6,
   stack = false,
   transition = 520,
+  roll = false,
+  rollStagger = 0.05,
+  rollDuration = 0.3,
   class: className,
   style,
   ...rest
@@ -58,10 +74,21 @@ const stacked = stack === true || stack === 'true' || stack === '';
 const seconds = num(interval, 2.6);
 const dur = num(transition, 520);
 
+// stack wins: a photo roll has no glyphs to split into reels.
+const rolling = !stacked && (roll === true || roll === 'true' || roll === '');
+const rollStep = num(rollStagger, 0.05);
+const rollTravel = num(rollDuration, 0.3);
+
 // A stacked roll holds images or blocks, so it needs a block-level root. The
 // inline rotator has to be able to sit inside a heading or a paragraph.
 const Root = stacked ? 'div' : 'span';
-const inlineStyle = [`--tloop-dur:${dur}ms`, style].filter(Boolean).join(';');
+const inlineStyle = [
+  `--tloop-dur:${dur}ms`,
+  rolling ? `--tloop-roll-dur:${rollTravel}s` : '',
+  style,
+]
+  .filter(Boolean)
+  .join(';');
 ---
 
 <Root
@@ -70,6 +97,8 @@ const inlineStyle = [`--tloop-dur:${dur}ms`, style].filter(Boolean).join(';');
   data-textloop
   data-interval={seconds}
   data-stack={stacked ? '' : undefined}
+  data-roll={rolling ? '' : undefined}
+  data-roll-stagger={rolling ? rollStep : undefined}
   {...rest}
 ><slot /></Root>
 
@@ -126,6 +155,63 @@ const inlineStyle = [`--tloop-dur:${dur}ms`, style].filter(Boolean).join(';');
       transform: none;
       filter: blur(0);
     }
+
+    /* ── Slot-machine mode ────────────────────────────────────────────────
+       The frame itself stops moving and stops blurring: in roll mode the
+       motion belongs to the glyphs, and leaving the frame transition on top
+       of it double-animates every character. */
+    [data-textloop][data-roll][data-motion='in'] > .tloop-frame {
+      transform: none;
+      filter: none;
+      transition: none;
+    }
+
+    /* Only the phrase arriving and the phrase leaving may be seen. Every
+       frame shares one grid cell, so a longer idle phrase would otherwise
+       poke out past the ends of a shorter active one: the reels are clipped
+       vertically by their masks, not horizontally. Opacity switches instantly
+       rather than fading, because in roll mode the travel is the transition
+       and a crossfade on top of it reads as a smear. */
+    [data-textloop][data-roll][data-motion='in'] > .tloop-frame[data-loop-active],
+    [data-textloop][data-roll][data-motion='in'] > .tloop-frame[data-loop-leaving] {
+      opacity: 1;
+    }
+
+    /* A reel is only as tall as one glyph, and it clips. That clipping is what
+       makes a character look like it is travelling past a window rather than
+       sliding around the page. */
+    [data-textloop][data-roll] .tloop-mask {
+      display: inline-block;
+      overflow: hidden;
+      vertical-align: bottom;
+    }
+
+    [data-textloop][data-roll] .tloop-word {
+      display: inline-block;
+      white-space: nowrap;
+    }
+
+    [data-textloop][data-roll] .tloop-char {
+      display: inline-block;
+      transition: transform var(--tloop-roll-dur, 0.3s) cubic-bezier(0.175, 0.885, 0.32, 1.1);
+      will-change: transform;
+    }
+
+    /* Waiting below the window, ready to roll up into it. */
+    [data-textloop][data-roll] .tloop-frame:not([data-loop-active]) .tloop-char {
+      transform: translateY(100%);
+    }
+
+    [data-textloop][data-roll] .tloop-frame[data-loop-active] .tloop-char {
+      transform: translateY(0);
+    }
+
+    /* The phrase being replaced leaves upward, so the reel always travels one
+       way. A character that dropped back down would read as a correction, not
+       a spin. */
+    [data-textloop][data-roll] .tloop-frame[data-loop-leaving] .tloop-char {
+      transform: translateY(-100%);
+    }
   }
 </style>
 
@@ -133,6 +219,70 @@ const inlineStyle = [`--tloop-dur:${dur}ms`, style].filter(Boolean).join(';');
   // Module scope: runs ONCE per page. Every instance gets its own timer and
   // its own closure, so two loops on a page never share state.
   const teardown: Array<() => void> = [];
+
+  // The frontmatter helper of the same name runs at build time and is not in
+  // scope here. Dataset values are always strings, so parse defensively.
+  const num = (value: string | undefined, fallback: number): number => {
+    if (value === undefined || value === '') return fallback;
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : fallback;
+  };
+
+  /**
+   * Split a frame's text into per-character reels.
+   *
+   * Deliberately the same shape as TextRoll.astro's `arm`, and for the same
+   * two reasons that cost real time there:
+   *   - characters are grouped into words, because every glyph is an
+   *     inline-block and without a word wrapper the browser will break a line
+   *     between any two letters ("you / r people.");
+   *   - Array.from per token, so surrogate pairs survive the regroup.
+   *
+   * The stagger index runs across the whole phrase rather than restarting at
+   * each space, so the reel reads as one left-to-right sweep.
+   *
+   * Returns false when there is nothing to split, in which case the frame is
+   * left exactly as the server rendered it.
+   */
+  function reel(frame: HTMLElement, step: number): boolean {
+    const source = (frame.textContent || '').replace(/\s+/g, ' ').trim();
+    if (source === '') return false;
+
+    const holder = document.createDocumentFragment();
+    const tokens = source.split(/(\s+)/).filter((t) => t !== '');
+    let i = 0;
+
+    for (const token of tokens) {
+      if (/^\s+$/.test(token)) {
+        holder.appendChild(document.createTextNode(' '));
+        continue;
+      }
+
+      const word = document.createElement('span');
+      word.className = 'tloop-word';
+
+      for (const ch of Array.from(token)) {
+        const mask = document.createElement('span');
+        mask.className = 'tloop-mask';
+        const glyph = document.createElement('span');
+        glyph.className = 'tloop-char';
+        glyph.textContent = ch;
+        glyph.style.transitionDelay = `${i * step}s`;
+        i += 1;
+        mask.appendChild(glyph);
+        word.appendChild(mask);
+      }
+
+      holder.appendChild(word);
+    }
+
+    // The split markup is decorative; the frame keeps its own accessible name
+    // via the untouched aria-label set below.
+    frame.setAttribute('aria-label', source);
+    frame.textContent = '';
+    frame.appendChild(holder);
+    return true;
+  }
 
   function setup(root: HTMLElement) {
     // root.children, never root.childNodes. The newlines an author leaves
@@ -149,6 +299,16 @@ const inlineStyle = [`--tloop-dur:${dur}ms`, style].filter(Boolean).join(';');
     let paused = false;
     let timer = 0;
 
+    // Roll mode splits every frame into glyph reels before anything is armed.
+    // If a frame turns out to have no text to split, fall back to the
+    // crossfade rather than arming a half-built reel.
+    const rollStep = num(root.dataset.rollStagger, 0.05);
+    const rolling =
+      root.hasAttribute('data-roll') && frames.every((f) => reel(f, rollStep));
+    if (root.hasAttribute('data-roll') && !rolling) {
+      root.removeAttribute('data-roll');
+    }
+
     frames.forEach((frame, i) => {
       frame.classList.add('tloop-frame');
       if (i === 0) {
@@ -161,8 +321,19 @@ const inlineStyle = [`--tloop-dur:${dur}ms`, style].filter(Boolean).join(';');
     root.setAttribute('data-motion', 'in');
 
     const advance = () => {
-      frames[index].removeAttribute('data-loop-active');
-      frames[index].setAttribute('aria-hidden', 'true');
+      const leaving = frames[index];
+      leaving.removeAttribute('data-loop-active');
+      leaving.setAttribute('aria-hidden', 'true');
+      // The outgoing reel keeps travelling upward while the incoming one
+      // arrives. Without this the old glyphs would snap back down to their
+      // waiting position and read as a stutter.
+      if (rolling) {
+        leaving.setAttribute('data-loop-leaving', '');
+        window.setTimeout(
+          () => leaving.removeAttribute('data-loop-leaving'),
+          Math.max(0, ms - 40)
+        );
+      }
       index = (index + 1) % frames.length;
       frames[index].setAttribute('data-loop-active', '');
       frames[index].removeAttribute('aria-hidden');

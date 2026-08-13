@@ -26,7 +26,7 @@ import { mission } from '../../data/landing';
 
   <Reveal class="rotator" index={1}>
     <span>{mission.rotatorPrefix}</span>
-    <TextLoop interval={2.2} class="rotator-loop">
+    <TextLoop interval={1.4} roll rollStagger={0.05} rollDuration={0.3} class="rotator-loop">
       {mission.rotator.map((word) => <span>{word}</span>)}
     </TextLoop>
   </Reveal>
