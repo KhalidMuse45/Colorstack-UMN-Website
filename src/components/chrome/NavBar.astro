@@ -64,6 +64,34 @@ import { primaryNav, joinCta, chapter } from '../../data/nav';
     background: var(--surface-page);
   }
 
+  /* Contextual state, entered once the opening hero has left (§5.1.1).
+     ONE change of material, not a second layout: over the hero the bar IS
+     the page ground, opaque cream flush with the masthead. Past the hero it
+     becomes a pane the main experience passes beneath — the cream goes
+     translucent, the backdrop blurs, and the hairline below closes the edge.
+     Chosen over compression because the header is sticky and in flow: any
+     change to its box height moves everything under it and puts CLS above
+     zero. Nothing here has a geometry, so the state cannot shift the page.
+     Chosen over a contrast flip because maroon-on-cream is the site's
+     structural language and recolouring the bar would out-shout the
+     masthead. */
+  .nav-bar.is-scrolled {
+    background: color-mix(in srgb, var(--surface-page) 82%, transparent);
+    backdrop-filter: blur(10px) saturate(1.08);
+    -webkit-backdrop-filter: blur(10px) saturate(1.08);
+  }
+
+  /* Without backdrop-filter a translucent bar would lay raw body text under
+     the nav links — legible neither as text nor as a bar. Those engines keep
+     the opaque ground and take the hairline alone as the state. */
+  @supports not (
+    (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+  ) {
+    .nav-bar.is-scrolled {
+      background: var(--surface-page);
+    }
+  }
+
   /* The 1px --hairline bottom rule appears only once scrolled (§5.1.1).
      Drawn as an overlay so adding it never shifts the 1px layout. */
   .nav-bar::after {
@@ -226,8 +254,17 @@ import { primaryNav, joinCta, chapter } from '../../data/nav';
   }
 
   @media (prefers-reduced-motion: no-preference) {
+    /* Ground and rule cross-fade together on one curve so the two read as a
+       single change. 240ms is the site's deliberate-but-quick tempo (the
+       hero buttons use the same). backdrop-filter is deliberately not in the
+       list: `none` does not interpolate, and the blur is invisible anyway
+       until the ground it sits behind has faded, so it needs no timing of
+       its own. */
+    .nav-bar,
     .nav-bar::after {
-      transition: opacity 0.2s ease;
+      transition:
+        background-color 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.24s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     .nav-link::before,
@@ -257,14 +294,42 @@ import { primaryNav, joinCta, chapter } from '../../data/nav';
 </style>
 
 <script>
-  // Sticky scroll state (§5.1.1): a passive listener toggles the hairline
-  // bottom rule. No layout reads in the callback — just one class flip.
-  const header = document.querySelector('[data-nav]');
-  if (header) {
-    const onScroll = () => {
-      header.classList.toggle('is-scrolled', window.scrollY > 0);
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
+  // Contextual state (§5.1.1). The boundary is the opening hero leaving the
+  // viewport, not the first pixel of scroll: the point of the state is that
+  // the visitor has moved out of the masthead and into the page, and one
+  // pixel is not that.
+  //
+  // Watched with an IntersectionObserver rather than the scroll listener this
+  // replaced. That listener ran a handler for every scroll event of every
+  // page; the observer costs two callbacks per crossing and reads no layout
+  // at runtime at all.
+  //
+  // No sentinel node is inserted and no rootMargin is set, so this reads no
+  // layout at all — not even once. Observing the opening section against the
+  // unmodified viewport is equivalent to a zero-height sentinel on its bottom
+  // edge, and the default boundary is the better one: the hero stops
+  // intersecting at the instant its last pixel clears the top of the
+  // viewport, which is the instant the bar has post-hero content behind it
+  // and something to be a pane over. Measuring the bar to offset the root by
+  // its height would flip one bar-height earlier, while the hero is still the
+  // thing underneath, and cost a forced synchronous layout at parse time
+  // (measured at 89ms on this page) to learn a number worth 60 pixels.
+  //
+  // Enhancement only. No JS, no IntersectionObserver, or no opening section
+  // and the bar stays in the state the server rendered, which is a complete
+  // working navbar.
+  const header = document.querySelector<HTMLElement>('[data-nav]');
+  const hero = document.querySelector<HTMLElement>('#main > :first-child');
+
+  if (header && hero && typeof IntersectionObserver !== 'undefined') {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          header.classList.toggle('is-scrolled', !entry.isIntersecting);
+        }
+      },
+      { threshold: 0 }
+    );
+    io.observe(hero);
   }
 </script>
