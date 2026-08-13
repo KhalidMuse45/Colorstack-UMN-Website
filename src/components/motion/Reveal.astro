@@ -80,7 +80,9 @@ const merged = [step > 0 ? `--rv-delay:${step}s` : '', style].filter(Boolean).jo
   (() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    const nodes = document.querySelectorAll<HTMLElement>('[data-reveal],[data-wipe]');
+    const nodes = Array.from(
+      document.querySelectorAll<HTMLElement>('[data-reveal],[data-wipe]')
+    );
     if (!nodes.length) return;
 
     const show = (el: HTMLElement) => {
@@ -88,16 +90,28 @@ const merged = [step > 0 ? `--rv-delay:${step}s` : '', style].filter(Boolean).jo
     };
 
     try {
-      nodes.forEach((el) => {
+      const inViewport = (el: HTMLElement): boolean => {
+        const rect = el.getBoundingClientRect();
+        return rect.top < window.innerHeight && rect.bottom > 0;
+      };
+      // Elements already on screen when the script runs are the visible state
+      // the server rendered. Arming one would hide it and delay its first
+      // paint until the reveal transition, so skip them entirely: not armed,
+      // not observed, not covered by the failsafe.
+      const toReveal = nodes.filter((el) => !inViewport(el));
+      if (!toReveal.length) return;
+
+      toReveal.forEach((el) => {
         el.dataset.rv = 'armed';
       });
 
       // From here the content is hidden, so every exit path must reveal.
-      const failsafe = window.setTimeout(() => nodes.forEach(show), 2500);
+      // The failsafe covers every element that got armed.
+      const failsafe = window.setTimeout(() => toReveal.forEach(show), 2500);
 
       if (typeof IntersectionObserver === 'undefined') {
         window.clearTimeout(failsafe);
-        nodes.forEach(show);
+        toReveal.forEach(show);
         return;
       }
 
@@ -111,7 +125,7 @@ const merged = [step > 0 ? `--rv-delay:${step}s` : '', style].filter(Boolean).jo
         },
         { rootMargin: '0px 0px -6% 0px', threshold: 0.06 }
       );
-      nodes.forEach((el) => io.observe(el));
+      toReveal.forEach((el) => io.observe(el));
     } catch {
       nodes.forEach(show);
     }
