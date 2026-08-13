@@ -15,4 +15,4 @@
 
 ## Ledger
 
-- [ ] Work logged in `HANDOFF-LOG.md` — deviations with justification, missing data under `## Blocked`
+- [ ] Work logged in `docs/CONTENT-NEEDED.md` — deviations with justification, missing data under `## Blocked`

@@ -1,3 +1,0 @@
-# Paths exempt from .githooks/pre-commit. One path per line, exact match.
-# Every entry MUST have a justification in HANDOFF-LOG.md.
-# (empty — the blanket styles.css exemption was removed in slice 1)

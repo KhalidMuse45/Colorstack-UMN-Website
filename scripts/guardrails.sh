@@ -7,17 +7,33 @@
 # Checked (for every non-excluded tracked file):
 #   1. no literal hex outside the token layer (src/styles/*.css only)
 #   2. no `outline: none`
-#   3. no gradients / backdrop-filter (glassmorphism)
-#   4. ColorStack casing — capital C, capital S, always
-# Excluded: vendored bundle, orchestration docs, CI files, this script, and any
-# path allowlisted in .guardrail-allow.
+#   3. ColorStack casing — capital C, capital S, always
+#   4. no em dashes in rendered copy
+# Excluded: the vendored design drop, CI files, and this script.
 set -u
 fail=0
 files=$(git ls-files |
-  grep -Ev '^(design/|\.githooks/|docs/history/|\.claude/|\.github/|scripts/|CLAUDE\.md$|HANDOFF-LOG\.md$)')
+  grep -Ev '^(design/|\.githooks/|\.claude/|\.github/|scripts/|CLAUDE\.md$)')
+
+# A check that cannot fail is not a check.
+#
+# If `git ls-files` returns nothing, the loop below scans nothing and the
+# script exits 0, reporting a pass it never performed. That is not
+# hypothetical: run from a git worktree under WSL bash, git cannot resolve the
+# worktree's absolute gitdir pointer, returns an empty list, and this script
+# silently self-passes. Every "lint exit: 0" from such a run is meaningless.
+#
+# So refuse to report success on an empty scan.
+count=$(printf '%s\n' "$files" | grep -c . || true)
+if [ "$count" -lt 10 ]; then
+  echo "FAIL guardrails scanned only $count files, which cannot be right."
+  echo "--> git ls-files returned nothing usable. If you are in a worktree,"
+  echo "    run this under Git Bash rather than WSL bash."
+  exit 1
+fi
+
 for f in $files; do
   [ -f "$f" ] || continue
-  if [ -f .guardrail-allow ] && grep -qxF "$f" .guardrail-allow; then continue; fi
   case "$f" in
     *.css|*.astro|*.jsx|*.tsx|*.svelte|*.vue)
       case "$f" in
@@ -57,5 +73,5 @@ for f in $files; do
       ;;
   esac
 done
-[ "$fail" = 1 ] && echo "--> fix it, or allowlist the path in .guardrail-allow and log why in HANDOFF-LOG.md"
+[ "$fail" = 1 ] && echo "--> fix it, or explain the exception in the pull request"
 exit $fail
