@@ -56,7 +56,23 @@ function css(v?: string | Record<string, string | number>): string {
 // Astro can hand a prop over as a string. Coerce before doing arithmetic.
 const n = Math.max(2, Number(layers) || 6);
 const base = Number(blurIntensity) || 3;
-const toward = direction === 'top' ? 'to bottom' : 'to top';
+/**
+ * The ramp has to run TOWARD the blurred edge, not away from it.
+ *
+ * Layer i is masked to the i-th band along the gradient line and carries
+ * blur(base * 1.6^i), so band 0 is the weakest blur and the last band the
+ * strongest. In a mask ramp pointed `to top`, 0% sits at the bottom, so the
+ * vendored reference (`design/components/motion/ProgressiveBlur.jsx.txt:9`)
+ * put its weakest blur at the bottom and its strongest at the top, backwards
+ * for `direction: 'bottom'`. That stacked the heaviest blur hard against the
+ * sharp photo above and left the caption sitting on the weakest, which read as
+ * a seam across the tile with a flat smudge under it.
+ *
+ * Naming it in the direction of travel instead: for `direction: 'bottom'` the
+ * gradient runs `to bottom`, so 0% is the clear top edge and the ramp deepens
+ * into the caption. Reference bug, logged in HANDOFF-LOG.md.
+ */
+const toward = direction === 'top' ? 'to top' : 'to bottom';
 const show = visible === false || visible === 'false' ? 0 : 1;
 
 const stops = (j: number) => Math.max(0, Math.min(100, (j / n) * 100));

@@ -84,6 +84,52 @@ Goal was navigability, not architecture. Nothing was rewritten, only relocated.
 
 **Deleted: `public/images/hudeifi-abdihakin.jpg`.** Referenced by nothing in `src/` or `public/`; the `index.html` that used it was removed in slice 1. It is also the only person-identifying image in the repo and this ledger already flagged its consent as unconfirmed, so deletion is the safe default rather than a loss. Recoverable with `git checkout <sha>^ -- public/images/hudeifi-abdihakin.jpg` if the chapter confirms consent and wants it back.
 
+### Landing polish outcome (2026-08-13)
+
+**LCP 4378ms → 1744ms, under the 2000ms budget.** Render delay 3089ms → 185ms, CLS still 0.00, and the RenderBlocking insight is gone from the trace entirely. Same rig throughout: production build, 390x844, Slow 4G, 4x CPU.
+
+Three changes, each on its own branch, stacked into `revamp/landing-polish`:
+
+1. **`polish/reveal-abovefold` did essentially all of it.** Reveals no longer arm when the element is already on screen. Worth 2361ms on its own.
+2. **`polish/inline-css`** removed both render-blocking stylesheets. Raw `dist/index.html` grows 47,401 → 84,355 bytes, which reads as a bad trade until measured gzipped: the landing page goes from 16,920 bytes across three requests to 16,265 in one. Smaller, and two round trips shorter. **Caveat:** inlined CSS is not shared or cached across navigations. Fine at two routes; re-measure if this becomes a many-page site with repeat visitors.
+3. **`polish/hero-srcset`** added 800w/1600w variants. Honest accounting: **this did not move LCP.** It was scoped against the theory in `docs/NEXT.md` that the 404KB file was too heavy, and that theory was wrong. Kept because it is still a real reduction in bytes and decode work (at DPR 3 the browser now takes the 243KB variant, at DPR 1 the 89KB one), but it is not what fixed the budget.
+
+**Fifth bug in the vendored React reference: `ProgressiveBlur`'s ramp runs the wrong way.** `design/components/motion/ProgressiveBlur.jsx.txt:9` computes `toward = direction === 'top' ? 'to bottom' : 'to top'`. Layer `i` is masked to the i-th band along that line and carries `blur(base * 1.6^i)`, so band 0 is the weakest and the last band the strongest. With `to top`, 0% is the bottom, which puts the weakest blur under the caption and the strongest hard against the sharp photo above it. On a tile at `blurIntensity: 6` the top band is a 63px blur butted directly against an unblurred photo, so it rendered as a visible seam across the tile with a flat smudge beneath. Our port was faithful, so the bug came across intact. Fixed by naming the direction of travel instead: `direction: 'bottom'` now ramps `to bottom`, clear at the top edge and deepening into the caption. Route upstream for v3 along with the other four.
+
+**Process note on delegating to free models.** Two opencode panes, each in its own worktree. DeepSeek V4 Flash completed both tickets it was given and its work passed review. Nemotron 3 Ultra made the correct one-line edit, then span for twenty minutes and **reverted its own work**, committing nothing and reporting nothing about it. That was caught only because `dist/index.html` came out byte-identical to the baseline; the pane itself showed no sign. **Verify delegated work against the filesystem and the build output, never against the agent's own report.** The ticket was then done by hand in a minute.
+
+Also: `CLAUDE.md` documents `herdr agent wait <pane> --status done`. There is no `--status` flag; it is `--until`, and it accepts `idle`, `working`, `blocked`, `done`, `unknown`. Corrected in the constitution.
+
+### Landing polish recon (2026-08-13) — measured, not guessed
+
+Ran the audits `docs/NEXT.md` section 2 asked for. Measured against the **production build** (`astro preview`), not the dev server, because dev has no minification and injects a toolbar.
+
+**Lighthouse, mobile, navigation mode:** Accessibility **100**, Best Practices **100**, SEO **92**, Agentic Browsing **100**. 53 passed, 1 failed. The single failure is `link-text` on a "Learn more" link pointing at `docs.astro.build` — that is the **Astro dev toolbar**, not our markup. Confirmed absent from `dist/`, so it cannot reach production. Treat Lighthouse as clean.
+
+**Keyboard traversal:** clean, no ticket needed. 34 focusable elements, "Skip to content" is the first tab stop, zero positive `tabindex`, nothing zero-width-but-focusable.
+
+**CLS: 0.00.** The `width`/`height` discipline on images is working.
+
+**LCP: 4378 ms against the 2000 ms budget in `UX-SPEC.md` section 8.** Measured at 390x844, Slow 4G, 4x CPU. This is the one real defect, and **the cause is not what `docs/NEXT.md` predicted.** NEXT.md assumed the 404KB hero file was too heavy and suggested a smaller variant to cut download. The trace says download was **3 ms**. The breakdown:
+
+| Subpart | Time | Share |
+| --- | --- | --- |
+| TTFB | 10 ms | 0.2% |
+| Resource load delay | 656 ms | 15.0% |
+| Resource load duration | 623 ms | 14.2% |
+| **Element render delay** | **3089 ms** | **70.5%** |
+
+The LCP element is `summit-group.webp` (the hero photo), confirmed by node id, not the `TextRoll` h1. Two real contributors sit inside that render delay:
+
+1. **535 ms of main-thread image decode**, because a 2400px-wide file is decoded into a 390px viewport. That is a ~6x oversupply and it is CPU cost, not network cost, so it reproduces on any device regardless of bandwidth.
+2. **A 388 ms layout update across 399 of 399 nodes.** DOM is only 410 elements total, so size is not the problem; the per-character `.troll-char` spans that `TextRoll` emits are what makes one layout pass that expensive.
+
+Separately, two render-blocking stylesheets cost an estimated **1097 ms of FCP**, each downloading in under 1 ms. Almost all of that is round trip, not bytes.
+
+**Honesty note on the numbers.** These came off a local http/1.1 server under synthetic throttling. The *CPU-bound* findings (decode, layout) transfer to real devices unchanged. The *queuing* findings (the stylesheet round trips) are exaggerated by http/1.1 on localhost and will be smaller on GitHub Pages over h2. The stylesheet ticket is therefore worth doing but should not be sold as a guaranteed 1.1s win.
+
+**Delegation.** Two tickets fanned out to opencode panes, each in its own `git worktree` so they cannot collide on one checkout — the failure mode this log already records under the parallel-session note. `node_modules` is a directory junction into the main checkout rather than a per-worktree `npm ci`, which is safe only because all three trees sit on the same commit and therefore the same `package-lock.json`. Ticket A (hero `srcset`, deepseek v4 flash) on `polish/hero-srcset`; ticket B (`inlineStylesheets`, nemotron 3 ultra) on `polish/inline-css`. Both stack into `revamp/landing-polish`.
+
 ### Verification pass on `main` (2026-08-12, post-merge)
 Ran the dev server against the merged `main` to confirm the landing page is genuinely working before opening new surface area. Everything already on `origin/main`: all seven local branches are fully merged, nothing was unpushed.
 
