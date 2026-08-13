@@ -22,7 +22,7 @@ import { stats, statsAside } from '../../data/landing';
       {
         stats.map((stat, i) => (
           <Reveal class="stat" index={i}>
-            <NumberRoll class="stat-value" duration={0.55} stagger={0.05} spins={3} blur={6} cue>
+            <NumberRoll class="stat-value" duration={0.48} stagger={0.04} spins={3} blur={10} cue>
               {stat.value}
             </NumberRoll>
             <span class="stat-label">{stat.label}</span>
@@ -125,7 +125,7 @@ import { stats, statsAside } from '../../data/landing';
     // part of the arrival rather than a second event queued behind it. Waiting
     // for the reveal to finish first tested at nearly a second of dead air,
     // long enough to read the number before anything happened to it.
-    const OVERLAP_MS = 260;
+    const OVERLAP_MS = 120;
 
     const fire = () => {
       const reels = Array.from(
@@ -143,7 +143,7 @@ import { stats, statsAside } from '../../data/landing';
           window.setTimeout(() => {
             const go = (el as any).nrSpin;
             if (typeof go === 'function') go();
-          }, i * 90);
+          }, i * 70);
         });
       }, settle);
     };

@@ -221,6 +221,24 @@ const merged = [`--nr-dur:${dur}s`, `--nr-blur:${smear}px`, style]
     };
 
     /**
+     * How long a reel may sit parked on 0 before the true value is planted
+     * with no animation.
+     *
+     * Parking at 0 is what makes the count read as a climb, but while parked
+     * the band literally says "0+ Members in the chapter". That is a false
+     * chapter statistic on a sponsor-facing page, which is the one class of
+     * mistake CLAUDE.md treats as non-negotiable, so the window it can be seen
+     * for has to be short rather than merely unlikely.
+     *
+     * 1.2s, not the 8s this first shipped with. The normal path is nowhere
+     * near it: the observer fires and the spin starts ~120ms after build. This
+     * only catches the cases where a spin never arrives at all, and costs
+     * nothing when it fires, because spin() re-parks to 0 and climbs anyway if
+     * the reader scrolls the band into view later.
+     */
+    const PARK_FAILSAFE_MS = 1200;
+
+    /**
      * Replace the text with reels. Returns false when there is nothing to
      * spin, in which case the server text is left exactly as rendered.
      */
@@ -234,6 +252,19 @@ const merged = [`--nr-dur:${dur}s`, `--nr-blur:${smear}px`, style]
 
       // Keep the real value as the accessible name before shredding the text.
       root.setAttribute('aria-label', source);
+
+      // Every reel waits on 0, on screen or not.
+      //
+      // An earlier version only parked when the element was off screen, on the
+      // theory that a visible 0 is a wrong number. In practice the stat band
+      // is usually already inside the viewport when the script runs, so the
+      // guard skipped exactly the case that needed it and the count still
+      // appeared to begin at its final value. Starting from 0 IS the effect.
+      //
+      // Safe because the 0 is never a resting state: a spin follows within a
+      // few hundred ms, and the failsafe below lands the true value outright
+      // if one never arrives.
+      root.setAttribute('data-nr-parked', '');
 
       const frag = document.createDocumentFragment();
       let digitIndex = 0;
@@ -266,12 +297,17 @@ const merged = [`--nr-dur:${dur}s`, `--nr-blur:${smear}px`, style]
           reel.appendChild(d);
         }
 
-        // Start showing the LAST face, which is the true digit. If no
-        // transition ever runs, the number is already correct on screen.
         const landed = -(faces - 1);
-        reel.style.transform = `translateY(${landed}em)`;
         reel.dataset.nrLanded = String(landed);
         reel.dataset.nrDelay = String(lead + digitIndex * step);
+
+        /**
+         * The reel waits on face 0, so the value climbs 0 -> 100 like an
+         * odometer. Waiting on the true digit instead reads as a number that
+         * was already correct and then twitched, which is what this looked
+         * like before.
+         */
+        reel.style.transform = 'translateY(0em)';
 
         slot.appendChild(reel);
         frag.appendChild(slot);
@@ -289,6 +325,27 @@ const merged = [`--nr-dur:${dur}s`, `--nr-blur:${smear}px`, style]
       }
 
       root.setAttribute('data-nr-on', '');
+
+      /**
+       * A parked reel is showing 0, which is not the truth. Everything that
+       * should un-park it is an event that might not arrive: an observer that
+       * never fires, a cue whose sequencer threw, a tab restored from bfcache
+       * already scrolled past. This is the backstop, and it lands the value
+       * with no animation at all rather than leaving a chapter statistic
+       * reading zero.
+       */
+      if (root.hasAttribute('data-nr-parked')) {
+        window.setTimeout(() => {
+          if (!root.hasAttribute('data-nr-parked')) return;
+          root.removeAttribute('data-nr-parked');
+          root.querySelectorAll<HTMLElement>('.nr-reel').forEach((r) => {
+            r.style.transitionDelay = '0s';
+            r.style.transform = `translateY(${r.dataset.nrLanded || 0}em)`;
+            r.removeAttribute('data-nr-fast');
+          });
+        }, PARK_FAILSAFE_MS);
+      }
+
       return true;
     }
 
@@ -302,41 +359,106 @@ const merged = [`--nr-dur:${dur}s`, `--nr-blur:${smear}px`, style]
         num(getComputedStyle(root).getPropertyValue('--nr-dur').trim().replace('s', ''), 0.55) *
         1000;
 
+      // Cancel anything still in flight from a previous spin, so a re-trigger
+      // does not race its own timers.
+      const pending = (root as any).nrTimers as number[] | undefined;
+      if (pending) pending.forEach((t) => window.clearTimeout(t));
+      const timers: number[] = [];
+      (root as any).nrTimers = timers;
+
       root.removeAttribute('data-nr-spinning');
       root.removeAttribute('data-nr-locked');
+      // It is about to be shown its real value the honest way.
+      root.removeAttribute('data-nr-parked');
 
-      // Jump to the top of the reel with no transition, then release. Two
-      // frames, because setting both in one frame collapses to no movement.
+      // Jump back to the top of the reel with the transition switched off.
       reels.forEach((r) => {
         r.style.transitionDelay = '0s';
         r.style.transform = 'translateY(0em)';
         r.setAttribute('data-nr-fast', '');
       });
 
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          root.setAttribute('data-nr-spinning', '');
-          let last = 0;
-          reels.forEach((r) => {
-            const d = num(r.dataset.nrDelay, 0);
-            last = Math.max(last, d);
-            r.style.transitionDelay = `${d}s`;
-            r.style.transform = `translateY(${r.dataset.nrLanded || 0}em)`;
-            // Drop the smear a little before the reel stops, so the value is
-            // already sharp at the moment it locks rather than clearing after.
-            window.setTimeout(
-              () => r.removeAttribute('data-nr-fast'),
-              d * 1000 + durMs * 0.55
-            );
-          });
+      /**
+       * Force the reset to commit before the transition is switched back on.
+       *
+       * A double requestAnimationFrame looks like it should do this and does
+       * work on a first spin, but it is not reliable on a RE-spin: the reset
+       * and the release can coalesce into one style recalculation, the reel
+       * never observes the 0em position, and the element simply sits there
+       * already landed. Reading a layout property forces the flush
+       * synchronously, which is the only version that survives being called
+       * twice on the same element.
+       */
+      void root.offsetHeight;
 
-          // Glimmer rides the lock-in, not the travel.
+      root.setAttribute('data-nr-spinning', '');
+      let last = 0;
+      reels.forEach((r) => {
+        const d = num(r.dataset.nrDelay, 0);
+        last = Math.max(last, d);
+        r.style.transitionDelay = `${d}s`;
+        r.style.transform = `translateY(${r.dataset.nrLanded || 0}em)`;
+        // Drop the smear a little before the reel stops, so the value is
+        // already sharp at the moment it locks rather than clearing after.
+        timers.push(
           window.setTimeout(
-            () => root.setAttribute('data-nr-locked', ''),
-            last * 1000 + durMs * 0.82
-          );
-        });
+            () => r.removeAttribute('data-nr-fast'),
+            d * 1000 + durMs * 0.72
+          )
+        );
       });
+
+      /**
+       * Guarantee the landing, whatever the transition did.
+       *
+       * This is the important one. Parking on 0 means a reel that fails to
+       * animate does not merely look wrong, it *reads* a different number:
+       * the band says "0+ Members in the chapter". Observed for real, with the
+       * inline style correctly set to translateY(-31em) while the computed
+       * transform stayed at 0 indefinitely, so the reel sat on 000 forever.
+       *
+       * The parked failsafe does not cover this, because spin() clears
+       * data-nr-parked on entry and thereby disarms it. So the spin has to
+       * carry its own backstop: once the travel time has certainly elapsed,
+       * compare the computed position against the intended one and, if the
+       * reel is not there, plant it with the transition switched off.
+       *
+       * Costs nothing when the animation works, which is nearly always. When
+       * it does not, a correct number appears without a flourish instead of a
+       * false statistic staying on screen.
+       */
+      timers.push(
+        window.setTimeout(
+          () => {
+            reels.forEach((r) => {
+              const want = num(r.dataset.nrLanded, 0);
+              const em = parseFloat(getComputedStyle(r).fontSize) || 1;
+              const m = /matrix\([^)]*,\s*([-0-9.]+)\)\s*$/.exec(
+                getComputedStyle(r).transform
+              );
+              const nowEm = m ? parseFloat(m[1]) / em : 0;
+              // A whole digit out is a failure, not easing overshoot.
+              if (Math.abs(nowEm - want) > 0.5) {
+                r.style.transition = 'none';
+                r.style.transitionDelay = '0s';
+                r.style.transform = `translateY(${want}em)`;
+                r.removeAttribute('data-nr-fast');
+                void r.offsetHeight;
+                r.style.transition = '';
+              }
+            });
+          },
+          last * 1000 + durMs + 260
+        )
+      );
+
+      // Glimmer rides the lock-in, not the travel.
+      timers.push(
+        window.setTimeout(
+          () => root.setAttribute('data-nr-locked', ''),
+          last * 1000 + durMs * 0.82
+        )
+      );
     }
 
     const roots = Array.from(
