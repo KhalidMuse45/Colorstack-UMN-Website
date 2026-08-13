@@ -1,122 +1,61 @@
-# <img src="public/images/colorstack-umn-logo.png" width="32" height="32" alt="ColorStack UMN chapter logo"> ColorStack UMN — Official Website
+# ColorStack UMN
 
-The official website for the **University of Minnesota Chapter** of [ColorStack](https://www.colorstack.org), a community dedicated to increasing the number of Black, Latinx, and Indigenous technologists who graduate and launch rewarding technical careers.
+The official website for the University of Minnesota chapter of ColorStack, a community
+dedicated to increasing the number of Black, Latinx, and Indigenous technologists who
+graduate and launch rewarding technical careers.
 
-🔗 **Live Site**: [colorstackumn.org](https://colorstackumn.org)
+## Live site
 
-> **Currently being rebuilt.** The site is mid-revamp against the design bundle in `design/`.
-> New here? Start at **[`docs/README.md`](docs/README.md)** — slice status, where the spec lives,
-> and the gotchas already paid for. Then [`CONTRIBUTING.md`](docs/CONTRIBUTING.md).
-> Progress and open blockers live in [`HANDOFF-LOG.md`](HANDOFF-LOG.md); the audit of the old site is [`RECON.md`](docs/history/RECON.md).
+The site builds to static HTML and deploys to GitHub Pages on every push to `main`. The
+intended address is `colorstackumn.org`, set as `site` in `astro.config.mjs` and as the
+custom domain in `public/CNAME`. Known limitation: that domain is not yet connected in the
+repository's GitHub Pages settings, so it does not resolve. Until someone with admin access
+configures it there and points DNS at GitHub, the deployed build is only reachable at the
+repository's default `github.io` address.
 
-| I want to… | Read |
-|---|---|
-| Understand the project & current status | [`docs/README.md`](docs/README.md) |
-| Contribute (human or agent) | [`CONTRIBUTING.md`](docs/CONTRIBUTING.md) — quick start by role |
-| Know who owns a path before touching it | [`docs/OWNERSHIP.md`](docs/OWNERSHIP.md) |
-| See blockers & the work ledger | [`HANDOFF-LOG.md`](HANDOFF-LOG.md) |
-| Check the design authority | [`design/UX-SPEC.md`](design/UX-SPEC.md) |
-| Review a PR | [`docs/history/reviews/README.md`](docs/history/reviews/README.md) |
+## Local development
 
----
-
-## About
-
-ColorStack at the University of Minnesota is an inclusive student organization focused on bolstering the representation and success of underrepresented students within computing disciplines. We leverage UMN's vast resources and the Twin Cities' thriving tech ecosystem to create meaningful change in tech diversity.
-
-**Founded**: 2025
-
----
-
-## Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| Framework | Astro 5 (static output, zero client JS by default) |
-| Styling | Plain CSS with design tokens from `design/tokens/` |
-| Fonts | Archivo, Lora, IBM Plex Mono — self-hosted woff2, latin subset |
-| Hosting | GitHub Pages · apex domain via `public/CNAME` |
-
----
-
-## Project Structure
-
-```
-colorstack-umn-website/
-├── src/
-│   ├── styles/         # Token layer, copied from design/tokens/ + base.css
-│   ├── layouts/        # Base.astro — imports tokens first
-│   ├── components/     # Chrome and primitives
-│   └── pages/          # One file per route
-├── content/            # events.json, issues.json, team.json, jobs.json
-├── public/
-│   ├── fonts/          # Self-hosted woff2
-│   ├── images/
-│   └── CNAME           # colorstackumn.org — must survive every build
-├── design/             # Vendored design bundle — never hand-edited
-├── CLAUDE.md           # Orchestrator constitution
-├── HANDOFF-LOG.md      # Slice ledger + blockers
-└── RECON.md            # Audit of the pre-revamp site
-```
-
----
-
-## Local Development
-
-Requires Node `^20.19` or `>=22.12`.
+Requires Node `^20.19.0` or `>=22.12.0`.
 
 ```bash
 git clone https://github.com/KhalidMuse45/Colorstack-UMN-Website.git colorstack-umn-website
 cd colorstack-umn-website
 npm install
-npm run dev        # http://localhost:4321
-npm run build      # static output to dist/
-npm run check      # astro check — types and template diagnostics
-```
-
-Brand guardrails run as a pre-commit hook. Enable them once per clone:
-
-```bash
 git config core.hooksPath .githooks
+npm run dev
 ```
 
-The hook blocks literal hex values outside the token layer, `outline` suppression without a replacement ring, gradients and glassmorphism, and misspellings of "ColorStack".
+`npm run dev` serves the site at http://localhost:4321.
 
----
+The `core.hooksPath` line has to be run once per clone. It enables the pre-commit checks
+described in [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Deployment
-
-Deployed via **GitHub Pages**. `public/CNAME` carries the apex domain and is emitted into `dist/` on every build — do not move it back to the repo root.
-
----
+| Script | What it does |
+| --- | --- |
+| `npm run dev` | Development server with live reload |
+| `npm run build` | Static build into `dist/` |
+| `npm run preview` | Serves the built `dist/` locally |
+| `npm run check` | `astro check`, type and template diagnostics |
+| `npm run lint` | Brand and accessibility guardrails, `scripts/guardrails.sh` |
+| `npm run lint:links` | Link check across `dist/`, run a build first |
 
 ## Roadmap
 
-Tracked as slices in `HANDOFF-LOG.md`.
+Built: `/`, `/about` and `/join`, plus `/motion-lab`, an internal component gallery that is
+`noindex` and is not linked from the site.
 
-- [x] Slice 1 — Scaffold, tokens, self-hosted fonts, guardrails
-- [ ] Slice 2 — Global chrome (NavBar, MobileSheet, Footer)
-- [ ] Slice 3 — Primitives (MetaRow, FigureBlock, EventCard, JoinBlock, …)
-- [ ] Slice 4 — Content layer (`content/*.json` + loaders)
-- [ ] Slice 5 — Home `/`
-- [ ] Slice 6 — `/join` + `/events`
-- [ ] Slice 7 — `/newsletter` archive + reader
-- [ ] Slice 8 — `/opportunities` + `/about` + `/about/team`
-- [ ] Slice 9 — `/sponsor`
-- [ ] Slice 10 — Motion, a11y, and performance pass
+Not built yet: `/events`, `/newsletter`, `/opportunities`, `/about/team` and `/sponsor`.
+The navigation links to all five today, so those links 404.
 
----
+All five are already specified in `design/UX-SPEC.md` section 5, so the hold-up is content
+rather than engineering. They need the chapter to supply an event schedule, newsletter
+issues, an opportunities list, team names and roles, and sponsor details. This site does
+not publish invented data, so the routes stay unbuilt until that material exists.
 
 ## Contributing
 
-This site is maintained by the **ColorStack UMN Executive Board**. To suggest changes or report issues, please reach out:
-
-- **Email**: [colorstk@umn.edu](mailto:colorstk@umn.edu)
-- **LinkedIn**: [ColorStack UMN](https://www.linkedin.com/company/colorstackumn/about/)
-- **Instagram**: [@colorstackumn](https://www.instagram.com/colorstackumn/)
-
----
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
-© 2025 ColorStack — University of Minnesota Chapter. All rights reserved.
+© 2025 ColorStack, University of Minnesota Chapter. All rights reserved.
