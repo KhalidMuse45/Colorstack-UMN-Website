@@ -35,8 +35,8 @@ Three rules, taken from `scripts/guardrails.sh`. Everything else is review, not 
    `https://github.com/KhalidMuse45/Colorstack-UMN-Website`, because the repository slug
    itself is misspelled upstream.
 
-The vendored bundle, CI config and orchestration notes are excluded from the scan. A
-genuine exception can be listed in `.guardrail-allow`, but explain why in `HANDOFF-LOG.md`.
+The vendored design drop, CI config and this repository's own notes are excluded from the
+scan. If you believe you have a genuine exception, explain why in the pull request.
 
 ## Never invent chapter data
 
@@ -48,7 +48,8 @@ site is read by recruiters and by prospective sponsors, and a fabricated statist
 misleads them on the chapter's behalf. Plausible-looking filler is worse than an empty
 slot, not better.
 
-If data is missing, leave the slot out entirely and note it in `HANDOFF-LOG.md`. A section
+If data is missing, leave the slot out entirely and add it to
+[`docs/CONTENT-NEEDED.md`](docs/CONTENT-NEEDED.md). A section
 that renders nothing is the correct outcome, not a bug to be papered over.
 
 ## Accessibility
@@ -72,12 +73,12 @@ touching layout, and it keeps a single place to check when copy is questioned.
 
 **`design/` is a vendored drop. Never hand-edit it.** It arrives from the design session
 as a whole bundle, and a local fix there is silently overwritten on the next pull. If you
-find a mistake in it, and several have been found, record it in `HANDOFF-LOG.md` and send
-it upstream.
+find a mistake in it, and five have been found so far, note it in the pull request and
+send it upstream.
 
 ## Opening a pull request
 
 Branch off `main`, keep one topic per branch, and run the three commands above before you
 push. In the description, say what you changed and call out anything you did differently
-from the spec, along with the reason. Append a line to `HANDOFF-LOG.md` so the next person
-can pick up where you stopped.
+from the spec, along with the reason. If your change leaves follow-up work, add it to
+[`docs/ROADMAP.md`](docs/ROADMAP.md) so the next person can pick it up.

@@ -39,6 +39,5 @@ can return nothing, in which case the loop scans nothing and the script would
 otherwise exit 0 and report a pass it never performed.
 
 CI wires this in `.github/workflows/ci.yml`, after `npm run build`, against the
-tracked tree. If a legitimately-needed violation ever lands, allowlist the path
-in `.guardrail-allow` **and** log the why in `HANDOFF-LOG.md` — never edit the
-script to silence a flag.
+tracked tree. If a legitimately-needed violation ever lands, explain it in the
+pull request. Never edit the script to silence a flag.
