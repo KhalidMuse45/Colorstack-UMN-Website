@@ -1,0 +1,338 @@
+---
+/**
+ * `/about`, the ColorStack UMN chapter story.
+ *
+ * Pattern follows `src/pages/index.astro`: the page composes existing
+ * components and every string comes from `src/data/about.ts`, so the e-board
+ * edits copy without touching layout.
+ *
+ * Information architecture is UX-SPEC §5.5: chapter story in Lora with an
+ * italic lede, a national affiliation paragraph, one full-bleed photo.
+ * Styling follows `design/LANDING-PAGE.md`, the superseding layer: no pills,
+ * `--radius-control` / `--radius-media` only, no IBM Plex Mono, no em dashes.
+ *
+ * The hero (SectionLabel + Reveal) and the full-bleed photo (Reveal `wipe`)
+ * reuse the landing treatment. The rotator closing the story is the mission
+ * TextLoop from the home page, reusing the approved copy. GetInTouch, the
+ * landing conversion band, closes the page.
+ */
+import Base from '../layouts/Base.astro';
+import SectionLabel from '../components/landing/SectionLabel.astro';
+import Reveal from '../components/motion/Reveal.astro';
+import TextLoop from '../components/motion/TextLoop.astro';
+import GetInTouch from '../components/landing/GetInTouch.astro';
+import { about, affiliation, story, what } from '../data/about';
+---
+
+<Base
+  title="About ColorStack UMN"
+  description="Who we are as a chapter: a home for Black and Latinx computer science students at the University of Minnesota, and the Twin Cities chapter of ColorStack, a national non-profit."
+>
+  <section class="about-hero">
+    <Reveal>
+      <SectionLabel class="about-eyebrow">{about.eyebrow}</SectionLabel>
+    </Reveal>
+    <h1 class="about-title">{about.title}</h1>
+    <Reveal index={1} class="about-hero-row">
+      <p class="about-lede">{about.lede}</p>
+      <div class="about-ctas">
+        {
+          about.ctas.map((cta, i) => (
+            <a
+              href={cta.href}
+              class:list={['about-btn', i === 0 ? 'about-btn-gold' : 'about-btn-ghost']}
+              {...(cta.external ? { target: '_blank', rel: 'noopener' } : {})}
+            >
+              {cta.label}
+            </a>
+          ))
+        }
+      </div>
+    </Reveal>
+  </section>
+
+  <Reveal as="figure" wipe class="about-photo">
+    <img
+      src={about.photo.src}
+      srcset="/images/summit-group-800.webp 800w, /images/summit-group-1600.webp 1600w, /images/summit-group.webp 2400w"
+      sizes="100vw"
+      alt={about.photo.alt}
+      width={about.photo.width}
+      height={about.photo.height}
+      loading="eager"
+      decoding="async"
+      style={about.photo.objectPosition ? `object-position:${about.photo.objectPosition}` : undefined}
+    />
+  </Reveal>
+
+  <section class="about-section" id="story">
+    <Reveal class="about-story-grid">
+      <div>
+        <SectionLabel class="about-label">{story.label}</SectionLabel>
+        <h2 class="about-h2">{story.headline}</h2>
+      </div>
+      <div class="about-body">
+        {story.paragraphs.map((p, i) => <p class:list={[i > 0 && 'muted']}>{p}</p>)}
+      </div>
+    </Reveal>
+    <Reveal class="about-rotator" index={1}>
+      <span>{story.rotatorPrefix}</span>
+      <TextLoop interval={2.2} class="about-rotator-loop">
+        {story.rotator.map((word) => <span>{word}</span>)}
+      </TextLoop>
+    </Reveal>
+  </section>
+
+  <section class="about-section about-affil">
+    <Reveal class="about-affil-grid">
+      <div>
+        <SectionLabel class="about-label">{affiliation.label}</SectionLabel>
+        <h2 class="about-h2">{affiliation.headline}</h2>
+      </div>
+      <div class="about-body">
+        {affiliation.paragraphs.map((p, i) => <p class:list={[i > 0 && 'muted']}>{p}</p>)}
+      </div>
+    </Reveal>
+  </section>
+
+  <section class="about-section about-what" id="what-we-do">
+    <Reveal class="about-what-head">
+      <SectionLabel class="about-label">{what.label}</SectionLabel>
+      <h2 class="about-h2">{what.headline}</h2>
+    </Reveal>
+    <Reveal class="about-programs" index={1}>
+      {
+        what.programs.map((prog) => (
+          <div class="about-program">
+            <h3 class="about-program-title">{prog.title}</h3>
+            <p class="about-program-body">{prog.body}</p>
+          </div>
+        ))
+      }
+    </Reveal>
+  </section>
+
+  <GetInTouch />
+</Base>
+
+<style>
+  .about-hero {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: clamp(64px, 10vw, 124px) var(--space-5) clamp(40px, 6vw, 64px);
+  }
+
+  .about-eyebrow {
+    margin-bottom: clamp(20px, 3vw, 32px);
+  }
+
+  .about-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(46px, 8.5vw, 104px);
+    line-height: 0.96;
+    letter-spacing: -0.03em;
+    color: var(--maroon);
+    text-wrap: balance;
+  }
+
+  .about-hero-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: clamp(24px, 4vw, 56px);
+    align-items: end;
+    margin-top: clamp(26px, 3.4vw, 40px);
+  }
+
+  .about-lede {
+    margin: 0;
+    font-family: var(--font-body);
+    font-style: italic;
+    font-size: clamp(19px, 2.1vw, 25px);
+    line-height: 1.5;
+    max-width: 34ch;
+    text-wrap: pretty;
+  }
+
+  .about-ctas {
+    display: flex;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+
+  .about-btn {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    border-radius: var(--radius-control);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 16.5px;
+    text-decoration: none;
+  }
+
+  .about-btn-gold {
+    padding: var(--space-4) 30px;
+    background: var(--gold);
+    color: var(--text-on-gold);
+  }
+
+  .about-btn-ghost {
+    padding: 15px 28px;
+    color: var(--maroon);
+    border: 1.5px solid var(--maroon);
+  }
+
+  /* No scale or shrink transforms on buttons. UX-SPEC §6. */
+  @media (prefers-reduced-motion: no-preference) {
+    .about-btn-gold {
+      transition: background 240ms ease;
+    }
+
+    .about-btn-ghost {
+      transition:
+        background 240ms ease,
+        color 240ms ease;
+    }
+  }
+
+  .about-btn-gold:hover {
+    background: var(--gold-dark);
+  }
+
+  .about-btn-ghost:hover {
+    background: var(--maroon);
+    color: var(--cream);
+  }
+
+  /* Full-bleed photo. Same treatment as the home HeroPhoto: light tint,
+     clip-path unfold, ground behind while the file loads. */
+  .about-photo {
+    margin: 0;
+    width: 100%;
+    background: var(--photo-ground);
+    overflow: hidden;
+  }
+
+  .about-photo img {
+    display: block;
+    width: 100%;
+    height: clamp(300px, 48vw, 600px);
+    object-fit: cover;
+    filter: var(--photo-tint);
+  }
+
+  /* Shared section shell. */
+  .about-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: clamp(72px, 10vw, 140px) var(--space-5);
+  }
+
+  .about-story-grid,
+  .about-affil-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: clamp(28px, 5vw, 72px);
+  }
+
+  .about-label {
+    margin-bottom: var(--space-5);
+  }
+
+  .about-h2 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(31px, 4.4vw, 56px);
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    color: var(--maroon);
+    text-wrap: balance;
+  }
+
+  .about-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    justify-content: center;
+  }
+
+  .about-body p {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 18.5px;
+    line-height: 1.62;
+    text-wrap: pretty;
+  }
+
+  .about-body .muted {
+    color: var(--text-muted);
+  }
+
+  /* Rotator on a hairline, the one sanctioned internal rule
+     (design/LANDING-PAGE.md:17). */
+  .about-rotator {
+    margin-top: clamp(44px, 6vw, 80px);
+    padding-top: clamp(32px, 4vw, 48px);
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: clamp(10px, 1.4vw, 18px);
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(26px, 4vw, 50px);
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+  }
+
+  .about-rotator-loop {
+    color: var(--maroon);
+  }
+
+  /* What we do: hairline rows, not cards. Same voice as the home Contact
+     channel rows (rows, not cards). */
+  .about-what-head {
+    margin-bottom: clamp(32px, 4vw, 48px);
+  }
+
+  .about-what-head .about-label {
+    margin-bottom: 18px;
+  }
+
+  .about-program {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+    padding: var(--space-5) var(--space-1);
+    border-bottom: 1px solid var(--line);
+  }
+
+  @media (min-width: 640px) {
+    .about-program {
+      grid-template-columns: 220px 1fr;
+      gap: var(--space-6);
+      align-items: baseline;
+      padding: var(--space-5) 0;
+    }
+  }
+
+  .about-program-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: var(--text-h3);
+    color: var(--maroon);
+  }
+
+  .about-program-body {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.62;
+    color: var(--text-muted);
+    text-wrap: pretty;
+  }
+</style>

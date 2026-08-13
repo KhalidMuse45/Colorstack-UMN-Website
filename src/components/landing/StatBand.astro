@@ -12,16 +12,19 @@
  * bands and the same instinct applies here.
  */
 import Reveal from '../motion/Reveal.astro';
+import NumberRoll from '../motion/NumberRoll.astro';
 import { stats, statsAside } from '../../data/landing';
 ---
 
-<section class="stat-band">
+<section class="stat-band" data-stat-band>
   <div class="stat-inner">
     <div class="stat-grid">
       {
         stats.map((stat, i) => (
           <Reveal class="stat" index={i}>
-            <span class="stat-value">{stat.value}</span>
+            <NumberRoll class="stat-value" duration={0.48} stagger={0.04} spins={3} blur={10} cue>
+              {stat.value}
+            </NumberRoll>
             <span class="stat-label">{stat.label}</span>
           </Reveal>
         ))
@@ -88,4 +91,78 @@ import { stats, statsAside } from '../../data/landing';
     max-width: 38ch;
     text-wrap: pretty;
   }
+
+  /* The reel is one digit tall and clips, so the oversized line-height the
+     display face carries would crop the glyphs. Only the slot needs the tight
+     box; the value keeps its own leading everywhere else. */
+  .stat-value :global(.nr-slot),
+  .stat-value :global(.nr-digit),
+  .stat-value :global(.nr-fixed) {
+    font-variant-numeric: tabular-nums;
+  }
 </style>
+
+<script>
+  /**
+   * Sequencer. The reels here are `cue`d, so they sit on their final digits
+   * until told to spin, and this decides when the band has arrived.
+   *
+   * Two cases, because the reveal itself has two:
+   *   below the fold  the stats were armed, so give the rise a short head
+   *                   start and let the two motions overlap.
+   *   above the fold  Reveal deliberately never arms what is already on screen
+   *                   (that fix is what took LCP from 4378ms to 1744ms), so
+   *                   there is no reveal to wait for and the reels lead.
+   */
+  (() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const band = document.querySelector<HTMLElement>('[data-stat-band]');
+    if (!band) return;
+
+    // Deliberately NOT the full 800ms reveal. The reels start while the band
+    // is still rising, so the two motions overlap and the jackpot reads as
+    // part of the arrival rather than a second event queued behind it. Waiting
+    // for the reveal to finish first tested at nearly a second of dead air,
+    // long enough to read the number before anything happened to it.
+    const OVERLAP_MS = 120;
+
+    const fire = () => {
+      const reels = Array.from(
+        band.querySelectorAll<HTMLElement>('[data-number-roll]')
+      );
+      if (!reels.length) return;
+
+      const armed = band.querySelector('[data-rv]') !== null;
+      const settle = armed ? OVERLAP_MS : 120;
+
+      window.setTimeout(() => {
+        // Second stat starts a beat after the first, so the band lands like
+        // two reels stopping in sequence rather than one block flipping.
+        reels.forEach((el, i) => {
+          window.setTimeout(() => {
+            const go = (el as any).nrSpin;
+            if (typeof go === 'function') go();
+          }, i * 70);
+        });
+      }, settle);
+    };
+
+    if (typeof IntersectionObserver === 'undefined') {
+      fire();
+      return;
+    }
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return;
+          io.disconnect();
+          fire();
+        });
+      },
+      { threshold: 0.35 }
+    );
+    io.observe(band);
+  })();
+</script>

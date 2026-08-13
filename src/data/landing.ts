@@ -332,9 +332,23 @@ export const closer = [
     tone: 'gold' as const,
   },
   {
+    /**
+     * "Come to a meeting" until 2026-08-13, pointing at Instagram.
+     *
+     * It invited people to something the site cannot tell them how to attend:
+     * the meeting time and location are unconfirmed and
+     * `design/LANDING-PAGE.md:134` forbids inventing them, so the panel named
+     * a weekly commitment and then handed the reader off to a feed to work the
+     * details out themselves.
+     *
+     * "Come to an event" makes the same invitation without implying a standing
+     * slot, and the link now goes to the list, which is where someone who
+     * wants in should actually go. Same `MAILING_LIST` constant as step one,
+     * the hero CTA, the nav CTA and the form, so the endpoint cannot drift.
+     */
     step: 'Step two',
-    title: 'Come to a meeting',
-    href: 'https://www.instagram.com/colorstackumn/',
+    title: 'Come to an event',
+    href: MAILING_LIST,
     tone: 'ink' as const,
   },
 ];

@@ -1,0 +1,430 @@
+---
+/**
+ * `/join` is the conversion page. `src/data/nav.ts:25` points the global nav
+ * CTA here, so this is the one page every visitor is meant to land on, and it
+ * 404'd before this file existed.
+ *
+ * Information architecture is UX-SPEC 5.6: above the fold is the form and
+ * nothing competing with it, then "What you'll get", the first-timer FAQ, and
+ * the community channels. Styling follows `design/LANDING-PAGE.md`, which
+ * supersedes the spec for this site: SectionLabel (Archivo) instead of mono
+ * meta rows, `--radius-control`/`--radius-media` instead of pills, and no em
+ * dashes in rendered copy.
+ *
+ * Every string lives in `src/data/join.ts`. Values that already exist on the
+ * home page are imported there from `src/data/landing.ts`, so field labels,
+ * the chapter email and the mailing-list endpoint cannot drift.
+ *
+ * The form is a real `<form>`: a plain GET to the Logicform endpoint, so it
+ * works with JavaScript disabled. Same shape as `GetInTouch.astro`, the
+ * reference implementation. It is deliberately NOT wrapped in a Reveal: this
+ * is the conversion point, and the motion contract says it must never sit
+ * behind a script that did not run.
+ *
+ * Meeting time, location, Slack and GroupMe have no source in this
+ * repository and are deliberately absent here (LANDING-PAGE.md:134,
+ * TICKET.md:67). The meeting question is routed to the inbox.
+ */
+import Base from '../layouts/Base.astro';
+
+import Reveal from '../components/motion/Reveal.astro';
+import TextRoll from '../components/motion/TextRoll.astro';
+import Accordion from '../components/motion/Accordion.astro';
+import SectionLabel from '../components/landing/SectionLabel.astro';
+
+import {
+  joinPage,
+  joinHero,
+  whatYoullGet,
+  faq,
+  connectSection,
+  communityLinks,
+} from '../data/join';
+---
+
+<Base title={joinPage.title} description={joinPage.description}>
+  <section class="join-hero" id="join">
+    <div class="join-hero-inner">
+      <Reveal class="join-copy">
+        <SectionLabel onDark>{joinHero.label}</SectionLabel>
+        <h1 class="join-title">
+          <TextRoll stagger={0.024} duration={700}>{joinHero.headline}</TextRoll>
+        </h1>
+        <p class="join-intro">{joinHero.intro}</p>
+      </Reveal>
+
+      <form class="join-form" action={joinHero.formAction} method="get" target="_blank">
+        <label class="join-label">
+          {joinHero.fieldLabel}
+          <input type="email" name="email" placeholder={joinHero.placeholder} required autocomplete="email" />
+        </label>
+        <div class="join-actions">
+          <button type="submit">{joinHero.submit}</button>
+          <a href={joinHero.altHref}>{joinHero.altLabel}</a>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <section class="join-section" id="what-youll-get">
+    <Reveal class="wyg-head">
+      <SectionLabel>{whatYoullGet.label}</SectionLabel>
+      <h2 class="wyg-title">{whatYoullGet.headline}</h2>
+    </Reveal>
+
+    <ol class="wyg-list">
+      {
+        whatYoullGet.items.map((item, i) => (
+          <Reveal as="li" class="wyg-row" index={i}>
+            <span class="wyg-num" aria-hidden="true">{i + 1}</span>
+            <div class="wyg-item">
+              <h3 class="wyg-item-title">{item.title}</h3>
+              <p class="wyg-item-body">{item.body}</p>
+            </div>
+          </Reveal>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="join-section join-faq" id="faq">
+    <Reveal class="wyg-head">
+      <SectionLabel>{faq.label}</SectionLabel>
+    </Reveal>
+
+    {/* The Accordion is the site's FAQ component (LANDING-PAGE.md:40). Its
+        no-JS state renders the full question and answer: the script only ever
+        builds the collapsing trigger on top. defaultOpen keeps the answer
+        visible after enhancement. */}
+    <Accordion defaultOpen={0} class="faq-acc">
+      <div class="faq-row">
+        <h2 class="faq-question" data-acc-title>{faq.question}</h2>
+        <div data-acc-body>
+          <p class="faq-answer">{faq.answer}</p>
+        </div>
+      </div>
+    </Accordion>
+  </section>
+
+  <section class="join-section" id="community">
+    <div class="connect-grid">
+      <Reveal class="connect-copy">
+        <SectionLabel>{connectSection.label}</SectionLabel>
+        <h2 class="connect-title">{connectSection.headline}</h2>
+        <p class="connect-note">{connectSection.meetNote}</p>
+      </Reveal>
+
+      <Reveal class="connect-channels" index={1}>
+        {
+          communityLinks.map((c) => (
+            <a
+              href={c.href}
+              class="connect-row"
+              {...(c.href.startsWith('http') ? { target: '_blank', rel: 'noopener' } : {})}
+            >
+              <span class="connect-text">
+                <span class="connect-row-label">{c.label}</span>
+                <span class="connect-row-value">{c.value}</span>
+              </span>
+              <span class="connect-row-marker">{c.marker}</span>
+            </a>
+          ))
+        }
+      </Reveal>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .join-hero {
+    background: var(--maroon);
+    color: var(--cream);
+  }
+
+  .join-hero-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: clamp(72px, 10vw, 132px) var(--space-5);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: clamp(32px, 5vw, 72px);
+    align-items: center;
+  }
+
+  .join-copy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  .join-title {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(40px, 7vw, 84px);
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    color: var(--gold);
+    text-wrap: balance;
+  }
+
+  .join-intro {
+    font-family: var(--font-body);
+    font-size: 18.5px;
+    line-height: 1.62;
+    max-width: 42ch;
+    text-wrap: pretty;
+  }
+
+  /* The conversion form. Same mechanics as GetInTouch.astro: a real GET form,
+     a label that wraps the input for an implicit association, and controls
+     that keep the global gold focus ring from base.css. */
+  .join-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .join-label {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-small);
+    color: var(--gold-soft);
+  }
+
+  .join-label input {
+    font-family: var(--font-body);
+    font-size: 16px;
+    color: var(--ink);
+    background: var(--cream);
+    border: 1px solid var(--hairline-inverse);
+    border-radius: var(--radius-control);
+    padding: var(--space-4) var(--space-5);
+    min-height: 44px;
+  }
+
+  .join-actions {
+    display: flex;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .join-actions button {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 16.5px;
+    background: var(--gold);
+    color: var(--text-on-gold);
+    border: none;
+    padding: var(--space-4) var(--space-6);
+    border-radius: var(--radius-control);
+    cursor: pointer;
+    min-height: 44px;
+  }
+
+  .join-actions a {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--gold-soft);
+    text-decoration: none;
+  }
+
+  .join-actions a:hover {
+    color: var(--gold);
+    text-decoration: underline;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .join-actions button {
+      transition: background 240ms ease;
+    }
+
+    .join-actions a {
+      transition: color 220ms ease;
+    }
+  }
+
+  .join-actions button:hover {
+    background: var(--gold-dark);
+  }
+
+  .join-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: clamp(72px, 10vw, 132px) var(--space-5);
+  }
+
+  .wyg-head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    max-width: 680px;
+    margin-bottom: clamp(40px, 6vw, 64px);
+  }
+
+  .wyg-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(31px, 4.4vw, 56px);
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    color: var(--maroon);
+    text-wrap: balance;
+  }
+
+  .wyg-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .wyg-row {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-5);
+    align-items: baseline;
+    padding: var(--space-5) 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .wyg-num {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--text-h3);
+    letter-spacing: var(--tracking-label);
+    color: var(--maroon-light);
+  }
+
+  .wyg-item-title {
+    margin-bottom: var(--space-2);
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: var(--text-h2);
+    letter-spacing: -0.02em;
+    color: var(--maroon);
+  }
+
+  .wyg-item-body {
+    font-family: var(--font-body);
+    font-size: 17.5px;
+    line-height: 1.62;
+    color: var(--text-muted);
+    max-width: 68ch;
+    text-wrap: pretty;
+  }
+
+  .join-faq {
+    padding-top: 0;
+  }
+
+  .faq-acc {
+    border-top: 1px solid var(--line);
+  }
+
+  .faq-question {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(22px, 3vw, 30px);
+    letter-spacing: -0.015em;
+    color: var(--maroon);
+  }
+
+  .faq-answer {
+    font-family: var(--font-body);
+    font-size: 18px;
+    line-height: 1.62;
+    color: var(--text-body);
+    max-width: 68ch;
+    text-wrap: pretty;
+  }
+
+  .connect-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: clamp(28px, 5vw, 72px);
+  }
+
+  .connect-copy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  .connect-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(27px, 3.2vw, 40px);
+    line-height: 1.08;
+    letter-spacing: -0.025em;
+    color: var(--maroon);
+    text-wrap: balance;
+  }
+
+  .connect-note {
+    font-family: var(--font-body);
+    font-size: 17.5px;
+    line-height: 1.62;
+    color: var(--text-muted);
+    text-wrap: pretty;
+  }
+
+  .connect-channels {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .connect-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-5) var(--space-1);
+    border-bottom: 1px solid var(--line);
+    min-height: 44px;
+    text-decoration: none;
+  }
+
+  /* Padding shift, not a transform. UX-SPEC section 6 forbids scale on hover. */
+  @media (prefers-reduced-motion: no-preference) {
+    .connect-row {
+      transition: padding-left 260ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+  }
+
+  .connect-row:hover {
+    padding-left: var(--space-3);
+  }
+
+  .connect-text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .connect-row-label {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 13.5px;
+    color: var(--text-muted);
+  }
+
+  .connect-row-value {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--text-h3);
+    color: var(--maroon);
+  }
+
+  .connect-row-marker {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-small);
+    color: var(--maroon-light);
+    flex: none;
+  }
+</style>

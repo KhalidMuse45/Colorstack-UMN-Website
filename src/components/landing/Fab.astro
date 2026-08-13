@@ -14,6 +14,28 @@ import { MAILING_LIST, contact } from '../../data/landing';
 
 <div class="fab">
   <LiquidMenu label="Get in touch" radius={76} size={62} blur={7} contrast={20}>
+    {/*
+      The chapter mark replaces the `+`. The mark carries its own maroon
+      ground, so it fills the circle rather than sitting on one, and the
+      button clips it round.
+
+      Served from a 192px variant, not the 1544px master the nav uses. This
+      renders at 62px, so the master would be roughly a 25x oversupply decoded
+      on every page load: 1.8KB as WebP against 34.6KB for the same crop as a
+      PNG.
+
+      alt is empty on purpose. The button already carries aria-label "Get in
+      touch", and a second name here would announce the control twice.
+    */}
+    <img
+      slot="trigger"
+      src="/images/colorstack-umn-mark-192.webp"
+      alt=""
+      width="62"
+      height="62"
+      decoding="async"
+    />
+
     <a href={`mailto:${contact.email}`} aria-label={`Email ColorStack UMN at ${contact.email}`}>✉</a>
     <a
       href="https://www.instagram.com/colorstackumn/"
