@@ -105,9 +105,29 @@ const merged = [step > 0 ? `--rv-delay:${step}s` : '', style].filter(Boolean).jo
         el.dataset.rv = 'armed';
       });
 
-      // From here the content is hidden, so every exit path must reveal.
-      // The failsafe covers every element that got armed.
-      const failsafe = window.setTimeout(() => toReveal.forEach(show), 2500);
+      /**
+       * From here the content is hidden, so every exit path must reveal.
+       *
+       * The failsafe only rescues elements the reader has ALREADY REACHED.
+       * It used to reveal every armed element on the page, and that silently
+       * defeated the whole system: 2.5 seconds after load everything below
+       * the fold was already in place, so scroll-triggered entrances further
+       * down never played. The effective window for any reveal on this site
+       * was roughly 0.8s to 2.5s after load, which is why the lower sections
+       * looked like they had no motion at all.
+       *
+       * Restricting it to the viewport keeps the anti-stranding guarantee
+       * exactly where it matters, on content someone is looking at, while
+       * leaving everything further down to the observer. Note this cannot be
+       * replaced by simply clearing the timer on the observer's first tick:
+       * an element that can never satisfy the 6% threshold, a zero-height
+       * node for instance, would then stay hidden forever.
+       */
+      const failsafe = window.setTimeout(() => {
+        toReveal.forEach((el) => {
+          if (el.getBoundingClientRect().top < window.innerHeight) show(el);
+        });
+      }, 2500);
 
       if (typeof IntersectionObserver === 'undefined') {
         window.clearTimeout(failsafe);

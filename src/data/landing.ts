@@ -350,6 +350,46 @@ export const channels: Channel[] = [
   },
 ];
 
+/* ── 9b. Partners ──────────────────────────────────────────────────────── */
+
+/**
+ * Companies and organisations that support the chapter.
+ *
+ * **Empty on purpose, and it must stay empty until someone supplies real
+ * names.** No sponsor or partner exists anywhere in this repository: not in
+ * `src/data`, not in `public/images`, not in the design drop. Inventing one,
+ * or padding this with logos of companies members happen to have interned at,
+ * would be a claim of endorsement the chapter never made, on the page most
+ * likely to be read by the companies in question.
+ *
+ * `Partners.astro` returns null while this is empty, so the site shows nothing
+ * rather than a heading over a blank strip. Same contract as `testimonials`.
+ *
+ * To turn the section on: add entries here, drop the logo files into
+ * `public/images/partners/`, and it appears. Nothing else needs to change.
+ * Logos should be the partner's own supplied asset, and permission to display
+ * a mark is worth having in writing before it ships.
+ */
+export interface Partner {
+  /** Organisation name, spelled as they spell it */
+  name: string;
+  /** Path under public/, e.g. /images/partners/acme.webp */
+  logo: string;
+  /** Optional link to the partner */
+  href?: string;
+}
+
+export const partners: Partner[] = [];
+
+/** Heading and copy for the partner band. Shown only when `partners` is not empty. */
+export const partnerBand = {
+  label: 'Partners',
+  headline: 'The people backing this work.',
+  /** The partnership ask. Points at the same inbox as everything else. */
+  cta: 'Partner with us',
+  ctaHref: `mailto:${CHAPTER_EMAIL}`,
+};
+
 /* ── 10. Split closer ──────────────────────────────────────────────────── */
 
 export const closer = [
