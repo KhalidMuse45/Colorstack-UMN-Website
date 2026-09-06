@@ -1,0 +1,116 @@
+.wrap {
+  display: grid;
+  gap: var(--space-10);
+  justify-items: start;
+}
+
+/*
+ * FIX-2 section 6: two columns, the copy on the left and the puzzle on the
+ * right. One column until there is room for the 560px puzzle plus a readable
+ * measure beside it.
+ */
+.play {
+  display: grid;
+  gap: var(--space-8);
+  align-items: start;
+  width: 100%;
+}
+
+@media (min-width: 980px) {
+  .play {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 560px);
+    gap: var(--space-10);
+  }
+}
+
+.intro {
+  max-width: 46ch;
+}
+
+/* The Lora italic line under the paragraph. FIX-2 section 6. */
+.aside {
+  font-style: italic;
+  color: var(--ink-soft);
+  margin-bottom: 0;
+}
+
+/*
+ * The invitation sits directly beneath the puzzle and is never gated by it:
+ * no completion check, no disabled state, nothing that reads as a reward.
+ */
+.invite {
+  display: grid;
+  gap: var(--space-5);
+  justify-items: start;
+  width: 100%;
+}
+
+.body {
+  margin: 0;
+}
+
+.form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-4);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  color: var(--ink);
+}
+
+.field input {
+  min-width: min(78vw, 320px);
+  min-height: 44px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--paper);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  color: var(--ink);
+}
+
+.field input:hover {
+  border-color: var(--ink);
+}
+
+.submit {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 26px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--gold);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-body);
+  cursor: pointer;
+  transition: background-color 200ms var(--ease);
+}
+
+.submit:hover {
+  background: var(--gold-dark);
+}
+
+.submit:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.reach {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  color: var(--ink);
+}

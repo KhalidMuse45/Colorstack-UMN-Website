@@ -105,9 +105,29 @@ const merged = [step > 0 ? `--rv-delay:${step}s` : '', style].filter(Boolean).jo
         el.dataset.rv = 'armed';
       });
 
-      // From here the content is hidden, so every exit path must reveal.
-      // The failsafe covers every element that got armed.
-      const failsafe = window.setTimeout(() => toReveal.forEach(show), 2500);
+      /**
+       * From here the content is hidden, so every exit path must reveal.
+       *
+       * The failsafe only rescues elements the reader has ALREADY REACHED.
+       * It used to reveal every armed element on the page, and that silently
+       * defeated the whole system: 2.5 seconds after load everything below
+       * the fold was already in place, so scroll-triggered entrances further
+       * down never played. The effective window for any reveal on this site
+       * was roughly 0.8s to 2.5s after load, which is why the lower sections
+       * looked like they had no motion at all.
+       *
+       * Restricting it to the viewport keeps the anti-stranding guarantee
+       * exactly where it matters, on content someone is looking at, while
+       * leaving everything further down to the observer. Note this cannot be
+       * replaced by simply clearing the timer on the observer's first tick:
+       * an element that can never satisfy the 6% threshold, a zero-height
+       * node for instance, would then stay hidden forever.
+       */
+      const failsafe = window.setTimeout(() => {
+        toReveal.forEach((el) => {
+          if (el.getBoundingClientRect().top < window.innerHeight) show(el);
+        });
+      }, 2500);
 
       if (typeof IntersectionObserver === 'undefined') {
         window.clearTimeout(failsafe);
@@ -121,11 +141,57 @@ const merged = [step > 0 ? `--rv-delay:${step}s` : '', style].filter(Boolean).jo
             if (!e.isIntersecting) return;
             show(e.target as HTMLElement);
             io.unobserve(e.target);
+            pending.delete(e.target as HTMLElement);
           });
+          if (!pending.size) sweepOff();
         },
         { rootMargin: '0px 0px -6% 0px', threshold: 0.06 }
       );
       toReveal.forEach((el) => io.observe(el));
+
+      /**
+       * Catch anything the observer missed, without ever revealing early.
+       *
+       * The observer alone is not sufficient. At a 6% threshold an element can
+       * go from below the viewport to above it between two callback
+       * deliveries and never be reported as intersecting, which is exactly
+       * what a fast flick on a phone does. Measured on this page: after a
+       * deliberately slow scroll to the bottom, NINE armed elements were still
+       * hidden. Content the reader has scrolled past must never stay invisible.
+       *
+       * So a passive, rAF-throttled sweep reveals anything whose top has
+       * passed the bottom of the viewport. It cannot cause an early reveal,
+       * because it only ever acts on elements the reader has already reached,
+       * and it removes itself once nothing is left armed.
+       */
+      const pending = new Set<HTMLElement>(toReveal);
+      let ticking = false;
+
+      const sweep = () => {
+        ticking = false;
+        pending.forEach((el) => {
+          if (el.getBoundingClientRect().top < window.innerHeight) {
+            show(el);
+            io.unobserve(el);
+            pending.delete(el);
+          }
+        });
+        if (!pending.size) sweepOff();
+      };
+
+      const onScroll = () => {
+        if (ticking) return;
+        ticking = true;
+        window.requestAnimationFrame(sweep);
+      };
+
+      function sweepOff() {
+        window.removeEventListener('scroll', onScroll);
+        window.removeEventListener('resize', onScroll);
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
     } catch {
       nodes.forEach(show);
     }

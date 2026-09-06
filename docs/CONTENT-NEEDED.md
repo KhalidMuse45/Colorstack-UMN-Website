@@ -44,6 +44,33 @@ name and role and the section appears by itself.
 
 If a quote comes with a photo, get the person's consent on the record first.
 
+## From the redesign photo drop (2026-09-06, see assets-src/photo-triage.md)
+
+**Usage rights for the Stacked Up Summit photos: resolved.** The chapter
+confirmed on 2026-09-06 that the `UMNSTACKEDUP/` photos were legally
+downloaded and may be used; board members appear in them. Cleared for the
+site.
+
+**"In the Room" wants a Tuesday, the drop supplies a photoshoot.** 42 of the
+45 board-shoot photos are a styled editorial shoot of two or three board
+members at Northrop, not a meeting in progress. The section ships with the
+closest genuine candids for now; real meeting-night photos with broader member
+representation would replace them well.
+
+**No community-program photos in the new drop.** Nothing new shows a game
+night or potluck, so that slot keeps `game-night-chess`. More would help.
+
+**The puzzle sentence is designer copy.** The Get in Touch slide puzzle
+assembles `You have a place in this room ✳` until the e-board writes its own
+sentence (eight words or fewer works best).
+
+**The hero caption is off until the chapter turns it on.** One optional
+string naming the hero photo's event, nothing else.
+
+**Sanity project.** The redesign's CMS swap needs someone to create the Sanity
+project (project ID + dataset) so the e-board can edit copy. Until then the
+new site reads from `web/content/landing.ts`.
+
 ## Worth a second look before launch
 
 **The stat band says `100+` members and `10+` offers.** Both were confirmed by

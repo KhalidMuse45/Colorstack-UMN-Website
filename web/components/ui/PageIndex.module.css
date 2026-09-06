@@ -1,0 +1,53 @@
+/*
+ * Sticky gutter index. Column 1 of the 12-column grid, 40px wide, desktop
+ * only. No heading, no rule, no "Chapter Index" label (docs/05).
+ *
+ * Hidden below 1200px because the gutter does not exist there. It is a
+ * position indicator, not navigation: nothing is reachable only through it, so
+ * hiding it costs a narrow window nothing.
+ */
+.index {
+  display: none;
+}
+
+@media (min-width: 1200px) {
+  .index {
+    display: flex;
+    position: fixed;
+    left: var(--space-5);
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 40;
+    flex-direction: column;
+    gap: var(--space-3);
+    width: 40px;
+    font-family: var(--font-mono);
+    font-size: var(--text-mono);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+  }
+}
+
+.item {
+  display: block;
+  transition: color 200ms var(--ease);
+}
+
+/* Current section reads as a maroon dot rather than a number. */
+.item[data-current] {
+  color: transparent;
+  position: relative;
+}
+
+.item[data-current]::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  margin-top: -3.5px;
+  border-radius: var(--radius-pill);
+  background: var(--maroon);
+}

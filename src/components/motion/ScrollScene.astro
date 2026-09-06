@@ -1,0 +1,182 @@
+---
+/**
+ * ScrollScene - ties an element's motion to scroll position rather than to a
+ * one-shot trigger, so a section can transform continuously as the reader
+ * moves through it.
+ *
+ * WHY NOT JAVASCRIPT
+ * This uses the native `animation-timeline: view()`. There is no script, no
+ * scroll listener, and no per-frame work on the main thread: the compositor
+ * drives it. A JS scroll handler doing the same thing would read layout on
+ * every event, which is the classic way to make scrolling feel worse while
+ * trying to make it feel better.
+ *
+ * HOW IT DEGRADES, which is the reason this approach was chosen
+ * `animation-timeline` is not supported everywhere. Where it is missing the
+ * animation simply never applies and the element renders in its normal,
+ * final, visible state. There is no polyfill, no fallback branch, and nothing
+ * to strand content: an unsupported browser sees a static page that is
+ * completely correct, just less expressive.
+ *
+ * That satisfies the project's motion contract for free. The server renders
+ * the final state; this only ever adds movement on top of it. Compare
+ * Reveal.astro, which has to arm a hidden state in a script and therefore
+ * needs a failsafe, an observer fallback and a catch.
+ *
+ * Reduced motion disables it outright.
+ *
+ * EFFECTS
+ *   rise    fades and lifts as the element enters. The default.
+ *   settle  fades and eases down from slightly above, for a block arriving
+ *           under something that is still on screen.
+ *   grow    a small scale change, for media that should feel like it is
+ *           opening rather than sliding.
+ *   hold    fades in on entry and back out on exit, for an element meant to
+ *           persist across a section boundary and then hand over.
+ */
+import type { HTMLAttributes, HTMLTag } from 'astro/types';
+
+/**
+ * `as` must be a generic tag parameter. A bare `as?: string` member silently
+ * voids the whole Props interface in Astro: the component still compiles but
+ * nothing on it is type checked. Documented on Reveal.astro, cost real time.
+ */
+type Props<Tag extends HTMLTag = 'div'> = Omit<HTMLAttributes<Tag>, 'as'> & {
+  /** Element tag to render */
+  as?: Tag;
+  /** Which motion to apply */
+  effect?: 'rise' | 'settle' | 'grow' | 'hold';
+  /**
+   * How much of the viewport crossing drives the animation, as a CSS
+   * `animation-range`. The default runs from the element entering the bottom
+   * of the viewport until it is 45% of the way up, so it finishes well before
+   * the reader reaches it and never animates while being read.
+   */
+  range?: string;
+  style?: string;
+};
+
+const {
+  as = 'div',
+  effect = 'rise',
+  range = 'entry 0% cover 45%',
+  class: className,
+  style,
+  ...rest
+} = Astro.props;
+
+const Tag = as as any;
+const merged = [`--ss-range:${range}`, style].filter(Boolean).join(';');
+---
+
+<Tag
+  class:list={['scroll-scene', className]}
+  style={merged}
+  data-scroll-scene={effect}
+  {...rest}
+>
+  <slot />
+</Tag>
+
+<style>
+  /* Nothing here changes the element's resting appearance. Every rule below
+     is inside both a reduced-motion guard and a support guard, so the default
+     state is simply the element as authored. */
+
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .scroll-scene[data-scroll-scene] {
+        animation-timeline: view();
+        animation-range: var(--ss-range, entry 0% cover 45%);
+        animation-fill-mode: both;
+        animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+        animation-duration: 1ms; /* ignored: the timeline drives progress */
+      }
+
+      .scroll-scene[data-scroll-scene='rise'] {
+        animation-name: ss-rise;
+      }
+
+      .scroll-scene[data-scroll-scene='settle'] {
+        animation-name: ss-settle;
+      }
+
+      .scroll-scene[data-scroll-scene='grow'] {
+        animation-name: ss-grow;
+      }
+
+      .scroll-scene[data-scroll-scene='hold'] {
+        animation-name: ss-hold;
+        /* A held element is choreographed across a whole boundary, so it needs
+           the full crossing rather than the short entry range. */
+        animation-range: var(--ss-range, cover 0% cover 100%);
+      }
+    }
+  }
+
+  /* Transform and opacity only. Both are compositor properties, so none of
+     these force layout or paint while scrolling. */
+
+  @keyframes ss-rise {
+    from {
+      opacity: 0;
+      transform: translateY(28px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes ss-settle {
+    from {
+      opacity: 0;
+      transform: translateY(-18px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes ss-grow {
+    from {
+      opacity: 0;
+      transform: scale(0.965);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* Arrives, then stays. It drifts up slowly against the scroll so it reads as
+     sitting on a nearer plane than the section arriving beneath it, which is
+     what makes the two feel continuous.
+   *
+   * It deliberately does NOT fade out at the end, and that is a correction.
+   * An earlier version released at 72% of the crossing, which sounds like a
+   * hand-off and measured like a bug: on a single line of text, 72% of the
+   * cover range is still the middle of the screen. The rotator reached
+   * opacity 0 while centred at 54%, 41% and 27% of the viewport, so the line
+   * "Building a space for you." went invisible while a reader was looking
+   * straight at it.
+   *
+   * Persistence was the point; vanishing was not. The hand-off belongs to the
+   * next section arriving, not to this one disappearing. Never trade
+   * readability for a transition. */
+  @keyframes ss-hold {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    18% {
+      opacity: 1;
+      transform: none;
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(-14px);
+    }
+  }
+</style>

@@ -1,0 +1,75 @@
+/*
+ * Section layout for the landing page.
+ *
+ * Everything here uses the shared tokens: `.container` for width, `--section-y`
+ * for rhythm, `--stack` for the 16px under a heading or a paragraph, `--text-*`
+ * for every size, `--radius-card` or 0 for every corner. There are no one-off
+ * margins and no local max-widths in this file, and none should be added.
+ *
+ * The mission section has no rules at all any more: it is an H2, two
+ * paragraphs and the rotator, which is a component that carries its own row
+ * (components/motion/TextLoop.module.css). The globals say the rest.
+ */
+
+/* ── What We Do ──────────────────────────────────────────────────────────
+   Pentagram rhythm: full-bleed 16:9 photo, then title left and body right.
+   The photo frame itself is the shared `.frame .frame-wide` from globals. */
+
+.programs {
+  display: grid;
+  gap: var(--section-y);
+}
+
+.programRow {
+  display: grid;
+  gap: var(--space-5);
+  margin-top: var(--space-5);
+}
+
+@media (min-width: 900px) {
+  .programRow {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 6fr);
+    gap: var(--space-10);
+    align-items: start;
+  }
+}
+
+.programRow h3,
+.programRow p { margin: 0; }
+
+/* ── In the Room ─────────────────────────────────────────────────────────
+   The gallery owns its own layout in whimsy/FloatingCards.module.css. What is
+   left here is the two-column shell around it: the canvas in the first
+   column, the marginalia note and the glyph stickers in the second. */
+
+.roomLayout {
+  display: grid;
+  gap: var(--space-5);
+  align-items: start;
+}
+
+@media (min-width: 1200px) {
+  /* The second column IS the gutter the marginalia note lives in. */
+  .roomLayout {
+    grid-template-columns: minmax(0, 1fr) 22ch;
+    gap: var(--space-10);
+  }
+}
+
+.gutter {
+  position: relative;
+  padding-top: var(--space-10);
+  min-height: 1px;
+}
+
+.sticker1 {
+  position: absolute;
+  top: 0;
+  right: var(--space-4);
+}
+
+.sticker2 {
+  position: absolute;
+  bottom: var(--space-10);
+  right: var(--space-10);
+}

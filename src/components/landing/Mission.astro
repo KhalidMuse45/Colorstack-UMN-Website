@@ -8,6 +8,7 @@
  * sanctions a rule on the site: "hairline only as an internal divider".
  */
 import TextLoop from '../motion/TextLoop.astro';
+import ScrollScene from '../motion/ScrollScene.astro';
 import Reveal from '../motion/Reveal.astro';
 import SectionLabel from './SectionLabel.astro';
 import { mission } from '../../data/landing';
@@ -24,12 +25,25 @@ import { mission } from '../../data/landing';
     </div>
   </Reveal>
 
-  <Reveal class="rotator" index={1}>
-    <span>{mission.rotatorPrefix}</span>
-    <TextLoop interval={1.05} roll rollStagger={0.035} rollDuration={0.24} class="rotator-loop">
-      {mission.rotator.map((word) => <span>{word}</span>)}
-    </TextLoop>
-  </Reveal>
+  {/*
+    The rotator is the emotional peak of this section, and it is also the
+    hand-off into "what we do". `hold` keeps it at full strength through the
+    middle of the crossing and only releases it as the next section arrives,
+    so the belief statement is still on screen while the evidence for it
+    starts appearing. That is the whole point of the transition: the two
+    sections stop reading as separate modules.
+
+    Scroll-linked rather than one-shot, so scrolling back up plays it in
+    reverse instead of leaving a spent animation behind.
+  */}
+  <ScrollScene as="div" effect="hold" class="rotator-scene">
+    <Reveal class="rotator" index={1}>
+      <span>{mission.rotatorPrefix}</span>
+      <TextLoop interval={1.05} roll rollStagger={0.035} rollDuration={0.24} class="rotator-loop">
+        {mission.rotator.map((word) => <span>{word}</span>)}
+      </TextLoop>
+    </Reveal>
+  </ScrollScene>
 </section>
 
 <style>

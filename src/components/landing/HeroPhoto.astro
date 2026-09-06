@@ -47,4 +47,43 @@ const photo = hero.photo;
     object-fit: cover;
     filter: var(--photo-tint);
   }
+
+  /* The conference photo is the only image here, so the movement has to come
+     from the frame itself rather than from cutting to another shot.
+     Two beats:
+       arrive   the photo settles back from slightly over-scaled as the
+                clip-path wipe opens it, so it lands rather than appears.
+       breathe  a very slow push in and out afterwards. This is the cinematic
+                treatment: at 26s a reader never catches it moving, they just
+                register that the room is not a still.
+
+     Transform only, so it is compositor work and cannot cost layout or paint.
+     The figure already clips, so the scale never spills into the band edges.
+     Deliberately restrained: anything faster reads as a slideshow effect
+     rather than a photograph that happens to be alive. */
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-photo img {
+      animation:
+        hero-arrive 1400ms cubic-bezier(0.22, 1, 0.36, 1) both,
+        hero-breathe 26s ease-in-out 1400ms infinite alternate;
+    }
+  }
+
+  @keyframes hero-arrive {
+    from {
+      transform: scale(1.055);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes hero-breathe {
+    from {
+      transform: scale(1);
+    }
+    to {
+      transform: scale(1.045);
+    }
+  }
 </style>

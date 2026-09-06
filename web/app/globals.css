@@ -1,0 +1,196 @@
+/* ColorStack UMN tokens. The only CSS file allowed to hold literal hexes. */
+:root {
+  --maroon: #7A0019;
+  --maroon-deep: #5B0013;
+  --gold: #FFCC33;
+  --gold-dark: #FFB71E;
+  --gold-soft: #FFDE7A;
+  --page: #FFFFFF;
+  --surface-warm: #FBF5EC;
+  --cream: var(--surface-warm);
+  --paper: #FFFFFF;
+  --ink: #1F1A17;
+  --ink-soft: #5C534E;
+  --line: #E8DCCB;
+  --rose: #C6887F;
+
+  /*
+   * maroonLight, stackYellow, teal and pink are in DESIGN.md's palette and are
+   * deliberately not defined here. Nothing on the landing page is allowed to
+   * use them, and a token that exists is a token something will reach for.
+   * The hairline pair went the same way: borders are 1px var(--line), full
+   * stop, so there is no second border colour to choose between.
+   */
+
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
+  --space-5: 24px; --space-6: 32px; --space-8: 48px; --space-10: 64px;
+  --space-12: 96px; --space-16: 128px;
+
+  /* Corners. Three values, and there is no fourth: 999px pills, 12px cards
+     and contained images, 0 on anything full-bleed. */
+  --radius-card: 12px;
+  --radius-pill: 999px;
+
+  /* One easing, everywhere. */
+  --ease: cubic-bezier(.22, 1, .36, 1);
+
+  /* ── The container. One width, one padding, everywhere. ─────────────────
+     No section sets its own max-width; every one of them uses .container. */
+  --container: 1320px;
+  --pad-x: 20px;
+
+  /* ── The vertical rhythm. Two values. ──────────────────────────────────
+     Sections 64px apart on mobile, 96px on desktop. Headings and paragraphs
+     get 16px beneath them. Nothing in this codebase sets any other margin. */
+  --section-y: var(--space-10);
+  --stack: var(--space-4);
+
+  /* ── The type scale. Six sizes, and there is no seventh. ───────────────
+     Every `font-size` rule in the app resolves to one of these six custom
+     properties, so the built stylesheet holds each literal exactly once and
+     the scale cannot be widened by accident in a component file.
+
+     hero  the hero wordmark, and nothing else
+     h2    section headings, the pull quote, spec-sheet values, the Next band,
+           the mobile menu links
+     h3    program titles
+     lede  the hero lede and the mission rotator
+     body  everything read as a sentence, and every control
+     mono  IBM Plex Mono: gutter index, [ Menu ], spec keys, footer */
+  --text-hero: clamp(46px, 10.5vw, 132px);
+  --text-h2: 40px;
+  --text-h3: 20px;
+  --text-lede: 22px;
+  --text-body: 17px;
+  --text-mono: 11px;
+
+  /* ── The nav's one variable. ───────────────────────────────────────────
+     White over the hero photograph, ink once the hero has gone. One DOM, one
+     set of measurements, one 240ms crossfade. See ui/Nav.module.css. */
+  --nav-fg: var(--paper);
+
+  /* ── The scrim. The only gradient on the site. ─────────────────────────
+     It exists so white copy stays legible over a photograph, not for
+     decoration. DESIGN.md bans decorative gradients; this is the contrast
+     exception, and it lives on the hero and nowhere else. Ink at 55% top to
+     bottom, clear by 60% of the height, plus a left band at 40% behind the
+     copy. */
+  --scrim: linear-gradient(to bottom, rgba(31, 26, 23, 0.55) 0%, rgba(31, 26, 23, 0) 60%),
+    linear-gradient(to right, rgba(31, 26, 23, 0.4) 0%, rgba(31, 26, 23, 0) 55%);
+}
+
+@media (min-width: 768px) {
+  :root {
+    --pad-x: var(--space-6);
+    --section-y: var(--space-12);
+  }
+}
+
+/* --font-display / --font-body / --font-mono are set by next/font in layout.tsx */
+
+*, *::before, *::after { box-sizing: border-box; }
+html { background: var(--page); color: var(--ink); -webkit-font-smoothing: antialiased; }
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: 1.55;
+  overflow-x: hidden;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  margin: 0 0 var(--stack);
+  text-wrap: balance;
+}
+h2 { font-weight: 800; font-size: var(--text-h2); line-height: 1.08; }
+h3 { font-weight: 700; font-size: var(--text-h3); line-height: 1.12; }
+
+p { margin: 0 0 var(--stack); max-width: 60ch; }
+
+a { color: inherit; text-decoration: none; }
+a:focus-visible, button:focus-visible, input:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/*
+ * Highlighter swipe for inline links: gold-soft, 200ms, the house easing.
+ *
+ * A solid bar that scales from the left, not the usual two-stop
+ * `linear-gradient` trick: the hero scrim is the only gradient on the site,
+ * and a gradient whose two stops are the same colour is still a gradient in
+ * the stylesheet. `mix-blend-mode: multiply` lets the bar sit over the text
+ * without needing a z-index or a stacking context to hide behind.
+ */
+.link { position: relative; }
+.link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 0.42em;
+  background: var(--gold-soft);
+  mix-blend-mode: multiply;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 200ms var(--ease);
+  pointer-events: none;
+}
+.link:hover::after { transform: scaleX(1); }
+
+/* The mission rotator line. The hero has its own, because it is white on a
+   photograph and sits on the hero's grid. */
+.lede {
+  max-width: 34ch;
+  font-family: var(--font-body);
+  font-size: var(--text-lede);
+  font-style: italic;
+  line-height: 1.55;
+}
+
+.container { max-width: var(--container); margin: 0 auto; padding: 0 var(--pad-x); }
+.section { position: relative; padding-block: var(--section-y); }
+/*
+ * Rose ground, ink text.
+ *
+ * DESIGN.md asks for white text on the rose band. Measured, that is 2.9:1
+ * against #C6887F, which fails WCAG AA for body copy at any size, and this is
+ * the section that tells first-generation students they are in the right
+ * place. Ink on the same ground is 5.9:1 and passes. CLAUDE.md rule 3:
+ * accessibility is not styling. Rose still carries the change in
+ * interpersonal distance; it just does it legibly.
+ */
+.section-rose { background: var(--rose); color: var(--ink); }
+.band-warm { background: var(--surface-warm); }
+
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/*
+ * Photo frames. Every photograph on the page sits in one of these three fixed
+ * aspect ratios with `object-fit: cover`, so the box is the right shape before
+ * the bytes arrive and no image can stretch, letterbox, or move the layout
+ * when it loads. 16:9 full-bleed with square corners, 4:5 portraits, 1:1 in a
+ * grid, 12px corners on anything contained.
+ */
+.frame { position: relative; display: block; margin: 0; overflow: hidden; background: var(--surface-warm); }
+.frame img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.frame-wide { aspect-ratio: 16 / 9; border-radius: 0; }
+.frame-portrait { aspect-ratio: 4 / 5; border-radius: var(--radius-card); }
+.frame-square { aspect-ratio: 1 / 1; border-radius: var(--radius-card); }
+
+/*
+ * There is no reduced-motion block in this file, and there is not meant to be
+ * one anywhere in the app. DESIGN.md, "Motion is not optional": the site ships
+ * one experience and no variant, and WebGL is assumed.
+ *
+ * What that decision did NOT relax: the server renders the final visible
+ * state, so a script that never runs cannot strand content; every interactive
+ * element keeps a visible focus ring, and removing an outline stays banned.
+ */

@@ -1,0 +1,230 @@
+/*
+ * FloatingCards. handoff/docs/07-FLOATINGCARDS.md.
+ *
+ * White ground, no shadows, no glow, no reflections, no dark plate. Everything
+ * here is either the stage the canvas fills, the masonry the server renders
+ * into that stage, or one of the two reading surfaces the brief asks for: the
+ * Lora italic line under the canvas and the lightbox.
+ */
+
+.root {
+  position: relative;
+}
+
+.stage {
+  position: relative;
+  width: 100%;
+  height: 70vh;
+  min-height: 380px;
+  background: var(--page);
+  transition: opacity 200ms var(--ease);
+}
+
+@media (min-width: 768px) {
+  .stage {
+    height: 100vh;
+    /* A very short window should not squash the cloud into a strip. */
+    min-height: 560px;
+  }
+}
+
+/* ── The server's markup ─────────────────────────────────────────────────
+   Four columns on desktop, two on mobile, 12px corners. This is what a
+   reader sees with no JavaScript, and what everyone sees for the paint or
+   two between hydration and the canvas mounting. */
+
+.masonry {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  columns: 2;
+  column-gap: var(--space-4);
+}
+
+@media (min-width: 900px) {
+  .masonry {
+    columns: 4;
+  }
+}
+
+.masonryItem {
+  break-inside: avoid;
+  margin: 0 0 var(--space-4);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}
+
+.masonryImage {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ── The hover line ──────────────────────────────────────────────────────
+   Alt text under the canvas, in Lora italic. Never over the card, never in
+   mono. Holds its height empty so nothing below it moves when it fills. */
+
+.caption {
+  /* Flush with the container's left edge: it is a line of reading, set where
+     every other line on the page starts, not a label floated under a card. */
+  margin: var(--space-5) 0 0;
+  min-height: 1.7em;
+  max-width: 60ch;
+  font-family: var(--font-body);
+  font-style: italic;
+  /* 14px, not var(--text-body). The brief sets this line a step below body on
+     purpose: it is a caption for the thing above it, not a paragraph. */
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: left;
+  color: var(--ink-soft);
+}
+
+/* ── The keyboard path ───────────────────────────────────────────────────
+   One button per photograph, labelled with its alt text. Clipped out of the
+   layout until something in it takes focus, because an interactive element
+   with no visible focus ring is not accessible, it is only invisible. */
+
+.a11yList {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  list-style: none;
+  white-space: nowrap;
+}
+
+.a11yList:focus-within {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  width: auto;
+  height: auto;
+  margin-top: var(--space-4);
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+.a11yButton {
+  max-width: 40ch;
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: 1.3;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 200ms var(--ease);
+}
+
+.a11yButton:hover {
+  border-color: var(--ink);
+}
+
+.a11yButton:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* ── Lightbox ────────────────────────────────────────────────────────────
+   Plain: the full photograph centred on white with a 1px line border, the
+   alt text beneath it in Lora, 200ms fade, no zoom. */
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+  /* Not opaque: the canvas keeps turning behind this and must read at 40%.
+     A 60% white veil is exactly that, and it is the only place the number
+     lives, so the stage itself is left at full opacity. */
+  background: color-mix(in srgb, var(--page) 60%, transparent);
+  animation: fade 200ms var(--ease);
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.lightboxPanel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  max-width: min(100%, 1100px);
+  /* The white the photo is centred on. It is here rather than on the whole
+     overlay so the canvas stays visible around the edges, and so the alt text
+     underneath is read off paper instead of off a moving photograph. */
+  padding: var(--space-6);
+  background: var(--page);
+}
+
+.lightboxPanel:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 6px;
+}
+
+.lightboxFigure {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.lightboxImage {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 68vh;
+  border: 1px solid var(--line);
+  background: var(--page);
+}
+
+.lightboxCaption {
+  max-width: 60ch;
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: 1.5;
+  color: var(--ink-soft);
+  text-align: center;
+}
+
+.lightboxClose {
+  padding: var(--space-2) var(--space-5);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  cursor: pointer;
+  transition: border-color 200ms var(--ease), color 200ms var(--ease);
+}
+
+.lightboxClose:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.lightboxClose:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}

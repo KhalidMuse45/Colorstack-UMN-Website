@@ -1,0 +1,13 @@
+.marginalia {
+  display: none;
+  position: absolute;
+  right: var(--space-6);
+  width: 18ch;
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  transform: rotate(-2deg);
+}
+@media (min-width: 1200px) { .marginalia { display: block; } }

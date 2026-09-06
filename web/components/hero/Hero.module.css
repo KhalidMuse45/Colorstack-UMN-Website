@@ -1,0 +1,122 @@
+/*
+ * The hero melts into the nav. The photograph runs full-bleed from the very
+ * top edge of the viewport, underneath a nav that carries no ground of its own
+ * while it is up there. The copy sits bottom-left on columns 1 to 6.
+ *
+ * There is no clip-path aperture any more. The handoff opened the photo from
+ * the bottom 45% of the stage; the direction now is that the photo starts at
+ * the top edge and stays there, so the pin drives only the shader zoom, the
+ * scrim, and the copy leaving. The photograph is full colour throughout.
+ */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  background: var(--ink);
+  overflow: hidden;
+}
+
+/* White, not maroon. Nothing tints the photograph any more, so the ground the
+   photo and the canvas sit on is the page's own white. */
+.media {
+  position: absolute;
+  inset: 0;
+  background: var(--page);
+}
+
+/* Explicit width and height on the <img>. The box is already the right shape,
+   so nothing reflows when the bytes land. */
+.photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/*
+ * The legibility scrim: one overlay, above the canvas, below the copy. The
+ * only gradient on the site, and it is here for contrast, not decoration. It
+ * fades out with the copy by 35% of the pin, so the photograph is unobstructed
+ * for most of the zoom.
+ */
+.scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: var(--scrim);
+  pointer-events: none;
+}
+
+/* Copy: bottom-left, on the 12-column grid, columns 1 to 6. */
+.copyWrap {
+  position: absolute;
+  inset: auto 0 0 0;
+  z-index: 2;
+  padding-bottom: var(--section-y);
+  pointer-events: none;
+}
+
+.copyWrap a { pointer-events: auto; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--space-5);
+}
+
+.copy { grid-column: 1 / -1; }
+
+@media (min-width: 900px) {
+  .copy { grid-column: 1 / 7; }
+}
+
+.mark {
+  margin: 0 0 var(--stack);
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: var(--text-hero);
+  line-height: 0.96;
+  letter-spacing: -0.03em;
+  color: var(--paper);
+}
+
+/*
+ * The wordmark is one word per line, and that is set by TextRoll's `block`
+ * prop rather than by a rule here, because the word spans carry an inline
+ * `display` that a class from this module cannot override.
+ *
+ * Why it is forced at all: measured on mobile, the wordmark fits on one line
+ * in the size-adjusted fallback and wraps to two in Archivo, so the h1 went
+ * from 44px to 88px tall the instant the font swapped. The copy block is
+ * anchored to the bottom of the hero, so those 44px moved the wordmark and
+ * everything above it, and that was the bulk of a 0.12 CLS. Deciding the line
+ * count ourselves makes the block's height a function of font-size alone,
+ * which does not change on swap. It is also the two-line composition the
+ * layout sketch in docs/02 shows.
+ */
+
+.lede {
+  margin: 0 0 var(--space-5);
+  max-width: 34ch;
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: var(--text-lede);
+  line-height: 1.55;
+  color: var(--paper);
+  text-wrap: pretty;
+}
+
+/* Optional, Sanity-set, one string. Off by default (docs/05). */
+.caption {
+  position: absolute;
+  z-index: 2;
+  left: var(--pad-x);
+  bottom: var(--space-3);
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--paper);
+}

@@ -1,0 +1,32 @@
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: 44px;
+  padding: 0 22px 0 26px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-body);
+  text-decoration: none;
+  transition: background-color 200ms, color 200ms, border-color 200ms;
+}
+.pill:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+.gold { background: var(--gold); color: var(--ink); }
+.gold:hover { background: var(--gold-dark); }
+.gold:active { background: var(--gold-dark); color: var(--maroon-deep); }
+
+.maroon { background: var(--maroon); color: var(--cream); }
+.maroon:hover { background: var(--maroon-deep); }
+
+.ghost { color: var(--ink); border: 1px solid var(--line); }
+.ghost:hover { background: var(--gold-soft); }
+
+.index {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: var(--text-mono);
+  letter-spacing: 0.08em;
+  opacity: 0.8;
+}

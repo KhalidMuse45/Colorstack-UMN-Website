@@ -22,9 +22,15 @@ script strands its content for anyone with JavaScript off, reduced motion on,
 or a script that threw.
 
 **3. Accessibility is not styling.** Every interactive element keeps a visible
-focus ring; never `outline: none`. All motion sits behind
-`prefers-reduced-motion`. Images carry alt text describing what is actually in
-the frame.
+focus ring; never `outline: none`. Images carry alt text describing what is
+actually in the frame. Every interactive piece has a keyboard and
+screen-reader path. Motion policy (owner decision, 2026-09-06, per the
+handoff's DESIGN.md "Motion is not optional"): the site does not read
+`prefers-reduced-motion` and ships no reduced-motion variant. WebGL is
+assumed; no component is required to ship or exercise a WebGL-unavailable
+fallback, and none is a QA gate. Static markup that exists anyway may stay as
+the incidental baseline. Rule 2 still holds: a script failure must never
+strand content.
 
 **4. `design/` is a vendored drop.** Never hand-edit it. Five bugs have been
 found in its reference components, so check it rather than trusting it.
