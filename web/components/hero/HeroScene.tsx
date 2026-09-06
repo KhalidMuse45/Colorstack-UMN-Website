@@ -22,6 +22,7 @@ function Plane({ src, progress, displace = true }: Omit<SceneProps, 'running' | 
   const { size } = useThree();
   const viewport = useThree((s) => s.viewport);
   const pointer = useRef(new THREE.Vector2(0, 0));
+  const mat = useRef<THREE.ShaderMaterial>(null);
 
   // The fragment shader samples with texture2D and does its own colour work,
   // so nothing decodes sRGB for it. Tag the texture as untagged and turn the
@@ -50,7 +51,13 @@ function Plane({ src, progress, displace = true }: Omit<SceneProps, 'running' | 
 
   useFrame((state, dt) => {
     const p = progress.current;
-    const u = uniforms;
+    // R3F v9 CLONES the `uniforms` prop when it constructs the material (v8
+    // shared the reference). Mutating the memo'd object therefore reaches
+    // nothing the GPU ever reads, and the room never turns on. Write to the
+    // material's own uniforms, which are the only ones that exist as far as
+    // the renderer is concerned.
+    const u = mat.current?.uniforms;
+    if (!u) return;
 
     // cover-fit
     const img = texture.image as { width: number; height: number } | undefined;
@@ -74,7 +81,7 @@ function Plane({ src, progress, displace = true }: Omit<SceneProps, 'running' | 
   return (
     <mesh scale={[viewport.width, viewport.height, 1]}>
       <planeGeometry args={[1, 1]} />
-      <shaderMaterial vertexShader={vertexShader} fragmentShader={fragmentShader} uniforms={uniforms} />
+      <shaderMaterial ref={mat} vertexShader={vertexShader} fragmentShader={fragmentShader} uniforms={uniforms} />
     </mesh>
   );
 }
