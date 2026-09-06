@@ -49,7 +49,7 @@ No decorative gradients. No shadows heavier than a 1px hairline. Duotone (graysc
 
 **Accessibility.** Gold focus ring, never `outline:none`. Keyboard and screen-reader paths for every interactive piece.
 
-**Motion is not optional.** The site does not read `prefers-reduced-motion` and ships no reduced-motion variant. The motion is the design. The only fallback anywhere is technical: if WebGL fails to initialize, the hero shows the color photo statically and everything else still animates.
+**Motion is not optional.** The site does not read `prefers-reduced-motion` and ships no reduced-motion variant. The motion is the design. WebGL is assumed (owner decision, 2026-09-06): no component is required to ship or exercise a WebGL-unavailable fallback, and none is a QA gate. Static markup that exists anyway (the hero's underlying `<img>`, a section's server-rendered state) may stay as the incidental baseline.
 
 ## The landing page
 
@@ -110,5 +110,5 @@ Next.js 15 App Router · Sanity v3 (studio at `/studio`) · GSAP + ScrollTrigger
 - At most one mono row outside the spec sheet and footer
 - White ground; cream on reading surfaces only
 - All eight nav items on desktop, `[ Menu ]` on mobile, Wunderbar present
-- Canvas stops after the hero; WebGL-unavailable path exercised
+- Canvas stops after the hero
 - `SOURCES.json` and `QA-REPORT.json` filled in honestly
