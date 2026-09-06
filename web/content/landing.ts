@@ -33,6 +33,13 @@ export interface Cta {
 }
 
 export interface Photo {
+  /**
+   * Stable identity for a photo that appears in a list rather than a fixed
+   * slot. Used as the React key and as the lightbox target in FloatingCards,
+   * where `src` alone would break the moment the same file was shown twice.
+   * Slot photos below do not need one.
+   */
+  id?: string;
   /** Path under /public. WebP placeholders until the chapter supplies real photos. */
   src: string;
   alt: string;
@@ -135,7 +142,216 @@ export const photos = {
     width: 1440,
     height: 956,
   },
+
+  /*
+   * ── Second batch, supplied 2026-09-05 ────────────────────────────────
+   *
+   * The e-board supplied three new sets on 2026-09-05: a ColorStack Bootcamp
+   * night, two Ideathon frames, and a board photoshoot at Northrop Auditorium,
+   * plus a folder of Stacked Up Summit photographs credited in their filenames
+   * to Chloe Jackman Photography. That last set is third-party professional
+   * work rather than a member's camera roll, so it was held until the chapter
+   * confirmed on 2026-09-06 that the files had been legally downloaded and
+   * could be used on the site. Every summit file below carries the
+   * photographer credit in SOURCES.json.
+   *
+   * Descriptions, quality notes and the alt text below come from
+   * `assets-src/photo-triage.md`, which reviewed all sixty masters. Alt text is
+   * carried across from that file, adjusted only where the final crop shows
+   * something slightly different from the uncropped master, and each such
+   * adjustment is noted on the entry.
+   *
+   * Widths and heights are the real output dimensions of the converted WebP,
+   * measured from the files, not the master's dimensions.
+   */
+
+  /** Workshops. The whiteboard is legible at full width, which is the point. */
+  bootcampJeopardy: {
+    src: '/images/bootcamp-jeopardy.webp',
+    alt: 'Three ColorStack UMN members standing beside a whiteboard reading "ColorStack Bootcamp, let\'s play Jeopardy" with résumé and interview categories',
+    width: 2400,
+    height: 1500,
+  },
+  /** Leadership. Students running the room, which is what the copy claims. */
+  ideathonPresenting: {
+    src: '/images/ideathon-presenting.webp',
+    alt: 'Three students presenting a project slide at a table during the Ideathon, one speaking into a microphone',
+    width: 2400,
+    height: 1500,
+  },
+  /** Professional Development. A recruiter conversation, on the nose. */
+  summitRecruiter: {
+    src: '/images/summit-recruiter.webp',
+    alt: 'A recruiter talking with a student at a Rubrik recruiting booth at the Stacked Up Summit',
+    width: 2400,
+    height: 1500,
+  },
+
+  /* Portrait roll on the rose band. Portrait crops, 1400x1750. */
+  redScarfPortrait: {
+    src: '/images/red-scarf-portrait.webp',
+    alt: 'A student smiling in a red scarf, standing in a colonnaded campus hallway',
+    width: 1400,
+    height: 1750,
+  },
+  /**
+   * The triage sheet reads "posing with raised fists" for both people. In the
+   * final crop only the person on the right has both fists up; the other is
+   * pointing at himself. Alt text follows the crop.
+   */
+  staircaseFists: {
+    src: '/images/staircase-fists.webp',
+    alt: 'Two students posing on a grand staircase facing the camera, one with both fists raised',
+    width: 1400,
+    height: 1750,
+  },
+  /**
+   * The triage sheet transcribed the sign as "Presidents Circle 2 East". The
+   * crop reads "Presidents Circle East 2", so the alt text does too.
+   */
+  presidentsCircle: {
+    src: '/images/presidents-circle.webp',
+    alt: 'Two students posed under a wall sign reading "Presidents Circle East 2", one pointing up at it',
+    width: 1400,
+    height: 1750,
+  },
 } as const satisfies Record<string, Photo>;
+
+/* ── Candids ───────────────────────────────────────────────────────────── */
+
+/**
+ * The fifteen photographs that float in the "In the Room" gallery.
+ *
+ * Textures, not slot photos: each is converted at 1200px on its longest side
+ * with NO crop, because mixed aspect ratios are most of what makes the cloud
+ * read as real material rather than tiles (handoff/docs/07). Card size in the
+ * scene comes from the aspect below, so these width and height values are load
+ * bearing and must be the real output dimensions.
+ *
+ * The order is deliberate. Neighbours differ in aspect, so no two landscapes
+ * and no long run of portraits sit next to each other in the 4x4 grid, and the
+ * first eight still mix when mobile takes only the first eight.
+ *
+ * Provenance: fourteen of the fifteen were supplied by the e-board on
+ * 2026-09-05, the summit set among them confirmed clear for use on 2026-09-06
+ * and credited to Chloe Jackman Photography in SOURCES.json. The fifteenth,
+ * game night, is from the 2026-08-12 batch and is the only genuinely
+ * unstaged chapter-event photograph in the set.
+ *
+ * One honest caveat, recorded in `assets-src/photo-triage.md` open question 3
+ * and repeated here so it is not lost: the Northrop photographs are a styled
+ * board photoshoot, not Tuesday-meeting snapshots. The headline over them says
+ * "This is what a Tuesday looks like." The e-board should either bless that or
+ * supply real meeting-night photographs to swap in. Nothing else changes when
+ * they do: replace the file, update the dimensions, keep the alt truthful.
+ */
+export const candids: Photo[] = [
+  {
+    id: 'staircase-group',
+    src: '/images/candids/staircase-group.webp',
+    alt: 'Nine people sitting and standing together on a grand stone staircase, several of them smiling',
+    width: 800,
+    height: 1200,
+  },
+  {
+    id: 'ideathon-room',
+    src: '/images/candids/ideathon-room.webp',
+    alt: 'Students at round tables with laptops during the Ideathon, a countdown timer on the screen at the front of the room',
+    width: 1200,
+    height: 800,
+  },
+  {
+    id: 'elevator-lobby',
+    src: '/images/candids/elevator-lobby.webp',
+    alt: 'Four people talking and smiling together in a marble elevator lobby',
+    width: 900,
+    height: 1200,
+  },
+  {
+    id: 'lab-typing',
+    src: '/images/candids/lab-typing.webp',
+    alt: 'A person typing at a computer lab keyboard with code visible on the monitor',
+    width: 800,
+    height: 1200,
+  },
+  {
+    id: 'summit-couches',
+    src: '/images/candids/summit-couches.webp',
+    alt: 'Five people talking in a conference lounge seating area, one gesturing with a raised hand',
+    width: 1200,
+    height: 800,
+  },
+  {
+    id: 'window-trio',
+    src: '/images/candids/window-trio.webp',
+    alt: 'Three people talking together in a room with a large window, one checking his phone',
+    width: 900,
+    height: 1200,
+  },
+  {
+    id: 'corridor-portrait',
+    src: '/images/candids/corridor-portrait.webp',
+    alt: 'A person standing alone in a grand marble corridor beneath a coffered ceiling',
+    width: 1200,
+    height: 1200,
+  },
+  {
+    id: 'staircase-landing',
+    src: '/images/candids/staircase-landing.webp',
+    alt: 'Two people sitting on a grand staircase landing, one checking his phone',
+    width: 900,
+    height: 1200,
+  },
+  {
+    id: 'summit-duolingo',
+    src: '/images/candids/summit-duolingo.webp',
+    alt: 'Three people talking near a Duolingo booth at the Stacked Up Summit, colorful cube seating around them',
+    width: 1200,
+    height: 800,
+  },
+  {
+    id: 'playful-boxing',
+    src: '/images/candids/playful-boxing.webp',
+    alt: 'Two people facing off in a playful boxing pose on a stairway landing',
+    width: 900,
+    height: 1200,
+  },
+  {
+    id: 'game-night-chess',
+    src: '/images/game-night-chess.webp',
+    alt: 'ColorStack UMN members playing chess and Connect Four around a table at game night',
+    width: 1440,
+    height: 956,
+  },
+  {
+    id: 'lab-workstation',
+    src: '/images/candids/lab-workstation.webp',
+    alt: 'A person at a computer lab workstation, seen from behind, with blank monitors in front of them',
+    width: 800,
+    height: 1200,
+  },
+  {
+    id: 'stairway-talk',
+    src: '/images/candids/stairway-talk.webp',
+    alt: 'Two people talking on a stairway landing beside a tall window',
+    width: 900,
+    height: 1200,
+  },
+  {
+    id: 'summit-dining',
+    src: '/images/candids/summit-dining.webp',
+    alt: 'Three students at a dining table wearing Stacked Up Summit lanyards, talking over food',
+    width: 1200,
+    height: 800,
+  },
+  {
+    id: 'red-chair',
+    src: '/images/candids/red-chair.webp',
+    alt: 'A person sitting in a red lounge chair, checking his phone',
+    width: 800,
+    height: 1200,
+  },
+];
 
 /* ── 1. Hero ───────────────────────────────────────────────────────────── */
 
@@ -199,21 +415,32 @@ export const whatWeDo = {
   hint: 'Hover any photo to read more.',
 };
 
+/**
+ * Photos re-slotted on 2026-09-06 from the 2026-09-05 batch. Body copy is
+ * untouched: only the evidence under each claim changed, so that each program
+ * is now illustrated by a photograph of that program rather than by whichever
+ * of the original six was closest to hand.
+ *
+ *   Workshops                 game night signage -> a Bootcamp résumé night
+ *   Leadership                game night signage -> students presenting at the Ideathon
+ *   Professional Development  a posed delegation -> a recruiter conversation
+ *   Community                 unchanged, game night is still the only one
+ */
 export const programs: Program[] = [
   {
     title: 'Workshops',
     body: 'Git, interview data structures, résumé teardowns, mock technical screens, and project nights where you actually ship something.',
-    photo: photos.ideathon,
+    photo: photos.bootcampJeopardy,
   },
   {
     title: 'Leadership',
     body: 'Every board seat is a student one. Members run events, manage budgets, pitch sponsors, and lead committees.',
-    photo: photos.gameNightSignage,
+    photo: photos.ideathonPresenting,
   },
   {
     title: 'Professional Development',
     body: 'Alumni and recruiter connections, conference delegations, and a referral network that has put members in front of hiring teams.',
-    photo: photos.summitPortrait,
+    photo: photos.summitRecruiter,
   },
   {
     title: 'Community',
@@ -231,26 +458,35 @@ export const community = {
     'A lot of us are first-generation students. Nobody at home could explain what a résumé screen was, why you need a GitHub, or how internship recruiting starts a year early. We turn that hidden curriculum into something you can just ask about.',
     'We also send a delegation to the national conference every year, and we chase the funding so cost never decides who gets to go.',
   ],
-  /** Stacked photo roll, cycled by TextLoop in `stack` mode. */
+  /**
+   * Stacked photo roll, cycled by TextLoop in `stack` mode.
+   *
+   * Portraits since 2026-09-06. The section is one duotone portrait cycling on
+   * rose, so the roll now holds portrait-shaped frames rather than the mix of
+   * landscapes it inherited. The incumbent `summitPortrait` stays in the
+   * rotation on purpose: three of the four are from the same Northrop
+   * photoshoot, and without it the whole cycle would be one hallway.
+   */
   roll: [
-    photos.summitGroup,
+    photos.redScarfPortrait,
+    photos.staircaseFists,
     photos.summitPortrait,
-    photos.summitSignage,
-    photos.ideathon,
+    photos.presidentsCircle,
   ] as Photo[],
 };
 
 /* ── 6. In the room ────────────────────────────────────────────────────── */
 
+/**
+ * The `grid` of four photos this object used to carry is gone as of
+ * 2026-09-06. It fed the 2x2 hover-duotone grid, which is retired: the section
+ * is now the rotating FloatingCards gallery and it reads `candids` above.
+ * Nothing consumed `grid` afterwards, so it went rather than sitting here as a
+ * second, quietly diverging list of the same kind of thing.
+ */
 export const inTheRoom = {
   label: 'In the room',
   headline: 'This is what a Tuesday looks like.',
-  grid: [
-    photos.gameNightChess,
-    photos.gameNightSignage,
-    photos.summitPortrait,
-    photos.summitSignage,
-  ] as Photo[],
 };
 
 /* ── 7. Voices ─────────────────────────────────────────────────────────── */

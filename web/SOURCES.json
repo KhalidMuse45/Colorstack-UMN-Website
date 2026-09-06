@@ -1,5 +1,5 @@
 {
-  "_comment": "One entry per photo shipped. Filled by whoever adds the photo. Required for every build (docs/06). Provenance below is carried across from src/data/landing.ts, which records that the chapter e-board supplied all six on 2026-08-12; alt text is byte-identical to the alt text the page renders.",
+  "_comment": "One entry per photo shipped. Filled by whoever adds the photo. Required for every build (docs/06). Alt text here is byte-identical to the alt text the page renders. Two batches: the first six were supplied by the chapter e-board on 2026-08-12 and their provenance is carried across from src/data/landing.ts; the twenty added on 2026-09-06 came from a supply of sixty masters on 2026-09-05, triaged in assets-src/photo-triage.md. Photographs marked \"Stacked Up Summit\" are professional work credited to Chloe Jackman Photography in the master filenames, held back until the chapter confirmed on 2026-09-06 that they had been legally downloaded and could be published here. Photographs marked \"board photoshoot at Northrop\" are a styled editorial shoot of two to three board members at Northrop Auditorium, NOT snapshots of a meeting; see notAudited below, because the section they mostly fill is headlined \"This is what a Tuesday looks like\".",
   "photos": [
     {
       "file": "public/images/summit-group.webp",
@@ -13,7 +13,7 @@
     },
     {
       "file": "public/images/summit-portrait.webp",
-      "usedFor": "Professional Development program photo, community roll, In the Room grid, Next band peek",
+      "usedFor": "community roll",
       "suppliedBy": "chapter e-board",
       "suppliedOn": "2026-08-12",
       "event": "national student conference",
@@ -23,7 +23,7 @@
     },
     {
       "file": "public/images/summit-signage.webp",
-      "usedFor": "community roll, In the Room grid",
+      "usedFor": "nothing on the landing page since 2026-09-06; the roll it was in turned to portraits. Master kept, entry kept.",
       "suppliedBy": "chapter e-board",
       "suppliedOn": "2026-08-12",
       "event": "Stacked Up Summit 2026",
@@ -33,7 +33,7 @@
     },
     {
       "file": "public/images/ideathon.webp",
-      "usedFor": "Workshops program photo, community roll",
+      "usedFor": "nothing on the landing page since 2026-09-06; superseded in Workshops by bootcamp-jeopardy.webp. Master kept, entry kept.",
       "suppliedBy": "chapter e-board",
       "suppliedOn": "2026-08-12",
       "event": "Ideathon",
@@ -43,7 +43,7 @@
     },
     {
       "file": "public/images/game-night-chess.webp",
-      "usedFor": "Community program photo, In the Room grid",
+      "usedFor": "Community program photo, In the Room gallery (FloatingCards)",
       "suppliedBy": "chapter e-board",
       "suppliedOn": "2026-08-12",
       "event": "game night",
@@ -53,13 +53,217 @@
     },
     {
       "file": "public/images/game-night-signage.webp",
-      "usedFor": "Leadership program photo, In the Room grid",
+      "usedFor": "nothing on the landing page since 2026-09-06; superseded in Leadership by ideathon-presenting.webp. Master kept, entry kept.",
       "suppliedBy": "chapter e-board",
       "suppliedOn": "2026-08-12",
       "event": "game night",
       "posedOrCandid": "posed",
       "permission": "chapter-supplied for website use",
       "alt": "Two ColorStack UMN members beside the hand-drawn whiteboard they made for game night, reading \"Destress with ColorStack, game night, Jeopardy and board games\""
+    },
+    {
+      "file": "public/images/bootcamp-jeopardy.webp",
+      "usedFor": "Workshops program photo",
+      "suppliedBy": "chapter e-board",
+      "suppliedOn": "2026-09-05",
+      "event": "ColorStack Bootcamp",
+      "posedOrCandid": "posed",
+      "permission": "chapter-supplied for website use; Stacked Up Summit set legally downloaded, confirmed 2026-09-06",
+      "alt": "Three ColorStack UMN members standing beside a whiteboard reading \"ColorStack Bootcamp, let's play Jeopardy\" with résumé and interview categories"
+    },
+    {
+      "file": "public/images/ideathon-presenting.webp",
+      "usedFor": "Leadership program photo",
+      "suppliedBy": "chapter e-board",
+      "suppliedOn": "2026-09-05",
+      "event": "Ideathon",
+      "posedOrCandid": "candid",
+      "permission": "chapter-supplied for website use; Stacked Up Summit set legally downloaded, confirmed 2026-09-06",
+      "alt": "Three students presenting a project slide at a table during the Ideathon, one speaking into a microphone"
+    },
+    {
+      "file": "public/images/summit-recruiter.webp",
+      "usedFor": "Professional Development program photo",
+      "suppliedBy": "chapter e-board",
+      "suppliedOn": "2026-09-05",
+      "event": "Stacked Up Summit",
+      "photographer": "Chloe Jackman Photography",
+      "posedOrCandid": "candid",
+      "permission": "chapter-supplied for website use; Stacked Up Summit set legally downloaded, confirmed 2026-09-06",
+      "alt": "A recruiter talking with a student at a Rubrik recruiting booth at the Stacked Up Summit"
+    },
+    {
+      "file": "public/images/red-scarf-portrait.webp",
+      "usedFor": "Who We Show Up For portrait roll",
+      "suppliedBy": "chapter e-board",
+      "suppliedOn": "2026-09-05",
+      "event": "board photoshoot at Northrop",
+      "posedOrCandid": "posed",
+      "permission": "chapter-supplied for website use; Stacked Up Summit set legally downloaded, confirmed 2026-09-06",
+      "alt": "A student smiling in a red scarf, standing in a colonnaded campus hallway"
+    },
+    {
+      "file": "public/images/staircase-fists.webp",
+      "usedFor": "Who We Show Up For portrait roll, Next band peek",
+      "suppliedBy": "chapter e-board",
+      "suppliedOn": "2026-09-05",
+      "event": "board photoshoot at Northrop",
+      "posedOrCandid": "posed",
+      "permission": "chapter-supplied for website use; Stacked Up Summit set legally downloaded, confirmed 2026-09-06",
+      "alt": "Two students posing on a grand staircase facing the camera, one with both fists raised"
+    },
+    {
+      "file": "public/images/presidents-circle.webp",
+      "usedFor": "Who We Show Up For portrait roll",
+      "suppliedBy": "chapter e-board",
+      "suppliedOn": "2026-09-05",
+      "event": "board photoshoot at Northrop",
+      "posedOrCandid": "posed",
+      "permission": "chapter-supplied for website use; Stacked Up Summit set legally downloaded, confirmed 2026-09-06",
+      "alt": "Two students posed under a wall sign reading \"Presidents Circle East 2\", one pointing up at it"
+    },
+    {
+      "file": "public/images/candids/staircase-group.webp",
+      "usedFor": "In the Room gallery (FloatingCards)",
+      "suppliedBy": "chapter e-board",
+      "suppliedOn": "2026-09-05",
+      "event": "board photoshoot at Northrop",
+      "posedOrCandid": "candid",
+      "permission": "chapter-supplied for website use; Stacked Up Summit set legally downloaded, confirmed 2026-09-06",
+      "alt": "Nine people sitting and standing together on a grand stone staircase, several of them smiling"
+    },
+    {
+      "file": "public/images/candids/ideathon-room.webp",
+      "usedFor": "In the Room gallery (FloatingCards)",
+      "suppliedBy": "chapter e-board",
+      "suppliedOn": "2026-09-05",
+      "event": "Ideathon",
+      "posedOrCandid": "candid",
+      "permission": "chapter-supplied for website use; Stacked Up Summit set legally downloaded, confirmed 2026-09-06",
+      "alt": "Students at round tables with laptops during the Ideathon, a countdown timer on the screen at the front of the room"
+    },
+    {
+      "file": "public/images/candids/elevator-lobby.webp",
+      "usedFor": "In the Room gallery (FloatingCards)",
+      "suppliedBy": "chapter e-board",
+      "suppliedOn": "2026-09-05",
+      "event": "board photoshoot at Northrop",
+      "posedOrCandid": "candid",
+      "permission": "chapter-supplied for website use; Stacked Up Summit set legally downloaded, confirmed 2026-09-06",
+      "alt": "Four people talking and smiling together in a marble elevator lobby"
+    },
+    {
+      "file": "public/images/candids/lab-typing.webp",
+      "usedFor": "In the Room gallery (FloatingCards)",
+      "suppliedBy": "chapter e-board",
+      "suppliedOn": "2026-09-05",
+      "event": "board photoshoot at Northrop",
+      "posedOrCandid": "candid",
+      "permission": "chapter-supplied for website use; Stacked Up Summit set legally downloaded, confirmed 2026-09-06",
+      "alt": "A person typing at a computer lab keyboard with code visible on the monitor"
+    },
+    {
+      "file": "public/images/candids/summit-couches.webp",
+      "usedFor": "In the Room gallery (FloatingCards)",
+      "suppliedBy": "chapter e-board",
+      "suppliedOn": "2026-09-05",
+      "event": "Stacked Up Summit",
+      "photographer": "Chloe Jackman Photography",
+      "posedOrCandid": "candid",
+      "permission": "chapter-supplied for website use; Stacked Up Summit set legally downloaded, confirmed 2026-09-06",
+      "alt": "Five people talking in a conference lounge seating area, one gesturing with a raised hand"
+    },
+    {
+      "file": "public/images/candids/window-trio.webp",
+      "usedFor": "In the Room gallery (FloatingCards)",
+      "suppliedBy": "chapter e-board",
+      "suppliedOn": "2026-09-05",
+      "event": "board photoshoot at Northrop",
+      "posedOrCandid": "candid",
+      "permission": "chapter-supplied for website use; Stacked Up Summit set legally downloaded, confirmed 2026-09-06",
+      "alt": "Three people talking together in a room with a large window, one checking his phone"
+    },
+    {
+      "file": "public/images/candids/corridor-portrait.webp",
+      "usedFor": "In the Room gallery (FloatingCards)",
+      "suppliedBy": "chapter e-board",
+      "suppliedOn": "2026-09-05",
+      "event": "board photoshoot at Northrop",
+      "posedOrCandid": "posed",
+      "permission": "chapter-supplied for website use; Stacked Up Summit set legally downloaded, confirmed 2026-09-06",
+      "alt": "A person standing alone in a grand marble corridor beneath a coffered ceiling"
+    },
+    {
+      "file": "public/images/candids/staircase-landing.webp",
+      "usedFor": "In the Room gallery (FloatingCards)",
+      "suppliedBy": "chapter e-board",
+      "suppliedOn": "2026-09-05",
+      "event": "board photoshoot at Northrop",
+      "posedOrCandid": "candid",
+      "permission": "chapter-supplied for website use; Stacked Up Summit set legally downloaded, confirmed 2026-09-06",
+      "alt": "Two people sitting on a grand staircase landing, one checking his phone"
+    },
+    {
+      "file": "public/images/candids/summit-duolingo.webp",
+      "usedFor": "In the Room gallery (FloatingCards)",
+      "suppliedBy": "chapter e-board",
+      "suppliedOn": "2026-09-05",
+      "event": "Stacked Up Summit",
+      "photographer": "Chloe Jackman Photography",
+      "posedOrCandid": "candid",
+      "permission": "chapter-supplied for website use; Stacked Up Summit set legally downloaded, confirmed 2026-09-06",
+      "alt": "Three people talking near a Duolingo booth at the Stacked Up Summit, colorful cube seating around them"
+    },
+    {
+      "file": "public/images/candids/playful-boxing.webp",
+      "usedFor": "In the Room gallery (FloatingCards)",
+      "suppliedBy": "chapter e-board",
+      "suppliedOn": "2026-09-05",
+      "event": "board photoshoot at Northrop",
+      "posedOrCandid": "posed",
+      "permission": "chapter-supplied for website use; Stacked Up Summit set legally downloaded, confirmed 2026-09-06",
+      "alt": "Two people facing off in a playful boxing pose on a stairway landing"
+    },
+    {
+      "file": "public/images/candids/lab-workstation.webp",
+      "usedFor": "In the Room gallery (FloatingCards)",
+      "suppliedBy": "chapter e-board",
+      "suppliedOn": "2026-09-05",
+      "event": "board photoshoot at Northrop",
+      "posedOrCandid": "candid",
+      "permission": "chapter-supplied for website use; Stacked Up Summit set legally downloaded, confirmed 2026-09-06",
+      "alt": "A person at a computer lab workstation, seen from behind, with blank monitors in front of them"
+    },
+    {
+      "file": "public/images/candids/stairway-talk.webp",
+      "usedFor": "In the Room gallery (FloatingCards)",
+      "suppliedBy": "chapter e-board",
+      "suppliedOn": "2026-09-05",
+      "event": "board photoshoot at Northrop",
+      "posedOrCandid": "candid",
+      "permission": "chapter-supplied for website use; Stacked Up Summit set legally downloaded, confirmed 2026-09-06",
+      "alt": "Two people talking on a stairway landing beside a tall window"
+    },
+    {
+      "file": "public/images/candids/summit-dining.webp",
+      "usedFor": "In the Room gallery (FloatingCards)",
+      "suppliedBy": "chapter e-board",
+      "suppliedOn": "2026-09-05",
+      "event": "Stacked Up Summit",
+      "photographer": "Chloe Jackman Photography",
+      "posedOrCandid": "candid",
+      "permission": "chapter-supplied for website use; Stacked Up Summit set legally downloaded, confirmed 2026-09-06",
+      "alt": "Three students at a dining table wearing Stacked Up Summit lanyards, talking over food"
+    },
+    {
+      "file": "public/images/candids/red-chair.webp",
+      "usedFor": "In the Room gallery (FloatingCards)",
+      "suppliedBy": "chapter e-board",
+      "suppliedOn": "2026-09-05",
+      "event": "unconfirmed. The master was supplied twice, byte-identical, in both the board photoshoot folder and the Stacked Up Summit folder, so which shoot it belongs to is genuinely unknown. Its filename follows the board photoshoot's export pattern rather than the summit photographer's, so no photographer credit is claimed here. Ask the e-board, and add the credit if it turns out to be the summit's.",
+      "posedOrCandid": "candid",
+      "permission": "chapter-supplied for website use; Stacked Up Summit set legally downloaded, confirmed 2026-09-06",
+      "alt": "A person sitting in a red lounge chair, checking his phone"
     },
     {
       "file": "public/images/colorstack-umn-mark-192.webp",
@@ -73,6 +277,8 @@
     }
   ],
   "notAudited": [
-    "public/images/colorstack-umn-logo.png, summit-group-800.webp and summit-group-1600.webp were copied across with the rest of the existing set but nothing on the landing page references them."
+    "public/images/colorstack-umn-logo.png, summit-group-800.webp and summit-group-1600.webp were copied across with the rest of the existing set but nothing on the landing page references them.",
+    "The eleven \"board photoshoot at Northrop\" photographs are a styled editorial shoot, not meeting-night candids. They currently supply most of the In the Room gallery, whose headline is \"This is what a Tuesday looks like.\" That is a stretch and the e-board should either bless it or supply real meeting photographs with broader member representation. Raised as open question 3 in assets-src/photo-triage.md.",
+    "Individuals are named in several master filenames in assets-src/photos/UMNSTACKEDUP/. No name appears in any alt text or in this file, but these are prominent, repeated, close-up appearances of a small number of people and the chapter should be sure each of them agreed to be on the public site."
   ]
 }

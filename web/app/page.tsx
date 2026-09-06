@@ -9,6 +9,7 @@ import TextLoop from '@/components/motion/TextLoop';
 import PhotoRoll from '@/components/media/PhotoRoll';
 import Voices from '@/components/sections/Voices';
 import GetInTouch from '@/components/sections/GetInTouch';
+import FloatingCards from '@/components/whimsy/FloatingCards';
 import GlyphSticker from '@/components/whimsy/GlyphSticker';
 import Marginalia from '@/components/whimsy/Marginalia';
 import { getLanding } from '@/lib/landing';
@@ -124,35 +125,21 @@ export default async function Page() {
       {/*
         05 In the Room.
 
-        INTERIM PLACEHOLDER. The 2x2 duotone-to-colour-on-hover grid this
-        section was specced with is retired (owner decision, 2026-09-06). The
-        section becomes a rotating R3F candid-photo gallery built on
-        FloatingCards, per handoff/docs/07-FLOATINGCARDS.md, and a follow-up
-        pass owns that component.
+        The 2x2 duotone-to-colour-on-hover grid this section was specced with
+        is retired (owner decision, 2026-09-06). It is now the rotating candid
+        gallery from handoff/docs/07-FLOATINGCARDS.md: fifteen photographs as
+        thin planes on white, each turning on its own vertical axis.
 
-        What is deliberately here and should survive the swap: the section
-        shell. The headline, the marginalia note in the gutter, the glyph
-        stickers, the `data-index` the page rail reads, and the same four
-        photographs with their real alt text. What is deliberately NOT here:
-        any hover treatment or duotone polish, because it is about to be
-        replaced by a canvas. A plain static grid until then.
+        The section shell is unchanged from the interim placeholder it replaced:
+        the headline, the marginalia note in the gutter, the glyph stickers and
+        the `data-index` the page rail reads. FloatingCards renders its own
+        server-side markup, a static masonry of every photograph with its alt
+        text, so this section still says something with the canvas removed.
       */}
       <section className="section container" data-index="05">
         <h2>{d.roomHeadline}</h2>
         <div className={styles.roomLayout}>
-          <div className={styles.roomGrid}>
-            {d.roomGrid.map((ph) => (
-              <figure key={ph.src} className={styles.roomCell}>
-                <Image
-                  src={ph.src}
-                  alt={ph.alt}
-                  fill
-                  sizes="(min-width: 900px) 45vw, 50vw"
-                  style={{ objectPosition: ph.objectPosition }}
-                />
-              </figure>
-            ))}
-          </div>
+          <FloatingCards photos={d.candids} />
 
           <div className={styles.gutter}>
             {d.marginalia && <Marginalia>{d.marginalia}</Marginalia>}

@@ -79,8 +79,11 @@
 }
 
 /* ── In the Room ─────────────────────────────────────────────────────────
-   The grid rules below are the interim placeholder for the FloatingCards
-   gallery. See the comment on the section in page.tsx. */
+   The gallery itself owns its layout in components/whimsy/FloatingCards.module.css.
+   What is left here is the two-column shell around it: the canvas in the
+   first column, the marginalia note and the glyph stickers in the second.
+   The .roomGrid and .roomCell rules that used to sit below went with the 2x2
+   placeholder grid they styled. */
 
 .roomLayout {
   display: grid;
@@ -94,27 +97,6 @@
     grid-template-columns: minmax(0, 1fr) 22ch;
     gap: var(--space-10);
   }
-}
-
-.roomGrid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-5);
-}
-
-.roomCell {
-  position: relative;
-  margin: 0;
-  aspect-ratio: 4 / 3;
-  border-radius: var(--radius-card);
-  overflow: hidden;
-}
-
-.roomCell img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
 
 .gutter {

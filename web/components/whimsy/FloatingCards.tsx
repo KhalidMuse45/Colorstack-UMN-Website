@@ -1,76 +1,270 @@
 'use client';
 
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { useTexture } from '@react-three/drei';
-import { useMemo, useRef, useState } from 'react';
-import * as THREE from 'three';
+import dynamic from 'next/dynamic';
+import Image from 'next/image';
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
+import { tokens } from '@/lib/tokens';
+import styles from './FloatingCards.module.css';
 
-export type FloatingCard = { id: string; src: string; title: string; date?: string; href?: string; aspect?: number };
+const FloatingCardsScene = dynamic(() => import('./FloatingCardsScene'), { ssr: false });
 
 /**
- * Taste Labs-style cloud of event flyers on white. Drift, tilt toward the
- * cursor, hover raises, click brings to front and calls onSelect.
- * Events page hero. Reduced motion: caller renders a static grid instead.
+ * The ✳ pointer, over cards only. Drawn from `tokens.ink` rather than a literal
+ * hex, because a data URI is still a place a colour can drift out of the
+ * palette. `pointer` is the fallback if the browser will not take the image.
  */
-function Card({ card, index, total, active, onSelect }: { card: FloatingCard; index: number; total: number; active: boolean; onSelect: (id: string) => void }) {
-  const tex = useTexture(card.src);
-  const mesh = useRef<THREE.Mesh>(null);
-  const [hover, setHover] = useState(false);
-  const { viewport } = useThree();
+const STAR_CURSOR = `url("data:image/svg+xml,${encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28"><text x="14" y="21" font-size="20" text-anchor="middle" fill="${tokens.ink}">✳</text></svg>`,
+)}") 14 14, pointer`;
 
-  const seed = useMemo(() => {
-    const col = index % 4;
-    const row = Math.floor(index / 4);
-    return {
-      x: (col - 1.5) * (viewport.width / 4.6) + (Math.random() - 0.5) * 0.6,
-      y: (row - Math.floor(total / 4) / 2) * (viewport.height / 3.2) + (Math.random() - 0.5) * 0.5,
-      z: -1 - Math.random() * 1.5,
-      phase: Math.random() * Math.PI * 2,
-      rot: (Math.random() - 0.5) * 0.3,
-    };
-  }, [index, total, viewport.width, viewport.height]);
+export type FloatingCardsPhoto = {
+  /** Stable identity. Falls back to src plus position when a caller omits it. */
+  id?: string;
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+};
 
-  const aspect = card.aspect ?? 0.75;
-  const w = 0.9;
+/**
+ * "In the Room": candid chapter photographs as thin planes turning on their own
+ * vertical axes over white. Spec: handoff/docs/07-FLOATINGCARDS.md.
+ *
+ * WHAT THE SERVER RENDERS. The static masonry below, every photograph in it,
+ * with its alt text. That is the whole section for a reader whose JavaScript
+ * has not arrived, has been turned off, or threw on the way in, and it is the
+ * reason this component satisfies CLAUDE.md rule 2: the visible state is the
+ * server's, and the script only ever replaces it with a richer one.
+ *
+ * The canvas mounts on the client, in place of the masonry, as soon as the
+ * component has mounted. That is a paint or two after hydration and long
+ * before anyone has scrolled this far down the page, so the swap is not
+ * something a reader watches happen.
+ *
+ * WHAT IT DOES NOT DO. It does not read `prefers-reduced-motion`, here or
+ * anywhere below it. DESIGN.md, "Motion is not optional": the site ships one
+ * experience. There is no reduced-motion branch to find.
+ *
+ * It is also not coupled to scroll in any way. The only thing scroll position
+ * decides is whether the render loop is running at all, so that this canvas
+ * and the hero's are never drawing in the same frame.
+ */
+export default function FloatingCards({ photos }: { photos: FloatingCardsPhoto[] }) {
+  const captionId = useId();
+  const root = useRef<HTMLDivElement>(null);
+  const dialog = useRef<HTMLDivElement>(null);
+  const triggers = useRef(new Map<string, HTMLButtonElement>());
 
-  useFrame((state) => {
-    if (!mesh.current) return;
-    const t = state.clock.elapsedTime;
-    const targetZ = active ? 0.6 : hover ? seed.z + 0.4 : seed.z;
-    mesh.current.position.x = THREE.MathUtils.lerp(mesh.current.position.x, active ? 0 : seed.x, 0.08);
-    mesh.current.position.y = THREE.MathUtils.lerp(mesh.current.position.y, active ? 0 : seed.y + Math.sin(t * 0.5 + seed.phase) * 0.08, 0.08);
-    mesh.current.position.z = THREE.MathUtils.lerp(mesh.current.position.z, targetZ, 0.08);
-    mesh.current.rotation.y = THREE.MathUtils.lerp(mesh.current.rotation.y, active ? 0 : state.pointer.x * 0.25 + seed.rot, 0.06);
-    mesh.current.rotation.x = THREE.MathUtils.lerp(mesh.current.rotation.x, active ? 0 : -state.pointer.y * 0.15, 0.06);
-  });
+  const [mounted, setMounted] = useState(false);
+  const [mobile, setMobile] = useState(false);
+  const [inView, setInView] = useState(false);
+  const [pageVisible, setPageVisible] = useState(true);
+  const [hovered, setHovered] = useState<string | null>(null);
+  const [open, setOpen] = useState<string | null>(null);
 
-  return (
-    <mesh
-      ref={mesh}
-      position={[seed.x, seed.y, seed.z]}
-      onPointerOver={() => setHover(true)}
-      onPointerOut={() => setHover(false)}
-      onClick={() => onSelect(card.id)}
-    >
-      <planeGeometry args={[w, w / aspect]} />
-      <meshBasicMaterial map={tex} toneMapped={false} />
-    </mesh>
+  const items = useMemo(
+    () => photos.map((p, i) => ({ ...p, uid: p.id ?? `${p.src}-${i}` })),
+    [photos],
   );
-}
 
-export default function FloatingCards({ cards, onSelect }: { cards: FloatingCard[]; onSelect?: (card: FloatingCard) => void }) {
-  const [active, setActive] = useState<string | null>(null);
-  const select = (id: string) => {
-    const next = active === id ? null : id;
-    setActive(next);
-    const c = cards.find((k) => k.id === next);
-    if (c && onSelect) onSelect(c);
-  };
+  // docs/07 caps the cloud at sixteen cards, eight on mobile. The button list
+  // and the masonry below still carry every photograph, so nothing supplied is
+  // unreachable by keyboard on a small screen.
+  const shown = useMemo(() => items.slice(0, mobile ? 8 : 16), [items, mobile]);
+  const sceneCards = useMemo(
+    () => shown.map(({ uid, src, width, height }) => ({ uid, src, width, height })),
+    [shown],
+  );
+
+  useEffect(() => {
+    setMobile(window.matchMedia('(max-width: 767px)').matches);
+    setMounted(true);
+  }, []);
+
+  /*
+   * docs/07: `frameloop="always"` only while the section is in view. The hero
+   * canvas stops when its pin releases and this one starts when it is looked
+   * at, so the page never has two render loops going at once. This is a prop
+   * rather than a `setFrameloop` call from inside `useFrame`, which is the trap
+   * components/hero/HeroScene.tsx documents: the moment such a call sets
+   * "demand" its own `useFrame` stops, and nothing is left to set "always".
+   */
+  useEffect(() => {
+    const el = root.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      { rootMargin: '10% 0px' },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const on = () => setPageVisible(document.visibilityState === 'visible');
+    on();
+    document.addEventListener('visibilitychange', on);
+    return () => document.removeEventListener('visibilitychange', on);
+  }, []);
+
+  const openPhoto = useCallback((uid: string) => setOpen(uid), []);
+
+  const close = useCallback(() => {
+    setOpen((uid) => {
+      // Focus goes back to whatever opened the lightbox, which for a keyboard
+      // reader is the hidden button and for a pointer is nothing at all.
+      if (uid) triggers.current.get(uid)?.focus();
+      return null;
+    });
+  }, []);
+
+  // Focus moves into the lightbox on open.
+  useEffect(() => {
+    if (open) dialog.current?.focus();
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.stopPropagation();
+        close();
+        return;
+      }
+      // A one-control dialog, so the trap is one line: Tab keeps the close
+      // button. `aria-modal` hides the page behind it from assistive tech and
+      // this stops a sighted keyboard reader tabbing out of a modal.
+      if (e.key === 'Tab') {
+        const focusables = dialog.current?.querySelectorAll<HTMLElement>('button');
+        if (!focusables || focusables.length === 0) return;
+        e.preventDefault();
+        focusables[0].focus();
+      }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [open, close]);
+
+  const openPhotoData = open ? items.find((p) => p.uid === open) : undefined;
+  const hoveredPhoto = hovered ? items.find((p) => p.uid === hovered) : undefined;
+
   return (
-    <Canvas dpr={[1, 1.5]} camera={{ position: [0, 0, 3.2], fov: 45 }} style={{ position: 'absolute', inset: 0 }} onPointerMissed={() => setActive(null)}>
-      {cards.map((c, i) => (
-        <Card key={c.id} card={c} index={i} total={cards.length} active={active === c.id} onSelect={select} />
-      ))}
-    </Canvas>
+    <div className={styles.root} ref={root}>
+      <div
+        className={open ? `${styles.stage} ${styles.stageDimmed}` : styles.stage}
+        /*
+         * The canvas is decoration as far as assistive technology is
+         * concerned: every photograph in it is reachable through the button
+         * list below, which carries the same alt text. Before it mounts this
+         * same element holds the server's masonry, which is the section for a
+         * reader without JavaScript and must stay readable, so the attribute
+         * arrives with the canvas rather than being baked into the markup.
+         */
+        aria-hidden={mounted || undefined}
+        style={{ cursor: hovered ? STAR_CURSOR : undefined }}
+        /*
+         * A pointer can leave the canvas without ever crossing empty space on
+         * it, straight off a card and out of the section, in which case neither
+         * the card's own pointerout nor `onPointerMissed` fires and the caption
+         * line is left holding the alt text of a photo nobody is pointing at.
+         */
+        onPointerLeave={() => setHovered(null)}
+      >
+        {mounted ? (
+          <FloatingCardsScene
+            photos={sceneCards}
+            cols={mobile ? 2 : 4}
+            tilt={!mobile}
+            running={inView && pageVisible}
+            hoveredUid={hovered}
+            onHover={setHovered}
+            onOpen={openPhoto}
+          />
+        ) : (
+          <ul className={styles.masonry}>
+            {items.map((p) => (
+              <li key={p.uid} className={styles.masonryItem}>
+                <Image
+                  src={p.src}
+                  alt={p.alt}
+                  width={p.width}
+                  height={p.height}
+                  unoptimized
+                  className={styles.masonryImage}
+                />
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      {/*
+        The hovered photo's alt text, under the canvas, in Lora italic. Not over
+        the card, not in mono, and the line holds its height whether or not
+        anything is hovered so nothing below it moves.
+      */}
+      <p className={styles.caption}>
+        {hoveredPhoto?.alt ?? ' '}
+      </p>
+
+      {/*
+        One button per photograph, clipped out of the layout until something in
+        the list takes focus, at which point the whole list appears with a gold
+        ring on the focused item. This is the keyboard and screen-reader path
+        into the lightbox.
+      */}
+      <ul className={styles.a11yList}>
+        {items.map((p) => (
+          <li key={p.uid}>
+            <button
+              type="button"
+              className={styles.a11yButton}
+              ref={(el) => {
+                if (el) triggers.current.set(p.uid, el);
+                else triggers.current.delete(p.uid);
+              }}
+              onClick={() => openPhoto(p.uid)}
+            >
+              {p.alt}
+            </button>
+          </li>
+        ))}
+      </ul>
+
+      {openPhotoData && (
+        <div
+          className={styles.lightbox}
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget) close();
+          }}
+        >
+          <div
+            className={styles.lightboxPanel}
+            ref={dialog}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={`${captionId}-open`}
+            tabIndex={-1}
+          >
+            <figure className={styles.lightboxFigure}>
+              <Image
+                src={openPhotoData.src}
+                alt={openPhotoData.alt}
+                width={openPhotoData.width}
+                height={openPhotoData.height}
+                unoptimized
+                className={styles.lightboxImage}
+              />
+              <figcaption className={styles.lightboxCaption} id={`${captionId}-open`}>
+                {openPhotoData.alt}
+              </figcaption>
+            </figure>
+            <button type="button" className={styles.lightboxClose} onClick={close}>
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

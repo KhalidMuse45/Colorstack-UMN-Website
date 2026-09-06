@@ -18,6 +18,7 @@
  */
 import {
   MAILING_LIST,
+  candids,
   community,
   contact,
   channels,
@@ -35,6 +36,12 @@ import {
 } from '@/content/landing';
 
 export type Photo = {
+  /**
+   * Present on photos that live in a list rather than a fixed slot, which today
+   * means the candids. FloatingCards keys and targets its lightbox by it, so
+   * the same file can appear twice without the two entries colliding.
+   */
+  id?: string;
   src: string;
   alt: string;
   width: number;
@@ -74,7 +81,13 @@ export type Landing = {
 
   roomHeadline: string;
   marginalia?: string;
-  roomGrid: Photo[];
+  /**
+   * "In the Room". Twelve to sixteen candids that float as rotating planes
+   * (handoff/docs/07). Replaced `roomGrid`, the four photos the retired 2x2
+   * hover-duotone grid read, on 2026-09-06. In Sanity this is the
+   * `chapterPhoto` documents with `candid == true`.
+   */
+  candids: Photo[];
 
   voicesHeadline: string;
   testimonials: { quote: string; name: string; role?: string }[];
@@ -152,7 +165,7 @@ export async function getLanding(): Promise<Landing> {
 
     roomHeadline: inTheRoom.headline,
     marginalia: MARGINALIA,
-    roomGrid: [...inTheRoom.grid],
+    candids: [...candids],
 
     voicesHeadline: voices.headline,
     // Empty on purpose. See the comment on `testimonials` in content/landing.ts.
