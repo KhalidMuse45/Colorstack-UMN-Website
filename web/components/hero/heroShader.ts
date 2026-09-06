@@ -1,10 +1,13 @@
 /**
  * Hero photo shader. One full-screen plane, cover-fit.
  *
+ * The photograph is full colour at every scroll position. There is no tint,
+ * no two-tone step and no colour lift: the hero moment is the aperture
+ * opening plus the zoom, and the photo is simply itself the whole way through.
+ *
  * uProgress  0..1 from ScrollTrigger
  * uPointer   normalized pointer, eased in HeroScene
- * uMix       0 = duotone (uDark → uLight), 1 = source color. Driven by progress.
- * uZoom      UV zoom, 1.0 → 1.35, driven by progress.
+ * uZoom      UV zoom, 1.00 → 1.45, driven by progress.
  */
 export const vertexShader = /* glsl */ `
   varying vec2 vUv;
@@ -22,11 +25,8 @@ export const fragmentShader = /* glsl */ `
   uniform vec2  uPointer;   // -1..1
   uniform float uTime;
   uniform float uZoom;
-  uniform float uMix;
   uniform float uGrain;
   uniform float uDisplace;  // 0 on mobile, where there is no cursor to push from
-  uniform vec3  uDark;      // maroon
-  uniform vec3  uLight;     // cream
 
   varying vec2 vUv;
 
@@ -45,14 +45,7 @@ export const fragmentShader = /* glsl */ `
     float push = smoothstep(0.35, 0.0, dist) * uDisplace;
     uv += normalize(d + 1e-5) * push * 0.012;
 
-    vec3 col = texture2D(uTexture, uv).rgb;
-
-    // luminance → duotone
-    float l = dot(col, vec3(0.2126, 0.7152, 0.0722));
-    l = smoothstep(0.02, 0.98, l);
-    vec3 duo = mix(uDark, uLight, l);
-
-    vec3 outCol = mix(duo, col, uMix);
+    vec3 outCol = texture2D(uTexture, uv).rgb;
 
     // film grain
     float g = hash(vUv * 900.0 + fract(uTime)) - 0.5;

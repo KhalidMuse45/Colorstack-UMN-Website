@@ -10,7 +10,9 @@ import styles from './Nav.module.css';
 
 /**
  * Desktop: mark + wordmark top-left, seven links and the gold pill top-right.
- * Mobile: mark + wordmark + `[ Menu ]` into a full-screen white sheet.
+ * Mobile: mark + wordmark + `[ Menu ]` into a full-screen white sheet, whose
+ * own top row is the wordmark as text. FIX-2 §4: the 24px chapter mark belongs
+ * to the nav bar's top-left corner and nowhere else on the site.
  *
  * TWO STATES, ONE DOM.
  *
@@ -117,8 +119,9 @@ export default function Nav() {
       {open && (
         <div className={styles.sheet} role="dialog" aria-modal="true" aria-label="Menu">
           <div className={styles.sheetTop}>
+            {/* FIX-2 §4: the mark appears in the nav bar only. The sheet, like
+                the footer, carries the wordmark as text. */}
             <Link href="/" className={styles.brand} onClick={() => setOpen(false)} aria-label="ColorStack UMN, home">
-              <Image src="/images/colorstack-umn-mark-192.webp" alt="" width={24} height={24} />
               <span>ColorStack UMN</span>
             </Link>
             {/* autoFocus is correct here: the sheet is a modal dialog and

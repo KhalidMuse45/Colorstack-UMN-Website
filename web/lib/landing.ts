@@ -48,6 +48,11 @@ export type Photo = {
   height: number;
   /** CSS object-position, tuned per photo in the design reference. */
   objectPosition?: string;
+  /**
+   * An unposed moment. Mirrors the `candid` boolean on Sanity's `chapterPhoto`
+   * document, default false, and it is what `candids` below is filtered on.
+   */
+  candid?: boolean;
   event?: string;
   caption?: string;
 };
@@ -82,10 +87,14 @@ export type Landing = {
   roomHeadline: string;
   marginalia?: string;
   /**
-   * "In the Room". Twelve to sixteen candids that float as rotating planes
-   * (handoff/docs/07). Replaced `roomGrid`, the four photos the retired 2x2
-   * hover-duotone grid read, on 2026-09-06. In Sanity this is the
-   * `chapterPhoto` documents with `candid == true`.
+   * "In the Room". The candids that float as rotating planes (handoff/docs/07).
+   * Replaced `roomGrid`, the four photos the retired 2x2 hover-duotone grid
+   * read, on 2026-09-06.
+   *
+   * EVERY PHOTO IN HERE HAS `candid: true`, and that is a guarantee this
+   * function makes rather than one the gallery checks. In Sanity it becomes the
+   * `chapterPhoto` documents matching `candid == true`, which is the same
+   * filter one layer further out; until then it is the `.filter` below.
    */
   candids: Photo[];
 
@@ -165,7 +174,15 @@ export async function getLanding(): Promise<Landing> {
 
     roomHeadline: inTheRoom.headline,
     marginalia: MARGINALIA,
-    candids: [...candids],
+    /*
+     * The gallery is candids only, and this is the single place that is
+     * decided. `content/landing.ts` carries the whole pool with the reasoning
+     * on each entry; three of the fifteen are a group shot, a posed portrait
+     * and a staged gag, and they are filtered out here rather than deleted
+     * there. When Sanity lands, this line becomes the `candid == true` clause
+     * of the GROQ query and nothing downstream notices.
+     */
+    candids: candids.filter((p) => p.candid === true),
 
     voicesHeadline: voices.headline,
     // Empty on purpose. See the comment on `testimonials` in content/landing.ts.

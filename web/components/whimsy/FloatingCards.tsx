@@ -30,6 +30,13 @@ export type FloatingCardsPhoto = {
  * "In the Room": candid chapter photographs as thin planes turning on their own
  * vertical axes over white. Spec: handoff/docs/07-FLOATINGCARDS.md.
  *
+ * CANDIDS ONLY, AND NOT BY THIS COMPONENT'S DOING. `lib/landing.ts` hands it
+ * the photographs flagged `candid: true` and nothing else, so the canvas, the
+ * server's masonry, the keyboard list and the lightbox are all showing the same
+ * set without any of them holding a second copy of the rule. A group shot or a
+ * posed portrait cannot appear here by being passed in, only by being flagged
+ * candid in `content/landing.ts`, which is where that judgement is recorded.
+ *
  * WHAT THE SERVER RENDERS. The static masonry below, every photograph in it,
  * with its alt text. That is the whole section for a reader whose JavaScript
  * has not arrived, has been turned off, or threw on the way in, and it is the
@@ -76,9 +83,20 @@ export default function FloatingCards({ photos }: { photos: FloatingCardsPhoto[]
     [shown],
   );
 
+  /*
+   * The breakpoint is watched, not sampled once. The scene's own layout follows
+   * the canvas size on every resize, but the card count and the column count
+   * are decided here, and a window dragged across 768px with those frozen gives
+   * a phone-width viewport a sixteen-card four-column cloud. Which is exactly
+   * the state a reviewer resizing one open page would be looking at.
+   */
   useEffect(() => {
-    setMobile(window.matchMedia('(max-width: 767px)').matches);
+    const mq = window.matchMedia('(max-width: 767px)');
+    const on = () => setMobile(mq.matches);
+    on();
     setMounted(true);
+    mq.addEventListener('change', on);
+    return () => mq.removeEventListener('change', on);
   }, []);
 
   /*
@@ -151,7 +169,13 @@ export default function FloatingCards({ photos }: { photos: FloatingCardsPhoto[]
   return (
     <div className={styles.root} ref={root}>
       <div
-        className={open ? `${styles.stage} ${styles.stageDimmed}` : styles.stage}
+        /*
+         * No dimming class when the lightbox is open. The canvas keeps
+         * rendering at full strength and the lightbox's own white veil is what
+         * puts it at 40%: one mechanism, one number, and it cannot drift out of
+         * step with the veil the way two stacked opacities did.
+         */
+        className={styles.stage}
         /*
          * The canvas is decoration as far as assistive technology is
          * concerned: every photograph in it is reachable through the button

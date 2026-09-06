@@ -49,6 +49,23 @@ export interface Photo {
   objectPosition?: string;
   /** True while this slot still holds a generated placeholder. */
   placeholder?: boolean;
+  /**
+   * An unposed moment: someone mid-laugh, a whiteboard mid-problem, two members
+   * over one laptop. Absent or false means posed, and posed is the default, so
+   * a photograph has to be judged into the gallery rather than out of it.
+   *
+   * The "In the Room" gallery reads exactly the photographs that carry this,
+   * and nothing else. It is the field Sanity's `chapterPhoto` document will
+   * carry under the same name when that swap happens; `lib/landing.ts` is where
+   * the filter lives, so the query can replace it without touching the gallery.
+   *
+   * Judged one by one against the per-frame descriptions in
+   * `assets-src/photo-triage.md`. A group photograph, a posed portrait or a
+   * staged gag does not qualify however good it is: those photographs stay in
+   * the array below with no flag, so the reasoning survives in one place rather
+   * than being reconstructed from an absence.
+   */
+  candid?: boolean;
 }
 
 export interface Program {
@@ -220,7 +237,14 @@ export const photos = {
 /* ── Candids ───────────────────────────────────────────────────────────── */
 
 /**
- * The fifteen photographs that float in the "In the Room" gallery.
+ * The candidate pool for the "In the Room" gallery. Fifteen photographs, of
+ * which the twelve carrying `candid: true` are the ones that float.
+ *
+ * THE FLAG IS THE GATE. `lib/landing.ts` hands the gallery only the flagged
+ * entries, so adding a photograph here does not put it on the page: judging it
+ * unposed does. Three are deliberately unflagged and stay in the list with the
+ * reason on the entry, because a photograph rejected silently is a decision
+ * somebody has to make again from scratch next time.
  *
  * Textures, not slot photos: each is converted at 1200px on its longest side
  * with NO crop, because mixed aspect ratios are most of what makes the cloud
@@ -230,7 +254,7 @@ export const photos = {
  *
  * The order is deliberate. Neighbours differ in aspect, so no two landscapes
  * and no long run of portraits sit next to each other in the 4x4 grid, and the
- * first eight still mix when mobile takes only the first eight.
+ * first eight flagged entries still mix when mobile takes only eight.
  *
  * Provenance: fourteen of the fifteen were supplied by the e-board on
  * 2026-09-05, the summit set among them confirmed clear for use on 2026-09-06
@@ -246,6 +270,14 @@ export const photos = {
  * they do: replace the file, update the dimensions, keep the alt truthful.
  */
 export const candids: Photo[] = [
+  /**
+   * NOT A CANDID. `assets-src/photo-triage.md` calls this "by far the largest
+   * and most genuinely candid group shot in the set", and both halves of that
+   * sentence are true: it is unposed, and it is a group shot. Nine people
+   * assembled on a staircase for the camera is the one thing the gallery brief
+   * rules out by name, so the flag stays off and the photograph keeps earning
+   * its place in the hero and About slots instead.
+   */
   {
     id: 'staircase-group',
     src: '/images/candids/staircase-group.webp',
@@ -253,41 +285,61 @@ export const candids: Photo[] = [
     width: 800,
     height: 1200,
   },
+  /** Work in progress, nobody looking at the lens. The clearest candid here. */
   {
     id: 'ideathon-room',
     src: '/images/candids/ideathon-room.webp',
     alt: 'Students at round tables with laptops during the Ideathon, a countdown timer on the screen at the front of the room',
     width: 1200,
     height: 800,
+    candid: true,
   },
+  /**
+   * Four people mid-conversation, not four people arranged. The triage sheet
+   * reads "genuine unposed group energy", and they are turned toward each other
+   * rather than out at the camera, which is the line between this and
+   * `staircase-group` above.
+   */
   {
     id: 'elevator-lobby',
     src: '/images/candids/elevator-lobby.webp',
     alt: 'Four people talking and smiling together in a marble elevator lobby',
     width: 900,
     height: 1200,
+    candid: true,
   },
+  /** Hands on a keyboard, code on the monitor. Exactly the brief's example. */
   {
     id: 'lab-typing',
     src: '/images/candids/lab-typing.webp',
     alt: 'A person typing at a computer lab keyboard with code visible on the monitor',
     width: 800,
     height: 1200,
+    candid: true,
   },
+  /** Triage: "candid conference-lounge moment", one hand caught mid-gesture. */
   {
     id: 'summit-couches',
     src: '/images/candids/summit-couches.webp',
     alt: 'Five people talking in a conference lounge seating area, one gesturing with a raised hand',
     width: 1200,
     height: 800,
+    candid: true,
   },
+  /** Three people talking, one on his phone. Nothing arranged about it. */
   {
     id: 'window-trio',
     src: '/images/candids/window-trio.webp',
     alt: 'Three people talking together in a room with a large window, one checking his phone',
     width: 900,
     height: 1200,
+    candid: true,
   },
+  /**
+   * NOT A CANDID. The triage sheet's own words are "solo portrait in the grand
+   * corridor": one subject, placed, facing the lens. A posed portrait is ruled
+   * out by name however good the light is.
+   */
   {
     id: 'corridor-portrait',
     src: '/images/candids/corridor-portrait.webp',
@@ -295,20 +347,30 @@ export const candids: Photo[] = [
     width: 1200,
     height: 1200,
   },
+  /** Two people sitting, one on his phone. A gap between frames, not a pose. */
   {
     id: 'staircase-landing',
     src: '/images/candids/staircase-landing.webp',
     alt: 'Two people sitting on a grand staircase landing, one checking his phone',
     width: 900,
     height: 1200,
+    candid: true,
   },
+  /** A conversation at a booth, photographed from outside it. */
   {
     id: 'summit-duolingo',
     src: '/images/candids/summit-duolingo.webp',
     alt: 'Three people talking near a Duolingo booth at the Stacked Up Summit, colorful cube seating around them',
     width: 1200,
     height: 800,
+    candid: true,
   },
+  /**
+   * NOT A CANDID. A staged gag: the triage sheet describes a "playful boxing
+   * pose", and a pose held for the camera is a pose whether it is formal or
+   * funny. It reads as a candid at a glance, which is the reason to be explicit
+   * about why it is out rather than leaving the next reader to wonder.
+   */
   {
     id: 'playful-boxing',
     src: '/images/candids/playful-boxing.webp',
@@ -316,40 +378,60 @@ export const candids: Photo[] = [
     width: 900,
     height: 1200,
   },
+  /**
+   * The only photograph in the pool taken at an ordinary chapter night rather
+   * than at a shoot or a conference, which makes it the one that most nearly
+   * earns the "this is what a Tuesday looks like" headline. Re-encoded to
+   * 1200px for the gallery; the full-size file stays where the Community
+   * program card reads it.
+   */
   {
     id: 'game-night-chess',
-    src: '/images/game-night-chess.webp',
+    src: '/images/candids/game-night-chess.webp',
     alt: 'ColorStack UMN members playing chess and Connect Four around a table at game night',
-    width: 1440,
-    height: 956,
+    width: 1200,
+    height: 797,
+    candid: true,
   },
+  /** Back to the camera. Whatever else it is, it is not posed for anyone. */
   {
     id: 'lab-workstation',
     src: '/images/candids/lab-workstation.webp',
     alt: 'A person at a computer lab workstation, seen from behind, with blank monitors in front of them',
     width: 800,
     height: 1200,
+    candid: true,
   },
+  /** Two people talking to each other, not to the lens. */
   {
     id: 'stairway-talk',
     src: '/images/candids/stairway-talk.webp',
     alt: 'Two people talking on a stairway landing beside a tall window',
     width: 900,
     height: 1200,
+    candid: true,
   },
+  /** Triage: "sharp, well lit, candid". A meal, mid-sentence. */
   {
     id: 'summit-dining',
     src: '/images/candids/summit-dining.webp',
     alt: 'Three students at a dining table wearing Stacked Up Summit lanyards, talking over food',
     width: 1200,
     height: 800,
+    candid: true,
   },
+  /**
+   * One person, but not a portrait: he is looking at his phone rather than at
+   * the camera, and the frame is a moment taken rather than a subject arranged.
+   * That is the distinction that keeps it in and `corridor-portrait` out.
+   */
   {
     id: 'red-chair',
     src: '/images/candids/red-chair.webp',
     alt: 'A person sitting in a red lounge chair, checking his phone',
     width: 800,
     height: 1200,
+    candid: true,
   },
 ];
 
@@ -395,16 +477,12 @@ export const mission = {
     'ColorStack UMN exists to increase the number of Black and Latinx students who graduate from the University of Minnesota with a computer science degree, and a career to walk into.',
     'We do that three ways. We teach the technical skills the classroom skips, we open doors to recruiters and alumni who look like us, and we keep a community close enough that no one has to figure out sophomore year alone.',
   ],
-  /** Cycled by TextLoop. Ends on "you." deliberately; keep it last. */
+  /**
+   * Cycled once by TextLoop and held. Ends on "you." deliberately; keep it
+   * last. FIX-2 §5 fixes the sequence at these four phrases, down from six.
+   */
   rotatorPrefix: 'Building a space for',
-  rotator: [
-    'Black students.',
-    'Latinx students.',
-    'marginalized students.',
-    'low-income students.',
-    'first-generation students.',
-    'you.',
-  ],
+  rotator: ['Black students.', 'Latinx students.', 'first-generation students.', 'you.'],
 };
 
 /* ── 4. What we do ─────────────────────────────────────────────────────── */

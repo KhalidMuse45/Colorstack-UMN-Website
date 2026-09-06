@@ -5,7 +5,7 @@ import { useTexture } from '@react-three/drei';
 import { useEffect, useMemo, useRef, useState, type RefObject } from 'react';
 import * as THREE from 'three';
 import { fragmentShader, vertexShader } from './heroShader';
-import { tokens, hexToRgb01 } from '@/lib/tokens';
+import { tokens } from '@/lib/tokens';
 
 type SceneProps = {
   src: string;
@@ -40,11 +40,8 @@ function Plane({ src, progress, displace = true }: Omit<SceneProps, 'running' | 
       uPointer: { value: new THREE.Vector2(0, 0) },
       uTime: { value: 0 },
       uZoom: { value: 1 },
-      uMix: { value: 0 },
       uGrain: { value: 0.035 },
       uDisplace: { value: displace ? 1 : 0 },
-      uDark: { value: new THREE.Color(...hexToRgb01(tokens.maroon)) },
-      uLight: { value: new THREE.Color(...hexToRgb01(tokens.page)) },
     }),
     [texture, displace],
   );
@@ -53,9 +50,8 @@ function Plane({ src, progress, displace = true }: Omit<SceneProps, 'running' | 
     const p = progress.current;
     // R3F v9 CLONES the `uniforms` prop when it constructs the material (v8
     // shared the reference). Mutating the memo'd object therefore reaches
-    // nothing the GPU ever reads, and the room never turns on. Write to the
-    // material's own uniforms, which are the only ones that exist as far as
-    // the renderer is concerned.
+    // nothing the GPU ever reads. Write to the material's own uniforms, which
+    // are the only ones that exist as far as the renderer is concerned.
     const u = mat.current?.uniforms;
     if (!u) return;
 
@@ -68,9 +64,9 @@ function Plane({ src, progress, displace = true }: Omit<SceneProps, 'running' | 
       else u.uCover.value.set(planeAspect / imgAspect, 1);
     }
 
-    // scroll-driven values (docs/06, reconciled hero table)
-    u.uZoom.value = 1 + 0.35 * THREE.MathUtils.smoothstep(p, 0, 1);
-    u.uMix.value = THREE.MathUtils.smoothstep(p, 0.6, 0.69); // the room turns on
+    // scroll-driven values. The zoom is the whole scroll story now: no mix,
+    // no tint, the photograph is full colour at every position.
+    u.uZoom.value = 1 + 0.45 * THREE.MathUtils.smoothstep(p, 0, 1);
     u.uTime.value += dt;
 
     // eased pointer
@@ -86,73 +82,134 @@ function Plane({ src, progress, displace = true }: Omit<SceneProps, 'running' | 
   );
 }
 
-/** An n-pointed star, so the sprites read as the brand glyphs rather than as polygons. */
-function starShape(points: number, inner: number): THREE.Shape {
-  const s = new THREE.Shape();
-  const step = Math.PI / points;
-  for (let i = 0; i < points * 2; i += 1) {
-    const r = i % 2 === 0 ? 0.5 : inner;
-    const a = i * step - Math.PI / 2;
-    const x = Math.cos(a) * r;
-    const y = Math.sin(a) * r;
-    if (i === 0) s.moveTo(x, y);
-    else s.lineTo(x, y);
+/** The three brand glyphs, in the order DESIGN.md lists them. */
+const GLYPHS = ['✳', '✦', '★'];
+
+/**
+ * Draw one glyph centered on a 128x128 canvas in the gold token and hand it
+ * back as a texture. Runtime canvases rather than image files: three glyphs at
+ * 128px cost nothing to draw and add no network requests to a page whose LCP
+ * budget is already spent on the photograph.
+ *
+ * The font stack is symbol faces only. An emoji face would render U+2733 in
+ * its own colours and the gold would be lost.
+ */
+function glyphTexture(ch: string): THREE.CanvasTexture {
+  const canvas = document.createElement('canvas');
+  canvas.width = 128;
+  canvas.height = 128;
+
+  const ctx = canvas.getContext('2d');
+  if (ctx) {
+    ctx.clearRect(0, 0, 128, 128);
+    ctx.fillStyle = tokens.gold;
+    ctx.font = '96px "Segoe UI Symbol", "Apple Symbols", "Noto Sans Symbols 2", "DejaVu Sans", serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(ch, 64, 64);
   }
-  s.closePath();
-  return s;
+
+  const texture = new THREE.CanvasTexture(canvas);
+  // Same reasoning as the photo plane: the renderer's output conversion is
+  // off, so an untagged texture puts the token's own bytes on screen.
+  texture.colorSpace = THREE.NoColorSpace;
+  texture.needsUpdate = true;
+  return texture;
 }
+
+type Seed = {
+  /** Fixed. The sprite only ever drifts on y. */
+  x: number;
+  y: number;
+  /** Rotation phase, so the eight are never in step. */
+  phase: number;
+  /** Downward drift, world units per second. */
+  drift: number;
+  size: number;
+  /** Which of the three glyph textures. */
+  glyph: number;
+};
 
 /**
  * Eight drifting glyph sprites at the edges of the canvas, scattering from the
- * cursor. docs/06: eight, not twenty-four, and they never cover copy, so they
- * are confined to the outer thirds of the viewport. Desktop only.
+ * cursor. They are confined to the left and right 18% of the viewport so they
+ * never sit over the wordmark, the lede or the pill. Desktop only, and only
+ * while the hero pin is active, because the whole canvas stops with it.
  */
 function GlyphField({ count = 8 }: { count?: number }) {
   const viewport = useThree((s) => s.viewport);
   const group = useRef<THREE.Group>(null);
 
-  const seeds = useMemo(
-    () =>
-      Array.from({ length: count }, (_, i) => ({
-        x: (i % 2 === 0 ? -1 : 1) * viewport.width * (0.32 + Math.random() * 0.18),
-        y: (Math.random() - 0.5) * viewport.height,
-        r: Math.random() * Math.PI * 2,
-        v: 0.05 + Math.random() * 0.08,
-        s: 0.08 + Math.random() * 0.1,
-        k: i % 3,
-      })),
-    [count, viewport.width, viewport.height],
-  );
+  const textures = useMemo(() => GLYPHS.map(glyphTexture), []);
+  useEffect(() => () => textures.forEach((t) => t.dispose()), [textures]);
 
-  // Three shapes standing in for the three brand glyphs.
-  const shapes = useMemo(() => [starShape(8, 0.16), starShape(4, 0.14), starShape(5, 0.22)], []);
-  const gold = useMemo(() => new THREE.Color(...hexToRgb01(tokens.gold)), []);
+  // `seeds` is the drift position, mutated in place every frame. `eased` is
+  // where the sprite actually is: it chases the drift position, or the pushed
+  // position while the cursor is close, at the same rate either way. That is
+  // what makes it lerp back on its own when the pointer leaves.
+  const { seeds, eased } = useMemo(() => {
+    const next: Seed[] = Array.from({ length: count }, (_, i) => ({
+      // Outer 18% of each side: |x| between 0.32 and 0.50 of the width.
+      x: (i % 2 === 0 ? -1 : 1) * viewport.width * (0.32 + Math.random() * 0.18),
+      y: (Math.random() - 0.5) * viewport.height,
+      phase: Math.random() * Math.PI * 2,
+      drift: 0.05 + Math.random() * 0.08,
+      size: 0.08 + Math.random() * 0.1,
+      glyph: i % GLYPHS.length,
+    }));
+    return { seeds: next, eased: next.map((s) => new THREE.Vector2(s.x, s.y)) };
+  }, [count, viewport.width, viewport.height]);
 
   useFrame((state, dt) => {
     if (!group.current) return;
+
+    // Pointer is NDC. The sprites live on the z = 0 plane, which is what
+    // `viewport` measures, so half the viewport converts it to world units.
     const px = state.pointer.x * viewport.width * 0.5;
     const py = state.pointer.y * viewport.height * 0.5;
-    group.current.children.forEach((c, i) => {
+    const edge = viewport.height / 2 + 0.2;
+
+    group.current.children.forEach((child, i) => {
       const s = seeds[i];
-      if (!s) return;
-      s.y -= s.v * dt;
-      if (s.y < -viewport.height / 2 - 0.2) s.y = viewport.height / 2 + 0.2;
+      const e = eased[i];
+      if (!s || !e) return;
+
+      // Slow fall, wrapping to the top.
+      s.y -= s.drift * dt;
+      if (s.y < -edge) s.y = edge;
+
+      // Scatter: within 1.1 world units of the cursor, push away along the
+      // pointer to sprite vector by up to 0.9 units, falling off to nothing
+      // at the edge of that radius.
+      let tx = s.x;
+      let ty = s.y;
       const dx = s.x - px;
       const dy = s.y - py;
-      const d2 = dx * dx + dy * dy;
-      const repel = Math.max(0, 1 - d2 / 1.2) * 0.9;
-      c.position.set(s.x + dx * repel, s.y + dy * repel, 0.01);
-      c.rotation.z = s.r + state.clock.elapsedTime * 0.2;
+      const dist = Math.hypot(dx, dy);
+      if (dist < 1.1 && dist > 1e-4) {
+        const push = (1 - dist / 1.1) * 0.9;
+        tx += (dx / dist) * push;
+        ty += (dy / dist) * push;
+      }
+
+      e.x = THREE.MathUtils.lerp(e.x, tx, 0.08);
+      e.y = THREE.MathUtils.lerp(e.y, ty, 0.08);
+      child.position.set(e.x, e.y, 0.01);
+
+      // A sprite always faces the camera, so it turns through its material
+      // rather than through its transform.
+      const sprite = child as THREE.Sprite;
+      const mat = sprite.material as THREE.SpriteMaterial | undefined;
+      if (mat) mat.rotation = s.phase + state.clock.elapsedTime * 0.2;
     });
   });
 
   return (
     <group ref={group}>
       {seeds.map((s, i) => (
-        <mesh key={i} scale={s.s} position={[s.x, s.y, 0.01]}>
-          <shapeGeometry args={[shapes[s.k]]} />
-          <meshBasicMaterial color={gold} transparent opacity={0.85} toneMapped={false} />
-        </mesh>
+        <sprite key={i} position={[s.x, s.y, 0.01]} scale={[s.size, s.size, 1]}>
+          <spriteMaterial map={textures[s.glyph]} transparent depthWrite={false} toneMapped={false} />
+        </sprite>
       ))}
     </group>
   );
@@ -177,13 +234,21 @@ export default function HeroScene({ running, glyphs, ...plane }: SceneProps) {
    * left a frozen canvas. The frameloop is a prop now, driven by the pin state
    * Hero already tracks and by page visibility. docs/06: the canvas stops
    * rendering after the hero, and the page uses stillness.
+   *
+   * The camera sits at z = 3.2 rather than z = 1. The plane is scaled to the
+   * viewport either way, so the photograph is identical; what changes is the
+   * size of a world unit. At z = 1 the whole frame is only about 1.5 units
+   * across, which is narrower than the glyph sprites' own 1.1 unit scatter
+   * radius, so every sprite would be permanently pushed and none would ever
+   * scatter and return. At 3.2 the frame is about 4.8 units across and the
+   * spec's world-unit numbers mean what they say.
    */
   return (
     <Canvas
       dpr={[1, 1.5]}
       frameloop={running && visible ? 'always' : 'demand'}
       gl={{ antialias: false, powerPreference: 'high-performance' }}
-      camera={{ position: [0, 0, 1], fov: 50 }}
+      camera={{ position: [0, 0, 3.2], fov: 50 }}
       onCreated={({ gl }) => {
         gl.outputColorSpace = THREE.LinearSRGBColorSpace;
         gl.toneMapping = THREE.NoToneMapping;

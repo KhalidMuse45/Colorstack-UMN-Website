@@ -12,8 +12,9 @@ import { Component, type ErrorInfo, type ReactNode } from 'react';
  * graphics chips: all of them would otherwise take the whole page down with
  * them, because an uncaught render error in React unmounts the tree above it.
  *
- * Falling back costs the duotone lift and nothing else. The photograph is
- * already underneath, at the same size, in the same place.
+ * Falling back costs the zoom, the grain and the glyph sprites, and nothing
+ * else. The photograph is already underneath, in full colour, at the same
+ * size, in the same place.
  */
 type Props = { children: ReactNode };
 type State = { failed: boolean };

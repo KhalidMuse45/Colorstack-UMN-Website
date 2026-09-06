@@ -17,9 +17,22 @@ type Props = {
   index: string;
 };
 
+/*
+ * The two lines of copy beside the puzzle, quoted from FIX-2 section 6. They
+ * are about the puzzle rather than about the chapter, so they sit with the
+ * component that owns it; everything the chapter says is still a prop out of
+ * content/landing.ts.
+ */
+const PUZZLE_LEAD = 'Slide a tile into the open space. Put the sentence back together.';
+const PUZZLE_ASIDE = 'No rush. Some things are worth figuring out just because.';
+
 /**
  * The play beat and then the invitation. docs/02: "The invitation never waits
  * on the puzzle."
+ *
+ * Two columns: the heading and its two lines on the left, the puzzle on the
+ * right. Directly beneath, unblocked by anything the puzzle does, the mailing
+ * list field, the chapter inbox and the socials.
  *
  * The form is a plain GET to the Logicform endpoint in a new tab, with the
  * field named `email`, which is the same shape the Astro site has been posting
@@ -43,14 +56,20 @@ export default function GetInTouch({
   return (
     <section className="section container" id="get-in-touch" data-index={index}>
       <div className={styles.wrap}>
-        <div className={styles.intro}>
-          <h2>{headline}</h2>
-          <p>{body}</p>
+        <div className={styles.play}>
+          {/* Archivo 800 at 40px is the global h2; nothing is overridden here. */}
+          <div className={styles.intro}>
+            <h2>{headline}</h2>
+            <p>{PUZZLE_LEAD}</p>
+            <p className={styles.aside}>{PUZZLE_ASIDE}</p>
+          </div>
+
+          <RoomPuzzle sentence={sentence} />
         </div>
 
-        <RoomPuzzle sentence={sentence} />
-
         <div className={styles.invite}>
+          <p className={styles.body}>{body}</p>
+
           <form className={styles.form} action={mailingListUrl} method="get" target="_blank">
             <label className={styles.field}>
               {fieldLabel}

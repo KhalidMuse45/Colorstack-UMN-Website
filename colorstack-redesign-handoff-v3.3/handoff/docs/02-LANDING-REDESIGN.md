@@ -10,7 +10,7 @@ White canvas, maroon, gold, cream as the warm reading surface. No new colors.
 
 ## Where the boldness goes
 
-One place: the hero. The photo zoom with the duotone lifting to color is the memorable thing. Every section after it is quiet and disciplined. If a later section starts competing with the hero, cut it back.
+One place: the hero. The aperture opening and the photo zoom are the memorable thing. Every section after it is quiet and disciplined. If a later section starts competing with the hero, cut it back.
 
 ## Layout concept
 
@@ -27,8 +27,8 @@ Left-aligned throughout. A 12-column grid, max 1320px, 24px gutters, 20px page p
 │ A home for Black and Latinx CS students at the U... (italic) │
 │ (Join the List)                                              │
 │                                                              │
-│ ░░░░░░░░░░░░░░░ duotone photo, bottom 45% ░░░░░░░░░░░░░░░░░░ │
-│ ░░░░░░░░░░░░░░░  scales to fill, turns color  ░░░░░░░░░░░░░░ │
+│ ░░░░░░░░░ full-color photo, aperture from bottom 45% ░░░░░░░ │
+│ ░░░░░░░░░░░░░░░░░░░░  scales to fill  ░░░░░░░░░░░░░░░░░░░░░░ │
 ├──────────────────────────────────────────────────────────────┤
 │ We're building the room we wanted as freshmen.               │  white
 │ Building a space for [Black students.] ← TextLoop            │
@@ -66,16 +66,18 @@ Pinned scene, 150vh scroll travel beyond the viewport, scrubbed. Named "the room
 
 | Scroll | Wordmark | Photo (canvas) | Other |
 |---|---|---|---|
-| 0% | Full size, rolled in once on load | Below the stage, duotone maroon → white | Lede and one gold pill |
-| 0–43% | Contracts toward masthead position | Aperture opening | Lede and pill recede |
-| 0–60% | Locked as nav wordmark | Full viewport; scale 1.00 → 1.35 | Nav ground turns solid |
-| 60–69% | — | Duotone lifts to color: the room turns on | — |
+| 0% | Full size, rolled in once on load | Below the stage, full color | Lede and one gold pill |
+| 0–43% | Contracts toward masthead position | Aperture opening: the room turns on | Lede and pill recede |
+| 0–60% | Locked as nav wordmark | Full viewport | Nav ground turns solid |
+| 0–100% | — | Scale 1.00 → 1.45, full color the whole way | — |
 | 85–94% | — | Holds | Optional single caption rises 30px |
 | After | — | Canvas stops rendering | Stillness |
 
-Shader (`heroShader.ts`): one full-screen plane, cover-fit. Uniforms: `uTexture`, `uProgress` (0–1 from ScrollTrigger), `uPointer` (normalized, eased), `uTime`, `uMaroon`, `uCream`, `uGrain`. Effects, in order: UV zoom by progress, 3px pointer displacement (falls off with distance), luminance → duotone mix, blend to source color by `smoothstep(0.60, 0.69, uProgress)`, film grain at 0.035 on the plane only.
+Shader (`heroShader.ts`): one full-screen plane, cover-fit. Uniforms: `uTexture`, `uCover`, `uPointer` (normalized, eased), `uTime`, `uZoom` (from ScrollTrigger progress), `uGrain`, `uDisplace`. Effects, in order: UV zoom by progress from 1.00 to 1.45, 3px pointer displacement (falls off with distance), film grain at 0.035 on the plane only. No tint and no color mix: the photograph is full color at every scroll position, and the hero moment is the aperture opening plus the zoom.
 
-Glyph field: eight `✳ ✦ ★` sprites drift at the edges of the canvas, scatter from the cursor, return gently. Same canvas. They never cover text or links. Drop them if frame time on a mid-range laptop exceeds 8ms.
+The media container's ground is white.
+
+Glyph field: eight `✳ ✦ ★` sprites, drawn at runtime onto 128×128 canvases at 96px in the gold token and used as sprite materials (transparent, `depthWrite` off). They sit in the left and right 18% of the frame so they never cover text or links, each at a random y, a random size from 0.08 to 0.18 world units and a random rotation phase, drifting down at 0.05 to 0.13 units per second and wrapping to the top. Every frame they turn at 0.2 rad/s; within 1.1 world units of the pointer they are pushed away along the pointer to sprite vector by up to 0.9 units, eased at lerp 0.08, and they ease back to their drift position at the same rate when the pointer leaves. Same canvas. Drop them if frame time on a mid-range laptop exceeds 8ms.
 
 Reduced motion: no canvas. `<img>` with `object-fit: cover`, the color version, static at full size. Wordmark and lede render immediately.
 

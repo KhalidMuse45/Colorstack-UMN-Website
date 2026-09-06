@@ -1,6 +1,6 @@
 /*
  * Mono is fine here: it is the footer (01-BRAND-RULES). Full sitemap, contact
- * email with click-to-copy, socials, chapter mark bottom-right at 32px.
+ * email with click-to-copy, socials, wordmark text bottom-right.
  */
 .footer {
   position: relative;
@@ -53,7 +53,13 @@
   letter-spacing: 0.04em;
 }
 
-.mark {
+/* FIX-2 §4: wordmark text, not the chapter mark. */
+.wordmark {
   flex: none;
-  line-height: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--text-body);
+  letter-spacing: -0.01em;
+  text-transform: none;
+  color: var(--maroon);
 }

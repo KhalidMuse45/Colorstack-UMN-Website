@@ -47,9 +47,9 @@ export default async function Page() {
         {d.missionBody.map((p) => (
           <p key={p.slice(0, 32)}>{p}</p>
         ))}
-        <p className="lede">
-          {d.missionRotatorPrefix} <TextLoop items={d.missionRotator} interval={2.4} />
-        </p>
+        {/* FIX-2 §5: prefix and rotating word on one line, the word underlined
+            in gold. TextLoop owns the whole row, including the hairline. */}
+        <TextLoop prefix={d.missionRotatorPrefix} items={d.missionRotator} interval={2.4} />
       </section>
 
       {/* 02 What We Do. Pentagram rhythm: photo, then title left, body right. */}
@@ -122,8 +122,13 @@ export default async function Page() {
 
         The 2x2 duotone-to-colour-on-hover grid this section was specced with
         is retired (owner decision, 2026-09-06). It is now the rotating candid
-        gallery from handoff/docs/07-FLOATINGCARDS.md: fifteen photographs as
-        thin planes on white, each turning on its own vertical axis.
+        gallery from handoff/docs/07-FLOATINGCARDS.md: thin planes on white,
+        each turning on its own vertical axis.
+
+        `d.candids` is candids only, filtered on the `candid` flag in
+        `lib/landing.ts`. Passing the whole photo pool here would put a posed
+        portrait in the cloud, so this prop takes the filtered list and the
+        filter is not repeated inside the component.
 
         The section shell is unchanged from the interim placeholder it replaced:
         the headline, the marginalia note in the gutter, the glyph stickers and

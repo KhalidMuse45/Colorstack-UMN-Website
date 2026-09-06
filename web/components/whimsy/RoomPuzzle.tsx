@@ -1,281 +1,252 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { CSSProperties, KeyboardEvent as ReactKeyboardEvent } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import type { KeyboardEvent as ReactKeyboardEvent } from 'react';
+import {
+  SIZE,
+  SOLVED,
+  applyMove,
+  emptyIndex,
+  isSolved,
+  nextSolutionMove,
+  shuffle,
+  type Board,
+} from './roomPuzzle.logic';
 import styles from './RoomPuzzle.module.css';
 
 /**
- * The play beat: an eight-tile 3x3 sliding puzzle whose tiles are the words of
- * one sentence. docs/02 and docs/06.
+ * The belonging puzzle. FIX-2 sections 3 and 6.
  *
- * Rules it has to keep:
- *   - Always solvable. It is shuffled only by legal moves from the solved
- *     state, never by permuting the tiles, so it cannot land on one of the
- *     unreachable half of the 9! arrangements.
- *   - No timer, no score, no completion gate. The invitation underneath it is
- *     never blocked by it.
- *   - 180ms tile moves and no celebration animation.
- *   - Hint is A* with Manhattan distance and marks the next tile to slide.
+ * Eight word tiles on a 3x3 grid. Solved, they read the sentence left to
+ * right, top to bottom. No timer, no score, no completion gate: the invitation
+ * underneath is never waiting on this.
  *
  * SERVER STATE = SOLVED. The sentence renders in reading order in the HTML, so
- * with JavaScript off the page still says what it means, and a search engine
- * or a screen reader reads a sentence rather than a jumble. The shuffle is
- * something the script adds.
- */
-
-type Board = (number | null)[];
-
-const SIZE = 3;
-const CELLS = SIZE * SIZE;
-/** Tile n belongs in cell n. The blank belongs last. */
-const SOLVED: Board = [0, 1, 2, 3, 4, 5, 6, 7, null];
-
-const blankAt = (b: Board) => b.indexOf(null);
-
-/** Cells a tile could slide from, given where the blank is. */
-function movable(b: Board): number[] {
-  const z = blankAt(b);
-  const zr = Math.floor(z / SIZE);
-  const zc = z % SIZE;
-  const out: number[] = [];
-  if (zr > 0) out.push(z - SIZE);
-  if (zr < SIZE - 1) out.push(z + SIZE);
-  if (zc > 0) out.push(z - 1);
-  if (zc < SIZE - 1) out.push(z + 1);
-  return out;
-}
-
-function slide(b: Board, from: number): Board {
-  const z = blankAt(b);
-  const next = b.slice();
-  next[z] = b[from];
-  next[from] = null;
-  return next;
-}
-
-function manhattan(b: Board): number {
-  let d = 0;
-  for (let i = 0; i < CELLS; i += 1) {
-    const v = b[i];
-    if (v === null) continue;
-    d += Math.abs(Math.floor(i / SIZE) - Math.floor(v / SIZE)) + Math.abs((i % SIZE) - (v % SIZE));
-  }
-  return d;
-}
-
-/** Minimal binary heap. A sorted array would turn A* into a quadratic search. */
-class Heap<T> {
-  private a: T[] = [];
-  constructor(private less: (x: T, y: T) => boolean) {}
-  get size() {
-    return this.a.length;
-  }
-  push(v: T) {
-    this.a.push(v);
-    let i = this.a.length - 1;
-    while (i > 0) {
-      const p = (i - 1) >> 1;
-      if (!this.less(this.a[i], this.a[p])) break;
-      [this.a[i], this.a[p]] = [this.a[p], this.a[i]];
-      i = p;
-    }
-  }
-  pop(): T | undefined {
-    const top = this.a[0];
-    const last = this.a.pop();
-    if (this.a.length > 0 && last !== undefined) {
-      this.a[0] = last;
-      let i = 0;
-      for (;;) {
-        const l = i * 2 + 1;
-        const r = l + 1;
-        let m = i;
-        if (l < this.a.length && this.less(this.a[l], this.a[m])) m = l;
-        if (r < this.a.length && this.less(this.a[r], this.a[m])) m = r;
-        if (m === i) break;
-        [this.a[i], this.a[m]] = [this.a[m], this.a[i]];
-        i = m;
-      }
-    }
-    return top;
-  }
-}
-
-/**
- * A* with Manhattan distance. Returns the value of the tile to slide next, or
- * null if the board is already solved or the search was capped.
+ * with the script off the page still says what it means and a screen reader
+ * reads a sentence rather than a jumble. The shuffle is what the script adds.
  *
- * It carries the first move down the tree instead of storing parent pointers,
- * because the only thing a hint needs is that first step.
+ * The logic (neighbors, move, shuffle, the A* hint) is in roomPuzzle.logic.ts
+ * so it can be run outside a browser.
  */
-function nextMove(start: Board): number | null {
-  const key = (b: Board) => b.join(',');
-  const goal = key(SOLVED);
-  if (key(start) === goal) return null;
 
-  type Node = { board: Board; g: number; f: number; first: number };
-  const open = new Heap<Node>((x, y) => x.f < y.f);
-  const best = new Map<string, number>();
-
-  best.set(key(start), 0);
-  for (const from of movable(start)) {
-    const board = slide(start, from);
-    const tile = start[from] as number;
-    open.push({ board, g: 1, f: 1 + manhattan(board), first: tile });
-  }
-
-  let guard = 0;
-  while (open.size > 0) {
-    guard += 1;
-    // Sixty thousand expansions is far past the worst 8-puzzle case with this
-    // heuristic. The cap is only here so a hint can never hang the tab.
-    if (guard > 60000) return null;
-
-    const node = open.pop();
-    if (!node) break;
-    const k = key(node.board);
-    if (k === goal) return node.first;
-
-    const seen = best.get(k);
-    if (seen !== undefined && seen <= node.g) continue;
-    best.set(k, node.g);
-
-    for (const from of movable(node.board)) {
-      const board = slide(node.board, from);
-      const g = node.g + 1;
-      const bk = key(board);
-      const prior = best.get(bk);
-      if (prior !== undefined && prior <= g) continue;
-      open.push({ board, g, f: g + manhattan(board), first: node.first });
-    }
-  }
-  return null;
-}
-
-/**
- * Shuffle by walking legal moves out from the solved state, never undoing the
- * move just made. Solvability is a property of the walk, so it does not need
- * to be checked.
+/*
+ * Copy. It would normally live in content/landing.ts with the rest, but that
+ * file is the chapter's voice and these are the puzzle's own interface strings,
+ * quoted verbatim from FIX-2 section 6. The sentence itself is a prop and does
+ * come from content.
  */
-function shuffled(steps = 80): Board {
-  let b = SOLVED.slice();
-  let last = -1;
-  for (let i = 0; i < steps; i += 1) {
-    const options = movable(b).filter((c) => c !== last);
-    const from = options[Math.floor(Math.random() * options.length)];
-    last = blankAt(b);
-    b = slide(b, from);
-  }
-  // A shuffle that happens to land back on the sentence is not a shuffle.
-  return b.join(',') === SOLVED.join(',') ? shuffled(steps) : b;
-}
+const META_LABEL = 'The belonging puzzle';
+const OPEN_SPACE = 'room to move';
+const MOVES_LABEL = 'Moves';
+const SHUFFLE_LABEL = 'Shuffle';
+const HELP_LABEL = 'A little help';
+const STATUS = {
+  idle: 'A place for every piece. Start with a tile beside the open space.',
+  hint: 'Try the highlighted tile.',
+  solved: "That's the whole sentence. You're in.",
+};
 
-export default function RoomPuzzle({ sentence }: { sentence: string }) {
+/** FIX-2 section 3: the hint ring is shown for 1.6s. */
+const HINT_MS = 1600;
+
+/** A single character that is neither a letter nor a digit, such as the glyph. */
+const GLYPH = /^[^\p{L}\p{N}]$/u;
+
+type Slide = { index: number; dx: number; dy: number; refocus: boolean };
+
+type Props = {
+  /** The solved sentence. One word per tile, in reading order. */
+  sentence: string;
+  /**
+   * The word whose tile carries the gold. FIX-2 section 3 puts it on ROOM, the
+   * page's single permission gold; it is a prop so the component is not welded
+   * to one sentence.
+   */
+  accentWord?: string;
+};
+
+export default function RoomPuzzle({ sentence, accentWord = 'room' }: Props) {
   const words = useMemo(() => sentence.split(/\s+/).filter(Boolean), [sentence]);
+
   const [board, setBoard] = useState<Board>(SOLVED);
-  const [mark, setMark] = useState<number | null>(null);
-  const tiles = useRef(new Map<number, HTMLButtonElement>());
+  const [moves, setMoves] = useState(0);
+  const [hint, setHint] = useState<number | null>(null);
+  const [played, setPlayed] = useState(false);
+
+  const cells = useRef<(HTMLButtonElement | null)[]>([]);
+  const slide = useRef<Slide | null>(null);
 
   // The shuffle is the script's addition. The server sent the sentence.
   useEffect(() => {
-    setBoard(shuffled());
-    setMark(null);
+    setBoard(shuffle());
   }, []);
 
   useEffect(() => {
-    if (mark === null) return;
-    const id = window.setTimeout(() => setMark(null), 1800);
+    if (hint === null) return;
+    const id = window.setTimeout(() => setHint(null), HINT_MS);
     return () => window.clearTimeout(id);
-  }, [mark]);
+  }, [hint]);
 
-  const move = useCallback((from: number, refocus = false) => {
-    setBoard((b) => {
-      if (!movable(b).includes(from)) return b;
-      const tile = b[from];
-      if (refocus && tile !== null) {
-        // Keep the keyboard on the tile it just pushed.
-        window.requestAnimationFrame(() => tiles.current.get(tile)?.focus());
+  /*
+   * The 180ms slide, done as an invert-then-release rather than by animating
+   * the grid: the tiles are rendered in board order so that DOM order is
+   * reading order, which means the moved word is already painted in its new
+   * cell by the time this runs. It is offset back to the cell it came from
+   * with the transition suppressed, the style is flushed, and then both are
+   * released, so the transform transition in the stylesheet carries it across.
+   */
+  useLayoutEffect(() => {
+    const step = slide.current;
+    slide.current = null;
+    if (!step) return;
+    const el = cells.current[step.index];
+    if (!el) return;
+
+    el.style.transition = 'none';
+    el.style.setProperty('--dx', String(step.dx));
+    el.style.setProperty('--dy', String(step.dy));
+    // Force the offset to be committed before it is taken away again.
+    el.getBoundingClientRect();
+    el.style.transition = '';
+    el.style.removeProperty('--dx');
+    el.style.removeProperty('--dy');
+
+    // A tile activated from the keyboard becomes the open space, which is not
+    // focusable, so focus follows the word to where it landed.
+    if (step.refocus) el.focus();
+  }, [board]);
+
+  const move = useCallback(
+    (from: number) => {
+      const next = applyMove(board, from);
+      if (next === null) return;
+      const gap = emptyIndex(board);
+      slide.current = {
+        index: gap,
+        dx: (from % SIZE) - (gap % SIZE),
+        dy: Math.floor(from / SIZE) - Math.floor(gap / SIZE),
+        refocus: typeof document !== 'undefined' && document.activeElement === cells.current[from],
+      };
+      setBoard(next);
+      setMoves((n) => n + 1);
+      setHint(null);
+      setPlayed(true);
+    },
+    [board],
+  );
+
+  /*
+   * Arrow keys move focus within the grid. Enter and Space are the button's
+   * own activation and land on onClick, so they are not handled here.
+   */
+  const onKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
+    const steps: Record<string, [number, number]> = {
+      ArrowUp: [0, -1],
+      ArrowDown: [0, 1],
+      ArrowLeft: [-1, 0],
+      ArrowRight: [1, 0],
+    };
+    const step = steps[event.key];
+    if (!step) return;
+
+    const here = cells.current.findIndex((el) => el !== null && el === document.activeElement);
+    if (here < 0) return;
+    event.preventDefault();
+
+    let col = here % SIZE;
+    let row = Math.floor(here / SIZE);
+    // Step over the open space, which is not a button.
+    for (let i = 0; i < SIZE; i += 1) {
+      col += step[0];
+      row += step[1];
+      if (col < 0 || col >= SIZE || row < 0 || row >= SIZE) return;
+      const target = cells.current[row * SIZE + col];
+      if (target) {
+        target.focus();
+        return;
       }
-      return slide(b, from);
-    });
-    setMark(null);
-  }, []);
-
-  const onKeyDown = (e: ReactKeyboardEvent) => {
-    const z = blankAt(board);
-    const zr = Math.floor(z / SIZE);
-    const zc = z % SIZE;
-    let from = -1;
-    // Arrow names the direction the tile travels, so Up slides the tile that
-    // sits below the gap upward into it.
-    if (e.key === 'ArrowUp' && zr < SIZE - 1) from = z + SIZE;
-    else if (e.key === 'ArrowDown' && zr > 0) from = z - SIZE;
-    else if (e.key === 'ArrowLeft' && zc < SIZE - 1) from = z + 1;
-    else if (e.key === 'ArrowRight' && zc > 0) from = z - 1;
-    if (from < 0) return;
-    e.preventDefault();
-    move(from, true);
+    }
   };
 
-  const hint = () => {
-    const tile = nextMove(board);
-    setMark(tile);
-    if (tile !== null) tiles.current.get(tile)?.focus();
+  const help = () => {
+    const from = nextSolutionMove(board);
+    if (from === null) return;
+    setHint(from);
+    cells.current[from]?.focus();
   };
 
-  const gap = board.indexOf(null);
+  const restart = () => {
+    setBoard(shuffle());
+    setMoves(0);
+    setHint(null);
+    setPlayed(false);
+  };
+
+  const solved = isSolved(board);
+  const tone = solved && played ? 'solved' : hint !== null ? 'hint' : 'idle';
 
   return (
-    <div className={styles.wrap}>
-      <div
-        className={styles.board}
-        onKeyDown={onKeyDown}
-        role="group"
-        aria-label={`Sliding word puzzle. Arrange the tiles to read: ${sentence}`}
-      >
-        {board.map((value, cell) =>
-          value === null ? null : (
+    <div className={styles.puzzle} data-solved={solved ? '' : undefined}>
+      <div className={styles.meta}>
+        <span>{META_LABEL}</span>
+        <span>
+          {MOVES_LABEL} {moves}
+        </span>
+      </div>
+
+      <div className={styles.grid} role="group" aria-label={META_LABEL} onKeyDown={onKeyDown}>
+        {board.map((value, index) => {
+          if (value === 0) {
+            return (
+              /* No ref: the button that used to sit here has already had its
+                 own ref called with null, which clears the slot. Not
+                 aria-hidden either, so a screen reader still finds the open
+                 space between the words. */
+              <div key={index} className={styles.open}>
+                <span className={styles.openLabel}>{OPEN_SPACE}</span>
+              </div>
+            );
+          }
+
+          const word = words[value - 1] ?? '';
+          const variant = GLYPH.test(word)
+            ? styles.glyph
+            : word.toLowerCase() === accentWord.toLowerCase()
+              ? styles.accent
+              : '';
+
+          return (
             <button
-              key={value}
+              key={index}
               type="button"
               ref={(el) => {
-                if (el) tiles.current.set(value, el);
-                else tiles.current.delete(value);
+                cells.current[index] = el;
               }}
-              className={`${styles.cell} ${styles.tile}`}
-              data-mark={mark === value ? '' : undefined}
-              style={
-                { '--r': Math.floor(cell / SIZE), '--c': cell % SIZE } as CSSProperties
-              }
-              onClick={() => move(cell)}
-              aria-label={`${words[value] ?? ''}, row ${Math.floor(cell / SIZE) + 1}, column ${(cell % SIZE) + 1}`}
+              className={`${styles.tile} ${variant} ${hint === index ? styles.hint : ''}`}
+              onClick={() => move(index)}
+              aria-label={`Word: ${word}, position ${index + 1}`}
             >
-              <span aria-hidden>{words[value] ?? ''}</span>
+              <span aria-hidden>{word}</span>
+              <span className={styles.index} aria-hidden>
+                {value}
+              </span>
             </button>
-          ),
-        )}
-        <span
-          className={`${styles.cell} ${styles.empty}`}
-          aria-hidden
-          style={{ '--r': Math.floor(gap / SIZE), '--c': gap % SIZE } as CSSProperties}
-        />
+          );
+        })}
       </div>
 
       <div className={styles.controls}>
-        <button type="button" className={styles.control} onClick={hint}>
-          Hint
+        <button type="button" className={styles.control} onClick={restart}>
+          {SHUFFLE_LABEL}
         </button>
-        <button
-          type="button"
-          className={styles.control}
-          onClick={() => {
-            setBoard(shuffled());
-            setMark(null);
-          }}
-        >
-          Shuffle
+        <button type="button" className={styles.control} onClick={help}>
+          {HELP_LABEL}
         </button>
       </div>
+
+      <p className={styles.status} data-tone={tone} aria-live="polite">
+        {STATUS[tone]}
+      </p>
     </div>
   );
 }

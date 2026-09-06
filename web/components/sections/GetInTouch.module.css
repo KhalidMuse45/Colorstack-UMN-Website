@@ -4,8 +4,34 @@
   justify-items: start;
 }
 
+/*
+ * FIX-2 section 6: two columns, the copy on the left and the puzzle on the
+ * right. One column until there is room for the 560px puzzle plus a readable
+ * measure beside it.
+ */
+.play {
+  display: grid;
+  gap: var(--space-8);
+  align-items: start;
+  width: 100%;
+}
+
+@media (min-width: 980px) {
+  .play {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 560px);
+    gap: var(--space-10);
+  }
+}
+
 .intro {
-  max-width: 60ch;
+  max-width: 46ch;
+}
+
+/* The Lora italic line under the paragraph. FIX-2 section 6. */
+.aside {
+  font-style: italic;
+  color: var(--ink-soft);
+  margin-bottom: 0;
 }
 
 /*
@@ -17,6 +43,10 @@
   gap: var(--space-5);
   justify-items: start;
   width: 100%;
+}
+
+.body {
+  margin: 0;
 }
 
 .form {

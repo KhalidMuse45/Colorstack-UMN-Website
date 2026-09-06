@@ -9,7 +9,7 @@ A student collective that publishes. The site reads like a research lab whose re
 | Beat | Feeling | What the page does |
 |---|---|---|
 | Arrival | This is serious, and it is mine | White ground, ink-black Archivo wordmark, one italic line, one gold pill |
-| Recognition | Wait, those are my people | The summit photo opens from below and turns from maroon duotone to color. **The room turns on.** |
+| Recognition | Wait, those are my people | The summit photo's aperture opens and it zooms until it fills the frame, in full color throughout. **The room turns on.** |
 | Trust | They actually run things | Four programs with photographic evidence, a spec sheet of confirmed facts |
 | Belonging | Being first in my family is fine here | The page turns rose and speaks in second person |
 | Play | I want to stay | A sliding word puzzle that assembles the page's own sentence, then the unblocked invitation |
@@ -24,16 +24,16 @@ References and what each contributes: Taste Labs (cadence, bracket menu, a toy a
 |---|---|---|
 | page | `#FFFFFF` | Ground. Photos and motion happen on white |
 | surfaceWarm (alias cream) | `#FBF5EC` | Reading columns, pull-quote band, spec sheet, newsletter page |
-| maroon | `#7A0019` | Chapter ownership: wordmark, active index, emphasis, Next band, duotone dark stop |
+| maroon | `#7A0019` | Chapter ownership: wordmark, active index, emphasis, Next band |
 | maroonDeep | `#5B0013` | Hover and pressed only |
 | gold | `#FFCC33` | Permission: the inclusive phrase underline, the active puzzle piece, the primary pill. Nowhere else |
 | goldSoft | `#FFDE7A` | Link hover highlighter |
 | ink / inkSoft | `#1F1A17` / `#5C534E` | Body / secondary |
 | line | `#E8DCCB` | 1px borders |
-| rose | `#C6887F` | The belonging section and duotone grounds. Rose is a change in interpersonal distance, not a section color |
+| rose | `#C6887F` | The belonging section. Rose is a change in interpersonal distance, not a section color |
 | stackYellow / teal / pink | `#FCB432` / `#2E9E91` / `#F0426B` | National accents. One per page at most, never a ground |
 
-No decorative gradients. No shadows heavier than a 1px hairline. Duotone (grayscale multiplied on maroon or rose) is the only photo treatment.
+No decorative gradients. No shadows heavier than a 1px hairline. Photographs run in full color and untreated: the hero photo carries no tint at any scroll position, and the landing page has no duotone, no grayscale multiply and no filter.
 
 **Type.** Archivo 700–900 display, hero at `clamp(46px, 10.5vw, 132px)`, leading 0.96, tracking −0.03em. Lora 400–600 body at 17px/1.55, ledes in italic. IBM Plex Mono 11px uppercase +0.08em only for: the gutter index numbers, `[ Menu ]`, spec-sheet keys, the footer, and at most one dated row on editorial pages. iCiel Gotham is the logo only.
 
@@ -61,14 +61,14 @@ Left-aligned 12-column grid, max 1320px. Sticky gutter index `01…06` in mono o
 
 | Scroll | Wordmark | Photo (canvas) | Other |
 |---|---|---|---|
-| 0% | Rolled in once on load (850ms, 32ms/char) | Below the stage, duotone maroon → white | Lede, pill |
+| 0% | Rolled in once on load (850ms, 32ms/char) | Below the stage, full color | Lede, pill |
 | 0–43% | Contracts toward masthead | Aperture opening | Lede and pill recede |
-| 0–60% | Locked as nav wordmark | Full viewport, scale 1.00 → 1.35 | Nav turns solid |
-| 60–69% | — | Duotone lifts to color | — |
+| 0–60% | Locked as nav wordmark | Full viewport | Nav turns solid |
+| 0–100% | — | Scale 1.00 → 1.45, full color the whole way | — |
 | 85–94% | — | Holds | Optional caption rises 30px |
 | After | — | Canvas stops rendering | Stillness |
 
-Shader: one cover-fit plane; UV zoom, 3px pointer displacement, luminance duotone, `smoothstep(0.60, 0.69)` mix to color, grain on the plane only. Eight glyph sprites at the edges scatter from the cursor and never cross copy. Mobile: no displacement, no sprites. If WebGL is unavailable: the color photo, static, same layout.
+Shader: one cover-fit plane; UV zoom 1.00 → 1.45 driven by progress, 3px pointer displacement that falls off with distance, film grain at 0.035 on the plane only. No tint step and no color mix: the hero moment is the aperture opening plus the zoom. Eight `✳ ✦ ★` sprites in gold sit in the left and right 18% of the frame, turn at 0.2 rad/s, scatter from the cursor within 1.1 world units and ease back, and never cross copy. Mobile: no displacement, no sprites. If WebGL is unavailable: the color photo, static, same layout.
 
 **Mission.** H2 `We're building the room we wanted as freshmen.` Two Lora paragraphs. Rotator `Building a space for … you.` with a gold underline on the target word; cycles once, holds on "you."
 
@@ -76,7 +76,7 @@ Shader: one cover-fit plane; UV zoom, 3px pointer displacement, luminance duoton
 
 **Spec sheet.** Cream band, hairline grid, mono keys, Archivo 900 values rolling once. Renders only with two or more confirmed stats; otherwise the band is omitted. Confirmed today: `100+ Members`, `10+ Offers`. Lora italic aside beside it.
 
-**Who We Show Up For.** Rose ground, white text. `If you're the first in your family to do this, you're in the right place.` One duotone portrait cycling with a wipe.
+**Who We Show Up For.** Rose ground, white text. `If you're the first in your family to do this, you're in the right place.` One portrait cycling with a wipe.
 
 **In the Room.** `This is what a Tuesday looks like.` The rotating candid-photo gallery (`FloatingCards`, spec in `docs/07`): 12–16 unposed photos as thin planes on white, each turning on its own vertical axis; hover faces the camera and shows alt text below; click opens a plain lightbox. One marginalia note in the gutter, Lora italic: `we meant it about the snacks.` Up to two glyph stickers rotated 8–14°.
 

@@ -7,8 +7,8 @@
  * margins and no local max-widths in this file, and none should be added.
  *
  * The mission section has no rules at all any more: it is an H2, two
- * paragraphs and the shared `.lede`, and the globals already say what those
- * look like.
+ * paragraphs and the rotator, which is a component that carries its own row
+ * (components/motion/TextLoop.module.css). The globals say the rest.
  */
 
 /* ── What We Do ──────────────────────────────────────────────────────────

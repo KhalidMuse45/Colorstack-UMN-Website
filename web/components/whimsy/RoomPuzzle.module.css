@@ -1,119 +1,232 @@
 /*
- * The width lives on the wrapper. Every tile is absolutely positioned, so the
- * board has no intrinsic width of its own: put it in a shrink-to-fit parent
- * and `width: min(100%, 420px)` resolves against a containing block that is
- * itself sized by its content, the board collapses to the width of the Hint
- * and Shuffle links beneath it, and the tiles land on top of each other.
+ * The belonging puzzle. FIX-2 section 3 (tile states) and section 6 (layout).
+ *
+ * Every literal px in this file is a number FIX-2 names. Everything that has a
+ * token uses the token: colours are var(--maroon) / var(--gold) /
+ * var(--gold-soft) / var(--ink-soft) / var(--line) / var(--cream), 12px radius
+ * is var(--radius-card), 24px and 16px padding are var(--space-5) and
+ * var(--space-4).
  */
-.wrap {
-  display: grid;
-  gap: var(--space-5);
-  justify-items: start;
-  width: min(100%, 420px);
-}
 
-.board {
-  --gap: 8px;
-  position: relative;
+/* ── The container ──────────────────────────────────────────────────────── */
+
+.puzzle {
   width: 100%;
-  aspect-ratio: 1;
-}
-
-.cell {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: calc((100% - var(--gap) * 2) / 3);
-  height: calc((100% - var(--gap) * 2) / 3);
-  transform: translate(calc(var(--c) * (100% + var(--gap))), calc(var(--r) * (100% + var(--gap))));
+  max-width: 560px; /* FIX-2 section 6 */
+  padding: var(--space-5); /* FIX-2 section 6: 24px */
+  border: 1px solid var(--line);
   border-radius: var(--radius-card);
+  background: var(--cream);
+  transition: border-color 200ms var(--ease);
 }
 
-/* The 180ms tile move. docs/02: no celebration animation, just the slide. */
-.tile {
+@media (max-width: 767px) {
+  .puzzle {
+    padding: var(--space-4); /* FIX-2 section 6: 16px on mobile */
+  }
+}
+
+/* FIX-2 section 3, solved: the container's border turns maroon. */
+.puzzle[data-solved] {
+  border-color: var(--maroon);
+}
+
+/* ── Meta row ───────────────────────────────────────────────────────────── */
+
+.meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-bottom: 19px; /* FIX-2 section 6 */
+  border-bottom: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: var(--text-mono); /* FIX-2 section 6: 11px */
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+/* ── The grid ───────────────────────────────────────────────────────────── */
+
+.grid {
+  --gap: 9px; /* FIX-2 section 6 */
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gap);
+  margin-top: 20px; /* FIX-2 section 6 */
+  user-select: none;
+}
+
+/* ── Tiles. FIX-2 section 3. ────────────────────────────────────────────── */
+
+.tile,
+.open {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-2);
+  aspect-ratio: 1.28; /* FIX-2 section 3 */
+  border-radius: var(--radius-card); /* FIX-2 section 3: 12px */
+  padding: 0;
+}
+
+.tile {
+  /*
+   * The tile is painted above the open space so that the word being slid
+   * covers the dashed cell it is leaving instead of being covered by it.
+   */
+  z-index: 1;
   border: 1px solid var(--line);
   background: var(--paper);
-  color: var(--ink);
-  font-family: var(--font-body);
-  font-size: var(--text-body);
-  line-height: 1.2;
-  text-align: left;
+  color: var(--maroon);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(18px, 2.7vw, 34px); /* FIX-2 section 3 */
+  line-height: 1;
+  letter-spacing: -0.01em;
+  text-align: center;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: transform 180ms var(--ease), background-color 180ms var(--ease);
+  /*
+   * FIX-2 section 3: 120ms, background only, on hover. FIX-2 section 6: the
+   * move animates the tile over 180ms. --dx and --dy are set by the component
+   * for one frame to offset a moved tile back to the cell it came from; the
+   * transition then carries it across.
+   */
+  transform: translate(
+    calc(var(--dx, 0) * (100% + var(--gap))),
+    calc(var(--dy, 0) * (100% + var(--gap)))
+  );
+  transition: background-color 120ms var(--ease), transform 180ms var(--ease);
 }
 
+/* FIX-2 section 3, hover: background switches to soft gold, border unchanged. */
 .tile:hover {
-  border-color: var(--ink);
+  background: var(--gold-soft);
 }
 
-.tile:focus-visible {
-  outline: 2px solid var(--gold);
-  outline-offset: 2px;
+/* The mono index, bottom left, in the secondary ink. FIX-2 section 3. */
+.index {
+  position: absolute;
+  left: var(--space-2);
+  bottom: var(--space-2);
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: 9px; /* FIX-2 section 3 */
+  line-height: 1;
+  letter-spacing: 0;
+  color: var(--ink-soft);
 }
 
 /*
- * The piece in play. DESIGN.md marks it in gold; the owner's colour rule
- * confines gold to the pill, the mission underline and the focus ring, so the
- * hinted tile inverts to ink instead. It is at least as legible, and it does
- * not spend the page's one permission colour on a puzzle.
+ * The two tiles that carry their own colour. Written at the same specificity
+ * as .tile:hover and placed after it, so hovering them does not wash the
+ * colour out: their background is what they are, not a resting state.
  */
-.tile[data-mark] {
-  background: var(--ink);
-  border-color: var(--ink);
+
+/* ROOM: the page's single permission gold. FIX-2 section 3. */
+.tile.accent {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--maroon);
+}
+
+/* The glyph tile. FIX-2 section 3. */
+.tile.glyph {
+  background: var(--maroon);
+  border-color: var(--maroon);
+  color: var(--paper);
+  font-size: clamp(35px, 4vw, 58px); /* FIX-2 section 3 */
+}
+
+.tile.glyph .index {
   color: var(--paper);
 }
 
-.empty {
-  border: 1px solid var(--line);
-  transition: transform 180ms var(--ease);
-}
-
-.controls {
-  display: flex;
-  gap: var(--space-5);
-  font-family: var(--font-body);
-  font-size: var(--text-body);
-}
-
-.control {
-  background: none;
-  border: 0;
-  padding: 0;
-  cursor: pointer;
-  position: relative;
-  font: inherit;
-  color: var(--ink);
-}
-
 /*
- * The same gold-soft highlighter the inline links use, and for the same
- * reason it is a scaled bar rather than a two-stop gradient: the hero scrim
- * is the only gradient on the site.
+ * Hint. FIX-2 section 3 asks for a 3px maroon outline inset by 5px. Drawn as a
+ * ring on a pseudo-element rather than with the `outline` property, because
+ * `outline` is the focus ring and CLAUDE.md rule 3 does not let a hint take it
+ * away. Same geometry, and the focus ring still shows through on top.
  */
-.control::after {
+.tile.hint {
+  background: var(--gold-soft);
+}
+
+.tile.hint::after {
   content: '';
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 0.42em;
-  background: var(--gold-soft);
-  mix-blend-mode: multiply;
-  transform: scaleX(0);
-  transform-origin: left center;
-  transition: transform 200ms var(--ease);
+  inset: 5px; /* FIX-2 section 3 */
+  border: 3px solid var(--maroon); /* FIX-2 section 3 */
+  border-radius: 7px; /* the 12px corner, less the 5px inset */
   pointer-events: none;
 }
 
-.control:hover::after {
-  transform: scaleX(1);
+/* ── The open space. FIX-2 section 3. ───────────────────────────────────── */
+
+.open {
+  z-index: 0;
+  background: transparent;
+  border: 1px dashed var(--line);
+  cursor: default;
 }
 
-.control:focus-visible {
-  outline: 2px solid var(--gold);
-  outline-offset: 2px;
+/* The only instruction text in the puzzle. */
+.openLabel {
+  max-width: 75px; /* FIX-2 section 3 */
+  font-family: var(--font-mono);
+  font-size: 9px; /* FIX-2 section 3 */
+  line-height: 1.4;
+  letter-spacing: 0.07em; /* FIX-2 section 3 */
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--ink-soft);
+}
+
+/* ── Controls. FIX-2 section 6. ─────────────────────────────────────────── */
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-top: 20px; /* FIX-2 section 6 */
+}
+
+.control {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px; /* FIX-2 section 6 */
+  padding: 0 var(--space-5);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 10px; /* FIX-2 section 6 */
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 120ms var(--ease);
+}
+
+.control:hover {
+  background: var(--gold-soft);
+}
+
+/* ── Status line. FIX-2 section 6. ──────────────────────────────────────── */
+
+.status {
+  margin: 20px 0 0; /* FIX-2 section 6 */
+  min-height: 48px; /* FIX-2 section 6 */
+  max-width: none;
+  font-family: var(--font-body);
+  font-size: 14px; /* FIX-2 section 6 */
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+.status[data-tone='solved'] {
+  color: var(--maroon);
 }

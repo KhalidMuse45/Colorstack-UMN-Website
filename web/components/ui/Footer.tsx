@@ -1,11 +1,10 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { primaryNav, footerNav, socialNav, contactEmail } from '@/lib/nav';
 import CopyEmail from './CopyEmail';
 import styles from './Footer.module.css';
 
 /**
- * Full sitemap, the chapter inbox, socials, chapter mark bottom-right at 32px.
+ * Full sitemap, the chapter inbox, socials, wordmark bottom-right.
  *
  * The legal line is the wording docs/02 specifies, including the "not
  * affiliated" disclaimer. It is a statement about the chapter's relationship
@@ -49,14 +48,9 @@ export default function Footer() {
           <p className={styles.legal}>
             {'©'} 2026 ColorStack UMN {'·'} Not affiliated with the University of Minnesota
           </p>
-          <span className={styles.mark}>
-            <Image
-              src="/images/colorstack-umn-mark-192.webp"
-              alt="ColorStack UMN chapter mark"
-              width={32}
-              height={32}
-            />
-          </span>
+          {/* FIX-2 §4: the chapter mark lives in the nav and nowhere else.
+              The footer signs off with the wordmark as text. */}
+          <span className={styles.wordmark}>ColorStack UMN</span>
         </div>
       </div>
     </footer>

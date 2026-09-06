@@ -34,7 +34,7 @@ export type HeroProps = {
  * DOM layers, bottom to top:
  *   <img>     colour photo, priority, explicit width and height, object-fit
  *             cover in a box that is already the right shape.
- *   <canvas>  HeroScene: the UV zoom and the duotone lift, unchanged.
+ *   <canvas>  HeroScene: the UV zoom and the glyph sprites. Full colour.
  *   scrim     the one gradient on the site, for legibility, out by 35%.
  *   copy      wordmark, lede, one pill, bottom-left on columns 1 to 6.
  *
@@ -99,7 +99,7 @@ export default function Hero(p: HeroProps) {
       });
 
       // 0 -> 0.35: the copy leaves and the scrim clears with it, so the
-      // photograph is unobstructed long before the duotone lifts at 0.60.
+      // photograph is unobstructed for most of the zoom.
       tl.to(copy.current, { autoAlpha: 0, y: -16, ease: 'none', duration: 0.35 }, 0).to(
         scrim.current,
         { autoAlpha: 0, ease: 'none', duration: 0.35 },

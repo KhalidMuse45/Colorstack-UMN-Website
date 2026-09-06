@@ -1,53 +1,76 @@
 /*
+ * The mission rotator. FIX-2 §5 names every measurement in this file literally,
+ * which is why the raw pixel values sit here rather than the --space-* / --text-*
+ * scale: 84px min-height, 25px padding-top, 63px (38px mobile) margin-top,
+ * 8px 14px gap, 23px (21px mobile) prefix, 39px cap on the word, 5px underline
+ * thickness, 7px underline offset, 7px of travel, 115px stacked min-height.
+ * Colour, font and easing still come from tokens.
+ *
  * BASE STATE = what the server renders and what a reader with no JavaScript
- * keeps: every phrase in normal inline flow, all of them readable, in order.
- * Nothing is hidden by CSS that a script did not first opt into.
+ * keeps: the finished sentence, the last phrase, already underlined in gold.
+ * The script only ever rewinds it; it never hides content.
  */
-.loop { display: inline; }
+.rotator {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  min-height: 84px;
+  /* Overrides the global `p { max-width: 60ch }`, which would otherwise wrap
+     the word onto its own line long before 640px. FIX-2 §5: one line at every
+     size above that. */
+  max-width: none;
+  margin: 63px 0 0;
+  padding-top: 25px;
+  border-top: 1px solid var(--line);
+}
 
-.frame {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-style: normal;
+.prefix {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 23px;
+  line-height: 1.2;
   color: var(--ink);
+}
+
+.word {
+  /* inline-block so the swap's translateY has something to move. */
+  display: inline-block;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(23px, 3vw, 39px);
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+  color: var(--maroon);
   /*
-   * The gold underline on the target word: the mission underline, one of the
-   * three places gold is allowed. `text-decoration` rather than the usual
-   * two-stop `linear-gradient` background trick, because the hero scrim is the
-   * only gradient on the site and a gradient with one colour is still one.
+   * The gold underline: one of the three places gold is allowed. Real
+   * `text-decoration` rather than a one-stop gradient, and skip-ink off so a
+   * 5px rule does not break around descenders.
    */
   text-decoration: underline;
   text-decoration-color: var(--gold);
-  text-decoration-thickness: 0.14em;
-  text-underline-offset: 0.1em;
+  text-decoration-thickness: 5px;
+  text-underline-offset: 7px;
   text-decoration-skip-ink: none;
+  /* Back in over 240ms on the house easing. Only the word ever animates. */
+  transition: opacity 240ms var(--ease), transform 240ms var(--ease);
 }
 
-.frame + .frame { margin-left: 0.35em; }
-
-/*
- * ARMED. The script has confirmed it is running, so the phrases may now
- * collapse into one grid cell and take turns. The cell is as wide as the
- * longest phrase, so the line does not reflow as they rotate.
- */
-.loop[data-motion='in'] {
-  display: inline-grid;
-  grid-template-areas: 'a';
-  align-items: baseline;
-  vertical-align: baseline;
-}
-
-.loop[data-motion='in'] > .frame {
-  grid-area: a;
-  /* stretch would run the gold underline the width of the longest phrase */
-  justify-self: start;
+.word[data-leaving] {
   opacity: 0;
-  pointer-events: none;
-  margin-left: 0;
-  transition: opacity 420ms var(--ease);
+  transform: translateY(7px);
+  transition-duration: 180ms;
 }
 
-.loop[data-motion='in'] > .frame[data-active] {
-  opacity: 1;
-  pointer-events: auto;
+/* Below 640px the word stacks under the prefix and the row grows to fit it. */
+@media (max-width: 639px) {
+  .rotator {
+    flex-direction: column;
+    align-items: flex-start;
+    min-height: 115px;
+    margin-top: 38px;
+  }
+
+  .prefix { font-size: 21px; }
 }

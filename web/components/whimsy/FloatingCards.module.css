@@ -28,11 +28,6 @@
   }
 }
 
-/* The lightbox is open. docs/07: the canvas keeps rendering behind it. */
-.stageDimmed {
-  opacity: 0.22;
-}
-
 /* ── The server's markup ─────────────────────────────────────────────────
    Four columns on desktop, two on mobile, 12px corners. This is what a
    reader sees with no JavaScript, and what everyone sees for the paint or
@@ -70,13 +65,18 @@
    mono. Holds its height empty so nothing below it moves when it fills. */
 
 .caption {
+  /* Flush with the container's left edge: it is a line of reading, set where
+     every other line on the page starts, not a label floated under a card. */
   margin: var(--space-5) 0 0;
   min-height: 1.7em;
   max-width: 60ch;
   font-family: var(--font-body);
   font-style: italic;
-  font-size: var(--text-body);
+  /* 14px, not var(--text-body). The brief sets this line a step below body on
+     purpose: it is a caption for the thing above it, not a paragraph. */
+  font-size: 14px;
   line-height: 1.5;
+  text-align: left;
   color: var(--ink-soft);
 }
 
@@ -146,8 +146,10 @@
   align-items: center;
   justify-content: center;
   padding: var(--space-6);
-  /* Not opaque: the canvas is still turning behind this. */
-  background: color-mix(in srgb, var(--page) 86%, transparent);
+  /* Not opaque: the canvas keeps turning behind this and must read at 40%.
+     A 60% white veil is exactly that, and it is the only place the number
+     lives, so the stage itself is left at full opacity. */
+  background: color-mix(in srgb, var(--page) 60%, transparent);
   animation: fade 200ms var(--ease);
 }
 
@@ -166,6 +168,11 @@
   align-items: center;
   gap: var(--space-4);
   max-width: min(100%, 1100px);
+  /* The white the photo is centred on. It is here rather than on the whole
+     overlay so the canvas stays visible around the edges, and so the alt text
+     underneath is read off paper instead of off a moving photograph. */
+  padding: var(--space-6);
+  background: var(--page);
 }
 
 .lightboxPanel:focus-visible {
