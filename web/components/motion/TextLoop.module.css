@@ -1,0 +1,52 @@
+/*
+ * BASE STATE = what the server renders and what a reader with no JavaScript
+ * keeps: every phrase in normal inline flow, all of them readable, in order.
+ * Nothing is hidden by CSS that a script did not first opt into.
+ */
+.loop {
+  display: inline;
+}
+
+.frame {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--maroon);
+  /* the gold underline on the target word */
+  background-image: linear-gradient(var(--gold), var(--gold));
+  background-repeat: no-repeat;
+  background-size: 100% 0.18em;
+  background-position: 0 92%;
+}
+
+.frame + .frame {
+  margin-left: 0.35em;
+}
+
+/*
+ * ARMED. The script has confirmed it is running, so the phrases may now
+ * collapse into one grid cell and take turns. The cell is as wide as the
+ * longest phrase, so the line does not reflow as they rotate.
+ */
+.loop[data-motion='in'] {
+  display: inline-grid;
+  grid-template-areas: 'a';
+  align-items: baseline;
+  vertical-align: baseline;
+}
+
+.loop[data-motion='in'] > .frame {
+  grid-area: a;
+  /* stretch would run the gold underline the width of the longest phrase */
+  justify-self: start;
+  opacity: 0;
+  pointer-events: none;
+  margin-left: 0;
+  transition: opacity 420ms var(--ease), transform 420ms var(--ease);
+  transform: translateY(0.25em);
+}
+
+.loop[data-motion='in'] > .frame[data-active] {
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+}

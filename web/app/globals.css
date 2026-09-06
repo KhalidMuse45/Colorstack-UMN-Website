@@ -1,0 +1,101 @@
+/* ColorStack UMN tokens. The only CSS file allowed to hold literal hexes. */
+:root {
+  --maroon: #7A0019;
+  --maroon-deep: #5B0013;
+  --maroon-light: #900021;
+  --gold: #FFCC33;
+  --gold-dark: #FFB71E;
+  --gold-soft: #FFDE7A;
+  --page: #FFFFFF;
+  --surface-warm: #FBF5EC;
+  --cream: var(--surface-warm);
+  --paper: #FFFFFF;
+  --ink: #1F1A17;
+  --ink-soft: #5C534E;
+  --line: #E8DCCB;
+  --rose: #C6887F;
+  --stack-yellow: #FCB432;
+  --teal: #2E9E91;
+  --pink: #F0426B;
+  --hairline: rgba(31, 26, 23, 0.3);
+  --hairline-inverse: rgba(255, 255, 255, 0.35);
+
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
+  --space-5: 24px; --space-6: 32px; --space-8: 48px; --space-10: 64px;
+  --space-12: 96px; --space-16: 128px;
+
+  --radius-card: 12px;
+  --radius-small: 6px;
+  --radius-pill: 999px;
+
+  --ease: cubic-bezier(.22, 1, .36, 1);
+  --container: 1320px;
+}
+
+/* --font-display / --font-body / --font-mono are set by next/font in layout.tsx */
+
+*, *::before, *::after { box-sizing: border-box; }
+html { background: var(--page); color: var(--ink); -webkit-font-smoothing: antialiased; }
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+body { margin: 0; font-family: var(--font-body); font-size: 17px; line-height: 1.55; overflow-x: hidden; }
+
+h1, h2, h3 { font-family: var(--font-display); color: var(--maroon); letter-spacing: -0.01em; margin: 0 0 var(--space-4); }
+h2 { font-weight: 800; font-size: clamp(28px, 4vw, 40px); line-height: 1.08; text-wrap: balance; }
+h3 { font-weight: 700; font-size: clamp(20px, 2.4vw, 28px); line-height: 1.12; }
+p { margin: 0 0 var(--space-4); max-width: 60ch; }
+
+a { color: var(--maroon); text-decoration: none; }
+a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+/* highlighter swipe for inline links */
+.link {
+  background-image: linear-gradient(var(--gold-soft), var(--gold-soft));
+  background-repeat: no-repeat;
+  background-size: 0% 40%;
+  background-position: 0 85%;
+  transition: background-size 200ms var(--ease);
+}
+.link:hover { background-size: 100% 40%; }
+
+.container { max-width: var(--container); margin: 0 auto; padding: 0 var(--space-6); }
+/*
+ * padding-block, not the handoff's `padding: var(--space-12) 0`. Sections are
+ * routinely `class="section container"`, `.section` is declared after
+ * `.container`, and the shorthand therefore reset `.container`'s horizontal
+ * padding to zero. Every section that used both classes was running its copy
+ * and its photo grid into the left edge of the window.
+ */
+.section { position: relative; padding-block: var(--space-12); }
+.section-rose { background: var(--rose); color: var(--paper); }
+.section-rose h2 { color: var(--paper); }
+.band-warm { background: var(--surface-warm); }
+.reading { background: var(--surface-warm); padding: var(--space-10) var(--space-6); border-radius: var(--radius-card); }
+.card { border: 1px solid var(--line); border-radius: var(--radius-card); background: transparent; }
+.band-warm .card, .reading .card { background: var(--paper); border-color: transparent; }
+
+/* Long copy sits in columns 1-7 of the 12-column grid: max 60ch for Lora. */
+.measure { max-width: 60ch; }
+
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Duotone: grayscale multiplied onto a solid ground. The only photo treatment. */
+.duotone { position: relative; background: var(--maroon); overflow: hidden; }
+.duotone img { filter: grayscale(1); mix-blend-mode: multiply; transition: filter 400ms var(--ease); }
+.duotone:hover img, .duotone:focus-within img, .duotone.is-color img { filter: none; mix-blend-mode: normal; }
+.duotone-rose { background: var(--rose); }
+
+/*
+ * There is no reduced-motion block in this file, and there is not meant to be
+ * one anywhere in the app.
+ *
+ * DESIGN.md, "Motion is not optional" (owner decision, 2026-09-06): the site
+ * ships one experience and no variant. The only fallback in the build is
+ * technical rather than preferential, and it lives in components/hero: no
+ * WebGL context, no canvas, and the static colour photograph underneath
+ * carries the hero while everything else still animates.
+ *
+ * What that decision did NOT relax: the server renders the final visible
+ * state, so a script that never runs cannot strand content; every interactive
+ * element keeps a visible focus ring, and removing an outline stays banned.
+ */

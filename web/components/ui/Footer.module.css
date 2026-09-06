@@ -1,0 +1,69 @@
+/*
+ * Mono is fine here: it is the footer (01-BRAND-RULES). Full sitemap, contact
+ * email with click-to-copy, socials, chapter mark bottom-right at 32px.
+ */
+.footer {
+  position: relative;
+  background: var(--page);
+  border-top: 1px solid var(--line);
+  padding: var(--space-10) 0 var(--space-8);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-8);
+}
+
+@media (min-width: 720px) {
+  .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.col a,
+.col button {
+  color: var(--ink);
+}
+
+.col a:hover {
+  color: var(--maroon);
+}
+
+.heading {
+  color: var(--maroon-light);
+  margin: 0;
+}
+
+.foot {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-5);
+  margin-top: var(--space-10);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--line);
+}
+
+.legal {
+  margin: 0;
+  max-width: 52ch;
+  text-transform: none;
+  letter-spacing: 0.04em;
+}
+
+.mark {
+  flex: none;
+  line-height: 0;
+}
+

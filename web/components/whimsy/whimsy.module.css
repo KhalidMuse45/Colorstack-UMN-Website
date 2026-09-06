@@ -1,0 +1,25 @@
+/*
+ * One marginalia note per page, in the outer gutter, Lora italic, inkSoft.
+ *
+ * FIXED from the handoff, which pinned it with `position: absolute; right:
+ * var(--space-6)`. That right edge is the section's, not the grid's, so on any
+ * viewport narrower than the 1320px container plus twice the note's width the
+ * note landed on top of the photographs it was annotating. It is a flow
+ * element now and the page puts it in a real gutter column, which is what the
+ * spec meant by "in the gutter".
+ */
+.marginalia {
+  display: none;
+  width: 18ch;
+  margin: 0;
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  transform: rotate(-2deg);
+}
+
+@media (min-width: 1200px) {
+  .marginalia { display: block; }
+}

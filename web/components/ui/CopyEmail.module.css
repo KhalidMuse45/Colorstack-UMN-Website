@@ -1,0 +1,35 @@
+.wrap {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.copy {
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  border-bottom: 1px solid currentColor;
+  line-height: 1.2;
+}
+
+.copy:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* Reserved space, so confirming a copy never nudges the line it sits on. */
+.said {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity 200ms var(--ease);
+}
+
+.said[data-shown] {
+  opacity: 1;
+}

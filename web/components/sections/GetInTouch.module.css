@@ -1,0 +1,86 @@
+.wrap {
+  display: grid;
+  gap: var(--space-10);
+  justify-items: start;
+}
+
+.intro {
+  max-width: 60ch;
+}
+
+/*
+ * The invitation sits directly beneath the puzzle and is never gated by it:
+ * no completion check, no disabled state, nothing that reads as a reward.
+ */
+.invite {
+  display: grid;
+  gap: var(--space-5);
+  justify-items: start;
+  width: 100%;
+}
+
+.form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-4);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-family: var(--font-body);
+  font-size: 17px;
+  color: var(--ink);
+}
+
+.field input {
+  min-width: min(78vw, 320px);
+  min-height: 44px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--paper);
+  font-family: var(--font-body);
+  font-size: 17px;
+  color: var(--ink);
+}
+
+.field input:hover {
+  border-color: var(--maroon);
+}
+
+.submit {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 26px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--gold);
+  color: var(--maroon);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 200ms var(--ease);
+}
+
+.submit:hover {
+  background: var(--gold-dark);
+}
+
+.submit:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.reach {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  font-family: var(--font-body);
+  font-size: 17px;
+  color: var(--ink);
+}

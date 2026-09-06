@@ -1,0 +1,97 @@
+.hero {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  background: var(--page);
+  overflow: hidden;
+}
+
+/*
+ * BASE STATE: the photo occupies the bottom 45% of the stage, which is the
+ * hero's resting state at scroll 0 (docs/02, layout sketch). Nothing is hidden
+ * by this: with JavaScript off the reader gets wordmark, lede, pill and photo,
+ * which is the whole above-the-fold. The pinned scene only ever opens it
+ * further.
+ */
+.media {
+  position: absolute;
+  inset: 0;
+  background: var(--maroon);
+  clip-path: inset(55% 0 0 0);
+  will-change: clip-path;
+}
+
+.media img {
+  object-fit: cover;
+}
+
+.copyWrap {
+  position: relative;
+  z-index: 2;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: clamp(96px, 12vw, 148px) var(--space-6) 0;
+  pointer-events: none;
+}
+
+.copyWrap a,
+.copyWrap button {
+  pointer-events: auto;
+}
+
+.mark {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(46px, 10.5vw, 132px);
+  line-height: 0.96;
+  letter-spacing: -0.03em;
+  color: var(--maroon);
+  will-change: transform;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: clamp(24px, 4vw, 56px);
+  align-items: end;
+  margin-top: clamp(26px, 3.4vw, 40px);
+}
+
+.lede {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: clamp(19px, 2.1vw, 25px);
+  line-height: 1.5;
+  max-width: 34ch;
+  margin: 0;
+  color: var(--ink);
+  text-wrap: pretty;
+}
+
+.ctas {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+/* Optional, Sanity-set, one string. Off by default (docs/05). */
+.caption {
+  position: absolute;
+  z-index: 2;
+  left: var(--space-6);
+  bottom: var(--space-6);
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--paper);
+}
+
+/*
+ * There is no `@media (prefers-reduced-motion)` block here and there is not
+ * meant to be one. DESIGN.md, "Motion is not optional": one experience, no
+ * variant. When WebGL is unavailable the canvas simply does not mount and this
+ * same layout runs with the static photograph in it.
+ */

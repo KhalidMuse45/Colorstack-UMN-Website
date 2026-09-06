@@ -1,0 +1,78 @@
+{
+  "_comment": "One entry per photo shipped. Filled by whoever adds the photo. Required for every build (docs/06). Provenance below is carried across from src/data/landing.ts, which records that the chapter e-board supplied all six on 2026-08-12; alt text is byte-identical to the alt text the page renders.",
+  "photos": [
+    {
+      "file": "public/images/summit-group.webp",
+      "usedFor": "hero",
+      "suppliedBy": "chapter e-board",
+      "suppliedOn": "2026-08-12",
+      "event": "national student conference",
+      "posedOrCandid": "posed",
+      "permission": "chapter-supplied for website use",
+      "alt": "ColorStack UMN members gathered around a table at a national student conference, name badges on, smiling for a group photo"
+    },
+    {
+      "file": "public/images/summit-portrait.webp",
+      "usedFor": "Professional Development program photo, community roll, In the Room grid, Next band peek",
+      "suppliedBy": "chapter e-board",
+      "suppliedOn": "2026-08-12",
+      "event": "national student conference",
+      "posedOrCandid": "posed",
+      "permission": "chapter-supplied for website use",
+      "alt": "The ColorStack UMN delegation posed together at a national conference, name badges on"
+    },
+    {
+      "file": "public/images/summit-signage.webp",
+      "usedFor": "community roll, In the Room grid",
+      "suppliedBy": "chapter e-board",
+      "suppliedOn": "2026-08-12",
+      "event": "Stacked Up Summit 2026",
+      "posedOrCandid": "candid",
+      "permission": "chapter-supplied for website use",
+      "alt": "Stacked Up Summit 2026 welcome screen at the conference venue"
+    },
+    {
+      "file": "public/images/ideathon.webp",
+      "usedFor": "Workshops program photo, community roll",
+      "suppliedBy": "chapter e-board",
+      "suppliedOn": "2026-08-12",
+      "event": "Ideathon",
+      "posedOrCandid": "candid",
+      "permission": "chapter-supplied for website use",
+      "alt": "ColorStack UMN members working through the Ideathon on laptops, event screens behind them"
+    },
+    {
+      "file": "public/images/game-night-chess.webp",
+      "usedFor": "Community program photo, In the Room grid",
+      "suppliedBy": "chapter e-board",
+      "suppliedOn": "2026-08-12",
+      "event": "game night",
+      "posedOrCandid": "candid",
+      "permission": "chapter-supplied for website use",
+      "alt": "ColorStack UMN members playing chess and Connect Four around a table at game night"
+    },
+    {
+      "file": "public/images/game-night-signage.webp",
+      "usedFor": "Leadership program photo, In the Room grid",
+      "suppliedBy": "chapter e-board",
+      "suppliedOn": "2026-08-12",
+      "event": "game night",
+      "posedOrCandid": "posed",
+      "permission": "chapter-supplied for website use",
+      "alt": "Two ColorStack UMN members beside the hand-drawn whiteboard they made for game night, reading \"Destress with ColorStack, game night, Jeopardy and board games\""
+    },
+    {
+      "file": "public/images/colorstack-umn-mark-192.webp",
+      "usedFor": "nav mark, mobile menu mark, footer mark",
+      "suppliedBy": "chapter",
+      "suppliedOn": "2026-08-12",
+      "event": null,
+      "posedOrCandid": "not a photograph, the chapter mark",
+      "permission": "chapter identity asset",
+      "alt": "ColorStack UMN chapter mark"
+    }
+  ],
+  "notAudited": [
+    "public/images/colorstack-umn-logo.png, summit-group-800.webp and summit-group-1600.webp were copied across with the rest of the existing set but nothing on the landing page references them."
+  ]
+}

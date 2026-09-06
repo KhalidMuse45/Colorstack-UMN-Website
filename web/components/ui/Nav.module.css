@@ -1,0 +1,140 @@
+.nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 50;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--space-6);
+  padding: var(--space-3) var(--space-6);
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  transition: background-color 240ms var(--ease), border-color 240ms var(--ease);
+}
+
+.solid {
+  background: var(--page);
+  border-bottom-color: var(--line);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 16px;
+  color: var(--maroon);
+}
+
+/*
+ * The masthead wordmark. It arrives as the hero's own wordmark contracts and
+ * fades, so the name is on screen exactly once. Opacity only, no movement.
+ */
+.brandWord {
+  opacity: 0;
+  transition: opacity 240ms var(--ease);
+}
+
+.solid .brandWord,
+.sheet .brandWord {
+  opacity: 1;
+}
+
+.links {
+  display: none;
+  gap: var(--space-5);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.bracket {
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.bracket:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.pillSlot {
+  display: none;
+}
+
+@media (min-width: 1100px) {
+  .links { display: flex; justify-content: center; }
+  .pillSlot { display: inline-flex; }
+  .bracket { display: none; }
+  .sheet .bracket { display: inline-block; }
+}
+
+/* Full-screen white sheet. Links in Archivo 700 at 40px, socials at the foot. */
+.sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: var(--page);
+  padding: var(--space-3) var(--space-6) var(--space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  overflow-y: auto;
+}
+
+.sheetTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.sheetLinks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.sheetLinks a {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--maroon);
+}
+
+.sheetFoot {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-5);
+}
+
+.sheetSocials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  font-family: var(--font-body);
+  font-size: 17px;
+}
+
+/* Applied to <body> while the sheet is open. */
+.locked {
+  overflow: hidden;
+}

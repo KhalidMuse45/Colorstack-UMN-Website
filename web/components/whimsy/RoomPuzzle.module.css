@@ -1,0 +1,98 @@
+/*
+ * The width lives on the wrapper. Every tile is absolutely positioned, so the
+ * board has no intrinsic width of its own: put it in a shrink-to-fit parent
+ * and `width: min(100%, 420px)` resolves against a containing block that is
+ * itself sized by its content, the board collapses to the width of the Hint
+ * and Shuffle links beneath it, and the tiles land on top of each other.
+ */
+.wrap {
+  display: grid;
+  gap: var(--space-5);
+  justify-items: start;
+  width: min(100%, 420px);
+}
+
+.board {
+  --gap: 8px;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+}
+
+.cell {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc((100% - var(--gap) * 2) / 3);
+  height: calc((100% - var(--gap) * 2) / 3);
+  transform: translate(calc(var(--c) * (100% + var(--gap))), calc(var(--r) * (100% + var(--gap))));
+  border-radius: var(--radius-card);
+}
+
+/* The 180ms tile move. docs/02: no celebration animation, just the slide. */
+.tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2);
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: clamp(14px, 2.4vw, 19px);
+  line-height: 1.2;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 180ms var(--ease), background-color 180ms var(--ease);
+}
+
+.tile:hover {
+  border-color: var(--maroon);
+}
+
+.tile:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* Gold is permission: it marks the piece in play, and nothing else here. */
+.tile[data-mark] {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--maroon);
+}
+
+.empty {
+  border: 1px solid var(--hairline);
+  transition: transform 180ms var(--ease);
+}
+
+.controls {
+  display: flex;
+  gap: var(--space-5);
+  font-family: var(--font-body);
+  font-size: 17px;
+}
+
+.control {
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  color: var(--maroon);
+  background-image: linear-gradient(var(--gold-soft), var(--gold-soft));
+  background-repeat: no-repeat;
+  background-size: 0% 40%;
+  background-position: 0 85%;
+  transition: background-size 200ms var(--ease);
+}
+
+.control:hover {
+  background-size: 100% 40%;
+}
+
+.control:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}

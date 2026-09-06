@@ -1,0 +1,44 @@
+{
+  "_comment": "What was actually exercised before handoff. Do not mark true without doing it (docs/06). Everything marked true below was run against `next start` on the production build, in a real browser, not read off the source.",
+  "build": "web/ landing page, first pass. Next 15.5.25, React 19, R3F 9, drei 10, GSAP 3.13, Lenis 1.3. No Sanity, no framer-motion.",
+  "date": "2026-09-06",
+  "exercised": {
+    "buildPasses": true,
+    "lintPasses": true,
+    "typecheckPasses": true,
+    "guardrailsProvenToFail": true,
+    "heroCanvasGPU": true,
+    "heroFallbackNoWebGL": true,
+    "serverRenderedFinalState": true,
+    "keyboardOnlyNavigation": false,
+    "screenReaderHeroName": false,
+    "mobileSafariPin": false,
+    "puzzleSolvableFromShuffle": true,
+    "lighthouseMobilePerformance": null,
+    "aboveFoldElementCount": 4
+  },
+  "howEachWasChecked": {
+    "buildPasses": "npm run build, exit 0. Route / is 6.75 kB, 162 kB first load JS. Three and R3F are in the dynamic HeroScene chunk, not the first load.",
+    "lintPasses": "npm run lint, exit 0. eslint 9 flat config on next/core-web-vitals plus next/typescript, then scripts/guardrails.sh.",
+    "typecheckPasses": "npx tsc --noEmit, no output.",
+    "guardrailsProvenToFail": "A check that cannot fail is not a check. Appended a literal hex to a CSS module: FAIL, exit 1. Appended a real U+2014 to content/landing.ts: FAIL, exit 1. Both reverted, then clean exit 0. The script also refuses to run on a scan smaller than 25 files; the real scan is 59.",
+    "heroCanvasGPU": "Chromium via Playwright against next start. Canvas mounts, clip-path animates under scroll (measured inset(46.03%) mid-pin), Lenis classes present on <html>.",
+    "heroFallbackNoWebGL": "Second page with HTMLCanvasElement.prototype.getContext patched to return null for any webgl context. Result: no canvas element, hero <img> laid out at 1905x953 in the same place, wordmark present, pin still active. Nothing else changed.",
+    "serverRenderedFinalState": "curl of the production server, 53790 bytes, parsed for content rather than for markup: hero photo srcset, hero lede, mission headline, all six rotator phrases, the pull quote, both spec-sheet labels, the marginalia line, and all eight puzzle words in solved reading order.",
+    "puzzleSolvableFromShuffle": "Three shuffles, each solved end to end by clicking only the tile the A* hint marked: 24, 26 and 21 moves, all three finishing on 'You have a place in this room ✳'."
+  },
+  "notDoneAndWhy": {
+    "keyboardOnlyNavigation": "The puzzle's arrow-key handling and focus return, the nav sheet's Escape and focus restore, and every focus ring are written and typechecked, but no one has driven the page start to finish on a keyboard. Worth doing before launch.",
+    "screenReaderHeroName": "TextRoll keeps an sr-only intact copy of the wordmark and TextLoop swaps its aria-hidden state when it arms, but neither has been through NVDA or VoiceOver.",
+    "mobileSafariPin": "No Apple device available here. ScrollTrigger pins plus Lenis on iOS Safari is the classic place this breaks.",
+    "lighthouseMobilePerformance": "Not run. The LCP budget conversation needs a real measurement, not a guess."
+  },
+  "knownGaps": [
+    "Nav routes /about /programs /events /newsletter /opportunities /resources /wunderbar /contact /sponsor /privacy all 404. Landing only this pass, as briefed. They show as prefetch 404s in the console.",
+    "No favicon, so /favicon.ico 404s.",
+    "In the Room is an interim static grid standing in for the FloatingCards gallery, per the 2026-09-06 pivot. A follow-up pass owns it.",
+    "Voices renders nothing, which is correct: content/landing.ts has zero testimonials on purpose.",
+    "components/whimsy/FloatingCards.tsx and components/ui/SideNav.tsx and components/editorial/MetaRow.tsx and MetaSidebar.tsx and components/motion/ZoomImage.tsx are carried over from the handoff and compile, but nothing on this page uses them."
+  ],
+  "notes": "There is no reduced-motion path to report on. Per DESIGN.md 'Motion is not optional' (owner decision, 2026-09-06) the app does not read prefers-reduced-motion anywhere; the only fallback is the WebGL one above. An earlier revision of this build did ship reduced-motion variants and they were removed."
+}
