@@ -75,7 +75,7 @@
   max-width: 60ch;
   font-family: var(--font-body);
   font-style: italic;
-  font-size: 17px;
+  font-size: var(--text-body);
   line-height: 1.5;
   color: var(--ink-soft);
 }
@@ -118,7 +118,7 @@
   background: var(--page);
   color: var(--ink);
   font-family: var(--font-body);
-  font-size: 15px;
+  font-size: var(--text-body);
   line-height: 1.3;
   text-align: left;
   cursor: pointer;
@@ -126,7 +126,7 @@
 }
 
 .a11yButton:hover {
-  border-color: var(--maroon);
+  border-color: var(--ink);
 }
 
 .a11yButton:focus-visible {
@@ -194,7 +194,7 @@
 .lightboxCaption {
   max-width: 60ch;
   font-family: var(--font-body);
-  font-size: 17px;
+  font-size: var(--text-body);
   line-height: 1.5;
   color: var(--ink-soft);
   text-align: center;
@@ -207,14 +207,14 @@
   background: var(--page);
   color: var(--ink);
   font-family: var(--font-body);
-  font-size: 15px;
+  font-size: var(--text-body);
   cursor: pointer;
   transition: border-color 200ms var(--ease), color 200ms var(--ease);
 }
 
 .lightboxClose:hover {
-  border-color: var(--maroon);
-  color: var(--maroon);
+  border-color: var(--ink);
+  color: var(--ink);
 }
 
 .lightboxClose:focus-visible {

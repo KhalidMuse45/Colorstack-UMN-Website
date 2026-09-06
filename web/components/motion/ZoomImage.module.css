@@ -4,7 +4,7 @@
   overflow: hidden;
   transform-origin: center;
   will-change: transform, border-radius;
-  border-radius: 12px;
+  border-radius: var(--radius-card);
 }
 .frame img { display: block; width: 100%; height: auto; }
 .overlay {
@@ -12,4 +12,4 @@
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-4);
   text-align: center; color: var(--paper); padding: var(--space-6);
 }
-.overlay h1, .overlay h2 { color: var(--paper); font-family: var(--font-body); font-weight: 500; font-size: clamp(32px, 5vw, 64px); letter-spacing: -0.01em; }
+.overlay h1, .overlay h2 { color: var(--paper); font-family: var(--font-body); font-weight: 500; font-size: var(--text-h2); letter-spacing: -0.01em; }

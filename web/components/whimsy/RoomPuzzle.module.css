@@ -39,15 +39,15 @@
   background: var(--paper);
   color: var(--ink);
   font-family: var(--font-body);
-  font-size: clamp(14px, 2.4vw, 19px);
+  font-size: var(--text-body);
   line-height: 1.2;
-  text-align: center;
+  text-align: left;
   cursor: pointer;
   transition: transform 180ms var(--ease), background-color 180ms var(--ease);
 }
 
 .tile:hover {
-  border-color: var(--maroon);
+  border-color: var(--ink);
 }
 
 .tile:focus-visible {
@@ -55,15 +55,20 @@
   outline-offset: 2px;
 }
 
-/* Gold is permission: it marks the piece in play, and nothing else here. */
+/*
+ * The piece in play. DESIGN.md marks it in gold; the owner's colour rule
+ * confines gold to the pill, the mission underline and the focus ring, so the
+ * hinted tile inverts to ink instead. It is at least as legible, and it does
+ * not spend the page's one permission colour on a puzzle.
+ */
 .tile[data-mark] {
-  background: var(--gold);
-  border-color: var(--gold);
-  color: var(--maroon);
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
 }
 
 .empty {
-  border: 1px solid var(--hairline);
+  border: 1px solid var(--line);
   transition: transform 180ms var(--ease);
 }
 
@@ -71,7 +76,7 @@
   display: flex;
   gap: var(--space-5);
   font-family: var(--font-body);
-  font-size: 17px;
+  font-size: var(--text-body);
 }
 
 .control {
@@ -79,17 +84,33 @@
   border: 0;
   padding: 0;
   cursor: pointer;
+  position: relative;
   font: inherit;
-  color: var(--maroon);
-  background-image: linear-gradient(var(--gold-soft), var(--gold-soft));
-  background-repeat: no-repeat;
-  background-size: 0% 40%;
-  background-position: 0 85%;
-  transition: background-size 200ms var(--ease);
+  color: var(--ink);
 }
 
-.control:hover {
-  background-size: 100% 40%;
+/*
+ * The same gold-soft highlighter the inline links use, and for the same
+ * reason it is a scaled bar rather than a two-stop gradient: the hero scrim
+ * is the only gradient on the site.
+ */
+.control::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 0.42em;
+  background: var(--gold-soft);
+  mix-blend-mode: multiply;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 200ms var(--ease);
+  pointer-events: none;
+}
+
+.control:hover::after {
+  transform: scaleX(1);
 }
 
 .control:focus-visible {

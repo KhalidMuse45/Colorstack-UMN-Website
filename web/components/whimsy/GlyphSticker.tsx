@@ -8,15 +8,18 @@ type Props = {
   /** 8–14 per brand rules. Sign flips direction. */
   rotate?: number;
   size?: number;
-  tone?: 'gold' | 'maroon' | 'rose';
+  /* Gold is confined to the pill, the mission underline and the focus ring,
+     and maroon to the wordmark, the active index, the Next band and pressed
+     states. A decorative glyph is none of those, so it is ink-soft or ink. */
+  tone?: 'inkSoft' | 'ink';
   className?: string;
   delay?: number;
 };
 
 /** Spring-pops once on scroll. Max three per page. Never over the hero canvas. */
-export default function GlyphSticker({ glyph = '✳', rotate = 11, size = 56, tone = 'gold', className, delay = 0 }: Props) {
+export default function GlyphSticker({ glyph = '✳', rotate = 11, size = 56, tone = 'inkSoft', className, delay = 0 }: Props) {
   const ref = useRef<HTMLSpanElement>(null);
-  const color = tone === 'gold' ? 'var(--gold)' : tone === 'maroon' ? 'var(--maroon)' : 'var(--rose)';
+  const color = tone === 'ink' ? 'var(--ink)' : 'var(--ink-soft)';
 
   useGSAP(
     () => {

@@ -1,45 +1,29 @@
-/* ── Mission ─────────────────────────────────────────────────────────── */
+/*
+ * Section layout for the landing page.
+ *
+ * Everything here uses the shared tokens: `.container` for width, `--section-y`
+ * for rhythm, `--stack` for the 16px under a heading or a paragraph, `--text-*`
+ * for every size, `--radius-card` or 0 for every corner. There are no one-off
+ * margins and no local max-widths in this file, and none should be added.
+ *
+ * The mission section has no rules at all any more: it is an H2, two
+ * paragraphs and the shared `.lede`, and the globals already say what those
+ * look like.
+ */
 
-.missionBody {
-  max-width: 60ch;
-}
-
-.rotator {
-  margin: var(--space-8) 0 0;
-  max-width: none;
-  font-family: var(--font-body);
-  font-size: clamp(21px, 2.6vw, 30px);
-  line-height: 1.35;
-  color: var(--ink);
-}
-
-/* ── What We Do ──────────────────────────────────────────────────────── */
+/* ── What We Do ──────────────────────────────────────────────────────────
+   Pentagram rhythm: full-bleed 16:9 photo, then title left and body right.
+   The photo frame itself is the shared `.frame .frame-wide` from globals. */
 
 .programs {
   display: grid;
-  gap: var(--space-10);
-}
-
-/* Full-bleed. It sits outside .container on purpose, so the photo can break
-   the grid while the copy stays in columns 1 to 7. */
-.programPhoto {
-  position: relative;
-  display: block;
-  margin: 0;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  background: var(--surface-warm);
-  overflow: hidden;
-}
-
-.programPhoto img {
-  object-fit: cover;
+  gap: var(--section-y);
 }
 
 .programRow {
   display: grid;
   gap: var(--space-5);
-  margin-top: var(--space-6);
+  margin-top: var(--space-5);
 }
 
 @media (min-width: 900px) {
@@ -50,50 +34,23 @@
   }
 }
 
-.programRow h3 {
-  margin: 0;
-}
-
-.programRow p {
-  margin: 0;
-}
-
-/* ── Who We Show Up For ──────────────────────────────────────────────── */
-
-.communityLayout {
-  display: grid;
-  gap: var(--space-8);
-  align-items: start;
-}
-
-@media (min-width: 900px) {
-  .communityLayout {
-    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-    gap: var(--space-10);
-  }
-}
-
-.communityCopy p {
-  color: var(--paper);
-  max-width: 52ch;
-}
+.programRow h3,
+.programRow p { margin: 0; }
 
 /* ── In the Room ─────────────────────────────────────────────────────────
-   The gallery itself owns its layout in components/whimsy/FloatingCards.module.css.
-   What is left here is the two-column shell around it: the canvas in the
-   first column, the marginalia note and the glyph stickers in the second.
-   The .roomGrid and .roomCell rules that used to sit below went with the 2x2
-   placeholder grid they styled. */
+   The gallery owns its own layout in whimsy/FloatingCards.module.css. What is
+   left here is the two-column shell around it: the canvas in the first
+   column, the marginalia note and the glyph stickers in the second. */
 
 .roomLayout {
   display: grid;
-  gap: var(--space-6);
+  gap: var(--space-5);
   align-items: start;
 }
 
 @media (min-width: 1200px) {
+  /* The second column IS the gutter the marginalia note lives in. */
   .roomLayout {
-    /* The second column IS the gutter the marginalia note lives in. */
     grid-template-columns: minmax(0, 1fr) 22ch;
     gap: var(--space-10);
   }

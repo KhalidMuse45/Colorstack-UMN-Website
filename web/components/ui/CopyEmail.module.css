@@ -23,7 +23,7 @@
 /* Reserved space, so confirming a copy never nudges the line it sits on. */
 .said {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--text-mono);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   opacity: 0;

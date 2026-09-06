@@ -1,97 +1,119 @@
+/*
+ * The hero melts into the nav. The photograph runs full-bleed from the very
+ * top edge of the viewport, underneath a nav that carries no ground of its own
+ * while it is up there. The copy sits bottom-left on columns 1 to 6.
+ *
+ * There is no clip-path aperture any more. The handoff opened the photo from
+ * the bottom 45% of the stage; the direction now is that the photo starts at
+ * the top edge and stays there, so the pin drives only the shader zoom, the
+ * duotone lift, the scrim, and the copy leaving.
+ */
 .hero {
   position: relative;
   min-height: 100vh;
   min-height: 100svh;
-  background: var(--page);
+  background: var(--ink);
   overflow: hidden;
 }
 
-/*
- * BASE STATE: the photo occupies the bottom 45% of the stage, which is the
- * hero's resting state at scroll 0 (docs/02, layout sketch). Nothing is hidden
- * by this: with JavaScript off the reader gets wordmark, lede, pill and photo,
- * which is the whole above-the-fold. The pinned scene only ever opens it
- * further.
- */
 .media {
   position: absolute;
   inset: 0;
-  background: var(--maroon);
-  clip-path: inset(55% 0 0 0);
-  will-change: clip-path;
 }
 
-.media img {
+/* Explicit width and height on the <img>. The box is already the right shape,
+   so nothing reflows when the bytes land. */
+.photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
 }
 
-.copyWrap {
-  position: relative;
-  z-index: 2;
-  max-width: var(--container);
-  margin: 0 auto;
-  padding: clamp(96px, 12vw, 148px) var(--space-6) 0;
+/*
+ * The legibility scrim: one overlay, above the canvas, below the copy. The
+ * only gradient on the site, and it is here for contrast, not decoration. It
+ * fades out with the copy by 35% of the pin, so the photograph is unobstructed
+ * well before the room turns on at 60%.
+ */
+.scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: var(--scrim);
   pointer-events: none;
 }
 
-.copyWrap a,
-.copyWrap button {
-  pointer-events: auto;
+/* Copy: bottom-left, on the 12-column grid, columns 1 to 6. */
+.copyWrap {
+  position: absolute;
+  inset: auto 0 0 0;
+  z-index: 2;
+  padding-bottom: var(--section-y);
+  pointer-events: none;
+}
+
+.copyWrap a { pointer-events: auto; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--space-5);
+}
+
+.copy { grid-column: 1 / -1; }
+
+@media (min-width: 900px) {
+  .copy { grid-column: 1 / 7; }
 }
 
 .mark {
-  margin: 0;
+  margin: 0 0 var(--stack);
   font-family: var(--font-display);
   font-weight: 900;
-  font-size: clamp(46px, 10.5vw, 132px);
+  font-size: var(--text-hero);
   line-height: 0.96;
   letter-spacing: -0.03em;
-  color: var(--maroon);
-  will-change: transform;
+  color: var(--paper);
 }
 
-.row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: clamp(24px, 4vw, 56px);
-  align-items: end;
-  margin-top: clamp(26px, 3.4vw, 40px);
-}
+/*
+ * The wordmark is one word per line, and that is set by TextRoll's `block`
+ * prop rather than by a rule here, because the word spans carry an inline
+ * `display` that a class from this module cannot override.
+ *
+ * Why it is forced at all: measured on mobile, the wordmark fits on one line
+ * in the size-adjusted fallback and wraps to two in Archivo, so the h1 went
+ * from 44px to 88px tall the instant the font swapped. The copy block is
+ * anchored to the bottom of the hero, so those 44px moved the wordmark and
+ * everything above it, and that was the bulk of a 0.12 CLS. Deciding the line
+ * count ourselves makes the block's height a function of font-size alone,
+ * which does not change on swap. It is also the two-line composition the
+ * layout sketch in docs/02 shows.
+ */
 
 .lede {
+  margin: 0 0 var(--space-5);
+  max-width: 34ch;
   font-family: var(--font-body);
   font-style: italic;
-  font-size: clamp(19px, 2.1vw, 25px);
-  line-height: 1.5;
-  max-width: 34ch;
-  margin: 0;
-  color: var(--ink);
+  font-size: var(--text-lede);
+  line-height: 1.55;
+  color: var(--paper);
   text-wrap: pretty;
-}
-
-.ctas {
-  display: flex;
-  gap: var(--space-3);
-  flex-wrap: wrap;
 }
 
 /* Optional, Sanity-set, one string. Off by default (docs/05). */
 .caption {
   position: absolute;
   z-index: 2;
-  left: var(--space-6);
-  bottom: var(--space-6);
+  left: var(--pad-x);
+  bottom: var(--space-3);
   margin: 0;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--text-mono);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--paper);
 }
-
-/*
- * There is no `@media (prefers-reduced-motion)` block here and there is not
- * meant to be one. DESIGN.md, "Motion is not optional": one experience, no
- * variant. When WebGL is unavailable the canvas simply does not mount and this
- * same layout runs with the static photograph in it.
- */

@@ -4,18 +4,27 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { primaryNav, joinCta, socialNav, contactEmail } from '@/lib/nav';
+import { getHeroPassed, onHeroPassed } from '@/lib/heroPin';
 import Pill from './Pill';
 import styles from './Nav.module.css';
 
 /**
- * Desktop: mark + wordmark + seven links + the gold pill.
- * Mobile: mark + wordmark + `[ Menu ]` into a full-screen white sheet with the
- * links in Archivo 700 at 40px, socials and the chapter inbox at the bottom.
+ * Desktop: mark + wordmark top-left, seven links and the gold pill top-right.
+ * Mobile: mark + wordmark + `[ Menu ]` into a full-screen white sheet.
  *
- * The bar is transparent over the hero and turns solid white with a 1px line
- * once the hero locks. The wordmark fades in with it: the hero's own wordmark
- * is contracting and fading out over the same scroll, so exactly one of the
- * two is on screen at a time. docs/06: "locked as nav wordmark".
+ * TWO STATES, ONE DOM.
+ *
+ * At the top of the page the bar is fully transparent and sits on the hero
+ * photograph: white links, white wordmark, no background, no border, no blur.
+ * The moment the hero has scrolled past the top edge it returns to the site's
+ * default: white ground, 1px var(--line) bottom line, ink links, maroon
+ * wordmark, and it stays there for the rest of the page. Scrolling back up
+ * reverses it. Everything is a 240ms colour crossfade on the house easing, and
+ * both states use the same markup and the same measurements, so nothing jumps.
+ *
+ * The switch is whichever of these notices first: the hero's ScrollTrigger
+ * `onLeave`, published through lib/heroPin, or the hero's own bottom edge
+ * crossing the top of the viewport, measured here on scroll.
  */
 export default function Nav() {
   const [open, setOpen] = useState(false);
@@ -23,10 +32,28 @@ export default function Nav() {
   const opener = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    const on = () => setSolid(window.scrollY > 80);
-    on();
-    window.addEventListener('scroll', on, { passive: true });
-    return () => window.removeEventListener('scroll', on);
+    let fromPin = getHeroPassed();
+
+    const read = () => {
+      const hero = document.querySelector<HTMLElement>('[data-hero]');
+      // No hero on this page: the nav is simply in its default state.
+      const scrolledPast = !hero || hero.getBoundingClientRect().bottom <= 0;
+      setSolid(fromPin || scrolledPast);
+    };
+
+    const stop = onHeroPassed((value) => {
+      fromPin = value;
+      read();
+    });
+
+    read();
+    window.addEventListener('scroll', read, { passive: true });
+    window.addEventListener('resize', read);
+    return () => {
+      stop();
+      window.removeEventListener('scroll', read);
+      window.removeEventListener('resize', read);
+    };
   }, []);
 
   useEffect(() => {
@@ -58,7 +85,7 @@ export default function Nav() {
     <header className={`${styles.nav} ${solid ? styles.solid : ''}`}>
       <Link href="/" className={styles.brand} aria-label="ColorStack UMN, home">
         <Image src="/images/colorstack-umn-mark-192.webp" alt="" width={24} height={24} priority />
-        <span className={styles.brandWord}>ColorStack UMN</span>
+        <span>ColorStack UMN</span>
       </Link>
 
       <nav className={styles.links} aria-label="Primary">
@@ -92,7 +119,7 @@ export default function Nav() {
           <div className={styles.sheetTop}>
             <Link href="/" className={styles.brand} onClick={() => setOpen(false)} aria-label="ColorStack UMN, home">
               <Image src="/images/colorstack-umn-mark-192.webp" alt="" width={24} height={24} />
-              <span className={styles.brandWord}>ColorStack UMN</span>
+              <span>ColorStack UMN</span>
             </Link>
             {/* autoFocus is correct here: the sheet is a modal dialog and
                 focus has to enter it when it opens. */}

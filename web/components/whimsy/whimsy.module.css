@@ -14,7 +14,7 @@
   margin: 0;
   font-family: var(--font-body);
   font-style: italic;
-  font-size: 14px;
+  font-size: var(--text-body);
   line-height: 1.5;
   color: var(--ink-soft);
   transform: rotate(-2deg);

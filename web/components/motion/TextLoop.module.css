@@ -3,24 +3,27 @@
  * keeps: every phrase in normal inline flow, all of them readable, in order.
  * Nothing is hidden by CSS that a script did not first opt into.
  */
-.loop {
-  display: inline;
-}
+.loop { display: inline; }
 
 .frame {
   font-family: var(--font-display);
   font-weight: 700;
-  color: var(--maroon);
-  /* the gold underline on the target word */
-  background-image: linear-gradient(var(--gold), var(--gold));
-  background-repeat: no-repeat;
-  background-size: 100% 0.18em;
-  background-position: 0 92%;
+  font-style: normal;
+  color: var(--ink);
+  /*
+   * The gold underline on the target word: the mission underline, one of the
+   * three places gold is allowed. `text-decoration` rather than the usual
+   * two-stop `linear-gradient` background trick, because the hero scrim is the
+   * only gradient on the site and a gradient with one colour is still one.
+   */
+  text-decoration: underline;
+  text-decoration-color: var(--gold);
+  text-decoration-thickness: 0.14em;
+  text-underline-offset: 0.1em;
+  text-decoration-skip-ink: none;
 }
 
-.frame + .frame {
-  margin-left: 0.35em;
-}
+.frame + .frame { margin-left: 0.35em; }
 
 /*
  * ARMED. The script has confirmed it is running, so the phrases may now
@@ -41,12 +44,10 @@
   opacity: 0;
   pointer-events: none;
   margin-left: 0;
-  transition: opacity 420ms var(--ease), transform 420ms var(--ease);
-  transform: translateY(0.25em);
+  transition: opacity 420ms var(--ease);
 }
 
 .loop[data-motion='in'] > .frame[data-active] {
   opacity: 1;
   pointer-events: auto;
-  transform: none;
 }

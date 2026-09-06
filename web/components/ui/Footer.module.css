@@ -6,9 +6,9 @@
   position: relative;
   background: var(--page);
   border-top: 1px solid var(--line);
-  padding: var(--space-10) 0 var(--space-8);
+  padding-block: var(--section-y);
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--text-mono);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ink-soft);
@@ -32,18 +32,9 @@
 }
 
 .col a,
-.col button {
-  color: var(--ink);
-}
+.col button { color: var(--ink); }
 
-.col a:hover {
-  color: var(--maroon);
-}
-
-.heading {
-  color: var(--maroon-light);
-  margin: 0;
-}
+.heading { margin: 0; color: var(--ink-soft); }
 
 .foot {
   display: flex;
@@ -66,4 +57,3 @@
   flex: none;
   line-height: 0;
 }
-

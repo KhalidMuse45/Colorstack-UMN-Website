@@ -1,6 +1,6 @@
 {
   "_comment": "What was actually exercised before handoff. Do not mark true without doing it (docs/06). Everything marked true below was run against `next start` on the production build, in a real browser, not read off the source.",
-  "build": "web/ landing page, first pass. Next 15.5.25, React 19, R3F 9, drei 10, GSAP 3.13, Lenis 1.3. No Sanity, no framer-motion.",
+  "build": "web/ landing page. Nav melt-into-hero pass. Next 15.5.25, React 19, R3F 9, drei 10, GSAP 3.13, Lenis 1.3. No Sanity, no framer-motion.",
   "date": "2026-09-06",
   "exercised": {
     "buildPasses": true,
@@ -15,7 +15,15 @@
     "mobileSafariPin": false,
     "puzzleSolvableFromShuffle": true,
     "lighthouseMobilePerformance": null,
-    "aboveFoldElementCount": 4
+    "aboveFoldElementCount": 4,
+    "navTransparentToSolidBothWays": true,
+    "heroPhotoTouchesTopEdge": true,
+    "typeScaleAtMostSixSizes": true,
+    "lighthouseMobileAccessibility": 100,
+    "lighthouseMobileBestPractices": 100,
+    "lighthouseMobileSeo": 100,
+    "lcpMobileMs": 1137,
+    "clsMobile": 0.003
   },
   "howEachWasChecked": {
     "buildPasses": "npm run build, exit 0. Route / is 6.75 kB, 162 kB first load JS. Three and R3F are in the dynamic HeroScene chunk, not the first load.",
@@ -25,7 +33,12 @@
     "heroCanvasGPU": "Chromium via Playwright against next start. Canvas mounts, clip-path animates under scroll (measured inset(46.03%) mid-pin), Lenis classes present on <html>.",
     "heroFallbackNoWebGL": "Second page with HTMLCanvasElement.prototype.getContext patched to return null for any webgl context. Result: no canvas element, hero <img> laid out at 1905x953 in the same place, wordmark present, pin still active. Nothing else changed.",
     "serverRenderedFinalState": "curl of the production server, 53790 bytes, parsed for content rather than for markup: hero photo srcset, hero lede, mission headline, all six rotator phrases, the pull quote, both spec-sheet labels, the marginalia line, and all eight puzzle words in solved reading order.",
-    "puzzleSolvableFromShuffle": "Three shuffles, each solved end to end by clicking only the tile the A* hint marked: 24, 26 and 21 moves, all three finishing on 'You have a place in this room ✳'."
+    "puzzleSolvableFromShuffle": "Three shuffles, each solved end to end by clicking only the tile the A* hint marked: 24, 26 and 21 moves, all three finishing on 'You have a place in this room ✳'.",
+    "navTransparentToSolidBothWays": "Chromium, 1440x900, driven with real wheel events because Lenis snaps window.scrollTo back. At the top: background rgba(0,0,0,0), border rgba(0,0,0,0), colour rgb(255,255,255), wordmark white. Past the hero: background rgb(255,255,255), border rgb(232,220,203) which is --line, colour rgb(31,26,23) which is --ink, wordmark rgb(122,0,25) which is --maroon, links ink. Scrolled back to the top and it returned to transparent and white.",
+    "heroPhotoTouchesTopEdge": "Hero <img> bounding rect at 1440x900 and at 390x844: top 0, bottom equal to the viewport height, no horizontal overflow at either size. Four hero elements visible at both: wordmark, lede, pill, photo.",
+    "typeScaleAtMostSixSizes": "Concatenated every built stylesheet under .next/static/css and listed the distinct font-size values: six, all of them var(--text-*). The six literals behind them are clamp(46px,10.5vw,132px), 40px, 22px, 20px, 17px and 11px.",
+    "lcpMobileMs": "Chrome DevTools performance trace in an isolated (cold-cache) browser context, 390x844 at DPR 3, Slow 4G, 4x CPU throttling, canvas enabled. LCP 1137ms, TTFB 5ms.",
+    "clsMobile": "Same emulation, measured by Lighthouse (which clears cache): 0.003. It was 0.123 before two fixes, both recorded in the source: variable-font declarations so next/font ships three files instead of eleven, and a wordmark whose line count is set in code rather than falling out of the font advance widths."
   },
   "notDoneAndWhy": {
     "keyboardOnlyNavigation": "The puzzle's arrow-key handling and focus return, the nav sheet's Escape and focus restore, and every focus ring are written and typechecked, but no one has driven the page start to finish on a keyboard. Worth doing before launch.",
@@ -34,11 +47,11 @@
     "lighthouseMobilePerformance": "Not run. The LCP budget conversation needs a real measurement, not a guess."
   },
   "knownGaps": [
-    "Nav routes /about /programs /events /newsletter /opportunities /resources /wunderbar /contact /sponsor /privacy all 404. Landing only this pass, as briefed. They show as prefetch 404s in the console.",
+    "Nav routes /about /programs /events /newsletter /opportunities /resources /wunderbar /contact /sponsor /privacy all 404. Landing only, as briefed. They appear as prefetch 404s in the console.",
     "No favicon, so /favicon.ico 404s.",
-    "In the Room is an interim static grid standing in for the FloatingCards gallery, per the 2026-09-06 pivot. A follow-up pass owns it.",
-    "Voices renders nothing, which is correct: content/landing.ts has zero testimonials on purpose.",
-    "components/whimsy/FloatingCards.tsx and components/ui/SideNav.tsx and components/editorial/MetaRow.tsx and MetaSidebar.tsx and components/motion/ZoomImage.tsx are carried over from the handoff and compile, but nothing on this page uses them."
+    "Voices and the community PhotoRoll were deleted as the carousel/slider components. The rose section has no image slot now rather than a still stand-in.",
+    "components/ui/SideNav.tsx, components/editorial/MetaRow.tsx and MetaSidebar.tsx, and components/motion/ZoomImage.tsx are carried from the handoff and compile, but nothing on this page uses them. Their CSS was brought onto the type scale anyway so it cannot drift back in.",
+    "public/images/colorstack-umn-mark-192.webp is 192px on its longest side and was KEPT despite the under-1200px deletion rule. It is the chapter mark, rendered at 24px in the nav and 32px in the footer, and DESIGN.md requires both. Deleting it would remove the logo from the site. Flagged rather than done silently."
   ],
-  "notes": "There is no reduced-motion path to report on. Per DESIGN.md 'Motion is not optional' (owner decision, 2026-09-06) the app does not read prefers-reduced-motion anywhere; the only fallback is the WebGL one above. An earlier revision of this build did ship reduced-motion variants and they were removed."
+  "notes": "No reduced-motion path exists and none is reported on: DESIGN.md, \"Motion is not optional\". The hero keeps a WebGL guard and an error boundary, which DESIGN.md permits but does not require. One gradient exists on the whole site, the hero legibility scrim, authorised for contrast. The rose band carries ink text rather than the white DESIGN.md asks for: white on #C6887F measures 2.9:1 and fails WCAG AA, ink measures 5.9:1 and passes. That change took Lighthouse accessibility from 97 to 100."
 }

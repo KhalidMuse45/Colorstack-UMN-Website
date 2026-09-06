@@ -6,8 +6,6 @@ import SpecSheet from '@/components/editorial/SpecSheet';
 import NextBand from '@/components/editorial/NextBand';
 import Reveal from '@/components/motion/Reveal';
 import TextLoop from '@/components/motion/TextLoop';
-import PhotoRoll from '@/components/media/PhotoRoll';
-import Voices from '@/components/sections/Voices';
 import GetInTouch from '@/components/sections/GetInTouch';
 import FloatingCards from '@/components/whimsy/FloatingCards';
 import GlyphSticker from '@/components/whimsy/GlyphSticker';
@@ -16,26 +14,22 @@ import { getLanding } from '@/lib/landing';
 import styles from './page.module.css';
 
 /**
- * The landing page. Server component. Section order and copy: DESIGN.md "The
- * landing page", detail in docs/02, revised by docs/05.
+ * The landing page. Server component.
  *
- * Nothing on this page carries a `Fig.` caption, an image tag, a meta note or
- * a scroll cue. The only mono on it is the gutter index, the `[ Menu ]`
- * bracket, the spec-sheet keys and the footer.
+ * Every section is `.container`: one width, one padding, no local max-widths.
+ * Vertical rhythm is `--section-y` and nothing else. Every photograph sits in
+ * one of the three shared aspect-ratio frames from globals.css with explicit
+ * width and height and a `sizes` attribute, so no image can move the layout
+ * when it loads.
  *
- * Gutter index numbering. The handoff skeleton numbered Voices as 05, which
- * would leave the rail reading 01 02 03 04 06 for as long as the chapter has
- * no real testimonials, which is today and is the expected state. The six
- * sections that actually render carry 01 to 06 and Voices takes 07 when it
- * appears. PageIndex reads these off the DOM, so it stays honest either way.
+ * Nothing here carries a Fig. caption, an image tag, a meta note, a scroll
+ * cue, a keyboard hint or a "Chapter Index" heading. The only mono on the page
+ * is the gutter index, `[ Menu ]`, the spec-sheet keys and the footer.
+ *
+ * The gutter index runs 01 to 06 across the six sections that render.
  */
 export default async function Page() {
   const d = await getLanding();
-
-  // Voices only exists when the chapter has supplied two or more real quotes.
-  // Numbering the rail around it here keeps 01 to 06 contiguous today and 01
-  // to 07 contiguous the day the quotes land.
-  const hasVoices = d.testimonials.length >= 2;
 
   return (
     <main>
@@ -50,14 +44,11 @@ export default async function Page() {
       {/* 01 Mission */}
       <section className="section container" data-index="01">
         <h2>{d.missionHeadline}</h2>
-        <div className={styles.missionBody}>
-          {d.missionBody.map((p) => (
-            <p key={p.slice(0, 32)}>{p}</p>
-          ))}
-        </div>
-        <p className={styles.rotator}>
-          {d.missionRotatorPrefix}{' '}
-          <TextLoop items={d.missionRotator} interval={2.4} />
+        {d.missionBody.map((p) => (
+          <p key={p.slice(0, 32)}>{p}</p>
+        ))}
+        <p className="lede">
+          {d.missionRotatorPrefix} <TextLoop items={d.missionRotator} interval={2.4} />
         </p>
       </section>
 
@@ -70,11 +61,13 @@ export default async function Page() {
         <div className={styles.programs}>
           {d.programs.map((pr) => (
             <Fragment key={pr.title}>
-              <Reveal mode="wipe" as="figure" className={styles.programPhoto}>
+              {/* The one 8% wipe, once, per docs/06. The only reveal on the page. */}
+              <Reveal mode="wipe" as="figure" className="frame frame-wide">
                 <Image
                   src={pr.photo.src}
                   alt={pr.photo.alt}
-                  fill
+                  width={pr.photo.width}
+                  height={pr.photo.height}
                   sizes="100vw"
                   style={{ objectPosition: pr.photo.objectPosition }}
                 />
@@ -107,18 +100,20 @@ export default async function Page() {
         </div>
       </div>
 
-      {/* 04 Who We Show Up For. Rose is a change in distance, not a colour. */}
+      {/*
+        04 Who We Show Up For. Rose is a change in distance, not a colour.
+
+        The cycling duotone portrait that used to sit beside this copy went
+        with the rest of the carousels. Rather than drop a still photograph in
+        as a stand-in, the image slot is removed: this is a rose band that
+        speaks in second person, and it does not need a picture to do it.
+      */}
       <section className="section section-rose" data-index="04">
         <div className="container">
-          <div className={styles.communityLayout}>
-            <div className={styles.communityCopy}>
-              <h2>{d.communityHeadline}</h2>
-              {d.communityBody.map((p) => (
-                <p key={p.slice(0, 32)}>{p}</p>
-              ))}
-            </div>
-            <PhotoRoll photos={d.communityRoll} />
-          </div>
+          <h2>{d.communityHeadline}</h2>
+          {d.communityBody.map((p) => (
+            <p key={p.slice(0, 32)}>{p}</p>
+          ))}
         </div>
       </section>
 
@@ -144,17 +139,14 @@ export default async function Page() {
           <div className={styles.gutter}>
             {d.marginalia && <Marginalia>{d.marginalia}</Marginalia>}
             <GlyphSticker glyph="✦" rotate={-12} size={44} className={styles.sticker1} />
-            <GlyphSticker glyph="✳" rotate={9} size={36} tone="maroon" delay={0.1} className={styles.sticker2} />
+            <GlyphSticker glyph="✳" rotate={9} size={36} delay={0.1} className={styles.sticker2} />
           </div>
         </div>
       </section>
 
-      {/* Voices. Renders nothing at all until there are two real quotes. */}
-      <Voices testimonials={d.testimonials} headline={d.voicesHeadline} index="06" />
-
-      {/* Get in Touch: the puzzle, then the invitation it never blocks. */}
+      {/* 06 Get in Touch: the puzzle, then the invitation it never blocks. */}
       <GetInTouch
-        index={hasVoices ? '07' : '06'}
+        index="06"
         headline={d.getInTouchHeadline}
         body={d.getInTouchBody}
         sentence={d.puzzleSentence}

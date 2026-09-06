@@ -31,7 +31,7 @@
   flex-direction: column;
   gap: var(--space-2);
   font-family: var(--font-body);
-  font-size: 17px;
+  font-size: var(--text-body);
   color: var(--ink);
 }
 
@@ -43,12 +43,12 @@
   border-radius: var(--radius-pill);
   background: var(--paper);
   font-family: var(--font-body);
-  font-size: 17px;
+  font-size: var(--text-body);
   color: var(--ink);
 }
 
 .field input:hover {
-  border-color: var(--maroon);
+  border-color: var(--ink);
 }
 
 .submit {
@@ -59,10 +59,10 @@
   border: 0;
   border-radius: var(--radius-pill);
   background: var(--gold);
-  color: var(--maroon);
+  color: var(--ink);
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 16px;
+  font-size: var(--text-body);
   cursor: pointer;
   transition: background-color 200ms var(--ease);
 }
@@ -81,6 +81,6 @@
   flex-wrap: wrap;
   gap: var(--space-5);
   font-family: var(--font-body);
-  font-size: 17px;
+  font-size: var(--text-body);
   color: var(--ink);
 }

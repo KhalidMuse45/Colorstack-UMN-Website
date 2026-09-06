@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { gsap, useGSAP, ScrollTrigger } from '@/lib/gsap';
+import { setHeroPassed } from '@/lib/heroPin';
 import TextRoll from '@/components/motion/TextRoll';
 import Pill from '@/components/ui/Pill';
 import CanvasBoundary from './CanvasBoundary';
@@ -22,41 +23,44 @@ export type HeroProps = {
 };
 
 /**
- * "The room turns on." Pinned scene, 150vh of travel. docs/06 hero table.
+ * The hero melts into the nav.
  *
- * Four elements above the fold: wordmark, italic lede, one gold pill, photo.
- * Nothing else. No eyebrow, no second CTA, no scroll cue, no location line.
+ * The photograph runs full-bleed from the very top of the viewport, under a
+ * nav that has no ground, no border and no blur while it is up there. Four
+ * things are visible and no more: the wordmark, the italic lede, one gold
+ * pill, and the photo. No eyebrow, no second CTA, no scroll cue, no scroll
+ * arrow, no supporters strip.
  *
  * DOM layers, bottom to top:
- *   <Image>   colour photo, priority. The LCP element, and the whole picture
- *             for anyone whose browser cannot give us a WebGL context.
- *   <canvas>  HeroScene, opaque once its texture loads.
- *   copy      wordmark, lede, one pill. Optional caption.
+ *   <img>     colour photo, priority, explicit width and height, object-fit
+ *             cover in a box that is already the right shape.
+ *   <canvas>  HeroScene: the UV zoom and the duotone lift, unchanged.
+ *   scrim     the one gradient on the site, for legibility, out by 35%.
+ *   copy      wordmark, lede, one pill, bottom-left on columns 1 to 6.
  *
- * THE ONLY FALLBACK IS TECHNICAL. DESIGN.md, "Motion is not optional": there
- * is no reduced-motion variant and nothing here reads the media query. If
- * WebGL is unavailable, or the scene throws while mounting, the photograph
- * underneath is already in the right place at the right size and the pin, the
- * clip, the wordmark contraction and everything downstream carry on exactly as
- * they would have. What is lost is the duotone lift, and only that.
+ * Changed from the previous pass: the clip-path aperture is gone, because the
+ * photo now starts at the top edge instead of opening from the bottom 45% of
+ * the stage. The pin, the scrub and the shader are otherwise untouched.
+ *
+ * The nav's white-to-solid switch is published from this timeline. See
+ * lib/heroPin.ts for why it is a store rather than a prop.
+ *
+ * The WebGL guard and the error boundary stay. DESIGN.md now assumes WebGL and
+ * makes no fallback a requirement, which is not the same as forbidding one: an
+ * uncaught render error in the canvas would take the whole page down with it,
+ * and the photograph underneath is already in the right place at the right
+ * size. Two lines, and not a reduced-motion branch.
  */
 export default function Hero(p: HeroProps) {
   const root = useRef<HTMLElement>(null);
-  const media = useRef<HTMLDivElement>(null);
   const copy = useRef<HTMLDivElement>(null);
-  const mark = useRef<HTMLHeadingElement>(null);
+  const scrim = useRef<HTMLDivElement>(null);
   const cap = useRef<HTMLParagraphElement>(null);
   const progress = useRef(0);
 
-  // `ready` keeps the first client render identical to the server's. The real
-  // values land in an effect, so nothing here can cause a hydration mismatch.
   const [ready, setReady] = useState(false);
   const [desktop, setDesktop] = useState(true);
   const [webgl, setWebgl] = useState(false);
-
-  // Whether the canvas should be rendering. False once the pin releases, so
-  // the page can use stillness (docs/06). React state rather than a ref: it is
-  // the Canvas `frameloop` prop, and it has to cause a render to take effect.
   const [running, setRunning] = useState(true);
 
   useEffect(() => {
@@ -64,6 +68,10 @@ export default function Hero(p: HeroProps) {
     setWebgl(hasWebGL());
     setReady(true);
   }, []);
+
+  // If the hero ever unmounts, the nav must not be left believing something is
+  // still covering the top of the page.
+  useEffect(() => () => setHeroPassed(true), []);
 
   useGSAP(
     () => {
@@ -83,26 +91,20 @@ export default function Hero(p: HeroProps) {
           onToggle: (self) => {
             setRunning(self.isActive);
           },
+          // onLeave is the moment the hero has finished and scrolled past the
+          // top edge; onEnterBack is the same moment in reverse on the way up.
+          onLeave: () => setHeroPassed(true),
+          onEnterBack: () => setHeroPassed(false),
         },
       });
 
-      // 0 -> 0.6: the aperture opens to the full viewport while the copy
-      // recedes and the wordmark contracts toward the masthead.
-      tl.fromTo(
-        media.current,
-        { clipPath: 'inset(55% 0 0 0)' },
-        { clipPath: 'inset(0% 0 0 0)', ease: 'none', duration: 0.6 },
+      // 0 -> 0.35: the copy leaves and the scrim clears with it, so the
+      // photograph is unobstructed long before the duotone lifts at 0.60.
+      tl.to(copy.current, { autoAlpha: 0, y: -16, ease: 'none', duration: 0.35 }, 0).to(
+        scrim.current,
+        { autoAlpha: 0, ease: 'none', duration: 0.35 },
         0,
-      )
-        .to(copy.current, { autoAlpha: 0, y: -16, ease: 'none', duration: 0.35 }, 0)
-        .to(
-          mark.current,
-          { scale: 0.18, transformOrigin: 'left top', ease: 'none', duration: 0.6 },
-          0,
-        )
-        // 0.45 -> 0.6: the wordmark hands off to the one in the nav, which
-        // fades in on the same scroll (see ui/Nav.tsx, scrollY > 80).
-        .to(mark.current, { autoAlpha: 0, ease: 'none', duration: 0.15 }, 0.45);
+      );
 
       if (cap.current) {
         tl.fromTo(cap.current, { y: 30, autoAlpha: 0 }, { y: 0, autoAlpha: 1, ease: 'none', duration: 0.09 }, 0.85);
@@ -114,15 +116,17 @@ export default function Hero(p: HeroProps) {
   );
 
   return (
-    <section ref={root} className={styles.hero} aria-label={p.wordmark}>
-      <div ref={media} className={styles.media}>
+    <section ref={root} data-hero className={styles.hero} aria-label={p.wordmark}>
+      <div className={styles.media}>
         <Image
+          className={styles.photo}
           src={p.photo.src}
           alt={p.photo.alt}
-          fill
+          width={p.photo.width}
+          height={p.photo.height}
           priority
           sizes="100vw"
-          style={{ objectFit: 'cover', objectPosition: p.photo.objectPosition }}
+          style={{ objectPosition: p.photo.objectPosition }}
         />
         {ready && webgl && (
           <CanvasBoundary>
@@ -131,16 +135,20 @@ export default function Hero(p: HeroProps) {
         )}
       </div>
 
-      <div className={styles.copyWrap}>
-        <h1 ref={mark} className={styles.mark}>
-          <TextRoll text={p.wordmark} />
-        </h1>
-        <div ref={copy} className={styles.row}>
-          <p className={styles.lede}>{p.lede}</p>
-          <div className={styles.ctas}>
-            <Pill href={p.primary.href} external={p.primary.external} tone="gold">
-              {p.primary.label}
-            </Pill>
+      <div ref={scrim} className={styles.scrim} aria-hidden />
+
+      <div ref={copy} className={styles.copyWrap}>
+        <div className="container">
+          <div className={styles.grid}>
+            <div className={styles.copy}>
+              <h1 className={styles.mark}>
+                <TextRoll text={p.wordmark} block />
+              </h1>
+              <p className={styles.lede}>{p.lede}</p>
+              <Pill href={p.primary.href} external={p.primary.external} tone="gold">
+                {p.primary.label}
+              </Pill>
+            </div>
           </div>
         </div>
       </div>
