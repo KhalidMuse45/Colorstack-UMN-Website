@@ -22,9 +22,13 @@ script strands its content for anyone with JavaScript off, reduced motion on,
 or a script that threw.
 
 **3. Accessibility is not styling.** Every interactive element keeps a visible
-focus ring; never `outline: none`. All motion sits behind
-`prefers-reduced-motion`. Images carry alt text describing what is actually in
-the frame.
+focus ring; never `outline: none`. Images carry alt text describing what is
+actually in the frame. Motion policy (owner decision, 2026-09-06, supersedes
+the handoff's "no canvas, no pin, no roll" line): `prefers-reduced-motion`
+tones motion down rather than off. Skip pinned scenes, parallax, scale zooms
+and large translations for those users; quick fades, color/opacity transitions
+and other gentle effects are allowed. In both modes, content is never hidden
+or stranded behind an animation.
 
 **4. `design/` is a vendored drop.** Never hand-edit it. Five bugs have been
 found in its reference components, so check it rather than trusting it.
