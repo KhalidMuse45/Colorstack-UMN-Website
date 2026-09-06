@@ -1,0 +1,17 @@
+{
+  "_comment": "What was actually exercised before handoff. Do not mark true without doing it (docs/06).",
+  "build": "",
+  "date": "",
+  "exercised": {
+    "heroCanvasGPU": false,
+    "heroFallbackNoWebGL": false,
+    "reducedMotionPath": false,
+    "keyboardOnlyNavigation": false,
+    "screenReaderHeroName": false,
+    "mobileSafariPin": false,
+    "puzzleSolvableFromShuffle": false,
+    "lighthouseMobilePerformance": null,
+    "aboveFoldElementCount": null
+  },
+  "notes": ""
+}

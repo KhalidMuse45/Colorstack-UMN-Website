@@ -13,7 +13,7 @@
 set -u
 fail=0
 files=$(git ls-files |
-  grep -Ev '^(design/|\.githooks/|\.claude/|\.github/|scripts/|CLAUDE\.md$)')
+  grep -Ev '^(design/|colorstack-redesign-handoff-v3\.3/|\.githooks/|\.claude/|\.github/|scripts/|CLAUDE\.md$)')
 
 # A check that cannot fail is not a check.
 #
@@ -37,8 +37,8 @@ for f in $files; do
   case "$f" in
     *.css|*.astro|*.jsx|*.tsx|*.svelte|*.vue)
       case "$f" in
-        src/styles/colors.css|src/styles/typography.css|src/styles/spacing.css|src/styles/styles.css)
-          ;;   # token layer, copied from design/tokens/ — literal hexes are the point
+        src/styles/colors.css|src/styles/typography.css|src/styles/spacing.css|src/styles/styles.css|web/app/globals.css)
+          ;;   # token layer (Astro: design/tokens/ copies; Next: web/app/globals.css per handoff 01-BRAND-RULES)
         *)
           grep -nE '#[0-9a-fA-F]{3}([0-9a-fA-F]{3}([0-9a-fA-F]{2})?)?\b' "$f" &&
             { echo "FAIL $f — literal hex outside src/styles/ (use var(--token))"; fail=1; }
