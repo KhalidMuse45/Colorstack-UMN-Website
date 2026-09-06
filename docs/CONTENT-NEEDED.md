@@ -46,11 +46,10 @@ If a quote comes with a photo, get the person's consent on the record first.
 
 ## From the redesign photo drop (2026-09-06, see assets-src/photo-triage.md)
 
-**Usage rights for the Stacked Up Summit photos.** Everything in
-`assets-src/photos/UMNSTACKEDUP/` is professional photography from the
-national summit, credited to Chloe Jackman Photography in the filenames. The
-chapter supplied the files, but written confirmation that the chapter may use
-them on its own site is worth having before launch.
+**Usage rights for the Stacked Up Summit photos: resolved.** The chapter
+confirmed on 2026-09-06 that the `UMNSTACKEDUP/` photos were legally
+downloaded and may be used; board members appear in them. Cleared for the
+site.
 
 **"In the Room" wants a Tuesday, the drop supplies a photoshoot.** 42 of the
 45 board-shoot photos are a styled editorial shoot of two or three board

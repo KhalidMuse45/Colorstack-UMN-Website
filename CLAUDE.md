@@ -23,12 +23,13 @@ or a script that threw.
 
 **3. Accessibility is not styling.** Every interactive element keeps a visible
 focus ring; never `outline: none`. Images carry alt text describing what is
-actually in the frame. Motion policy (owner decision, 2026-09-06, supersedes
-the handoff's "no canvas, no pin, no roll" line): `prefers-reduced-motion`
-tones motion down rather than off. Skip pinned scenes, parallax, scale zooms
-and large translations for those users; quick fades, color/opacity transitions
-and other gentle effects are allowed. In both modes, content is never hidden
-or stranded behind an animation.
+actually in the frame. Every interactive piece has a keyboard and
+screen-reader path. Motion policy (owner decision, 2026-09-06, per the
+handoff's DESIGN.md "Motion is not optional"): the site does not read
+`prefers-reduced-motion` and ships no reduced-motion variant. The only
+fallback is technical: if WebGL fails to initialize the affected component
+renders its static equivalent, and everything else still animates. Rule 2
+still holds: a script failure must never strand content.
 
 **4. `design/` is a vendored drop.** Never hand-edit it. Five bugs have been
 found in its reference components, so check it rather than trusting it.

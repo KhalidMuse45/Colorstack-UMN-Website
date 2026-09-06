@@ -47,7 +47,9 @@ No decorative gradients. No shadows heavier than a 1px hairline. Duotone (graysc
 
 **Logo.** Chapter mark only. Never bordered, obstructed or recolored.
 
-**Accessibility.** Gold focus ring, never `outline:none`. Reduced motion is a first-class path: no canvas, no pin, no roll, no loop, no wipe; the same story in reading order.
+**Accessibility.** Gold focus ring, never `outline:none`. Keyboard and screen-reader paths for every interactive piece.
+
+**Motion is not optional.** The site does not read `prefers-reduced-motion` and ships no reduced-motion variant. The motion is the design. The only fallback anywhere is technical: if WebGL fails to initialize, the hero shows the color photo statically and everything else still animates.
 
 ## The landing page
 
@@ -66,7 +68,7 @@ Left-aligned 12-column grid, max 1320px. Sticky gutter index `01…06` in mono o
 | 85–94% | — | Holds | Optional caption rises 30px |
 | After | — | Canvas stops rendering | Stillness |
 
-Shader: one cover-fit plane; UV zoom, 3px pointer displacement, luminance duotone, `smoothstep(0.60, 0.69)` mix to color, grain on the plane only. Eight glyph sprites at the edges scatter from the cursor and never cross copy. Mobile: no displacement, no sprites. Reduced motion: a static color `<img>`.
+Shader: one cover-fit plane; UV zoom, 3px pointer displacement, luminance duotone, `smoothstep(0.60, 0.69)` mix to color, grain on the plane only. Eight glyph sprites at the edges scatter from the cursor and never cross copy. Mobile: no displacement, no sprites. If WebGL is unavailable: the color photo, static, same layout.
 
 **Mission.** H2 `We're building the room we wanted as freshmen.` Two Lora paragraphs. Rotator `Building a space for … you.` with a gold underline on the target word; cycles once, holds on "you."
 
@@ -76,7 +78,7 @@ Shader: one cover-fit plane; UV zoom, 3px pointer displacement, luminance duoton
 
 **Who We Show Up For.** Rose ground, white text. `If you're the first in your family to do this, you're in the right place.` One duotone portrait cycling with a wipe.
 
-**In the Room.** `This is what a Tuesday looks like.` 2×2 grid, duotone that turns to color on hover. One marginalia note in the gutter, Lora italic: `we meant it about the snacks.` Up to two glyph stickers rotated 8–14°.
+**In the Room.** `This is what a Tuesday looks like.` The rotating candid-photo gallery (`FloatingCards`, spec in `docs/07`): 12–16 unposed photos as thin planes on white, each turning on its own vertical axis; hover faces the camera and shows alt text below; click opens a plain lightbox. One marginalia note in the gutter, Lora italic: `we meant it about the snacks.` Up to two glyph stickers rotated 8–14°.
 
 **Voices.** Renders only with two or more real testimonials in Sanity.
 
@@ -88,7 +90,7 @@ Shader: one cover-fit plane; UV zoom, 3px pointer displacement, luminance duoton
 
 ## Reusable patterns for other pages
 
-- **FloatingCards** (Taste Labs): the Events page hero. 10–14 flyers as textured planes on white, drifting, tilting toward the cursor, click brings one forward with title, date and RSVP beneath. Reduced motion: a static grid.
+- **FloatingCards** (Taste Labs): rotating planes on white. Candid photos in "In the Room"; event flyers as the Events page hero, click brings one forward with title, date and RSVP beneath. Full brief in `docs/07`.
 - **SideNav** (Poolside): editorial pages. A 12px-radius bordered panel top-left with the Goldy mark and `Chapter Notes · Issues · About · Back to site`. Cream on white pages, white on cream pages.
 - **ZoomImage** (Anthropic): contained image entering at scale 0.86 / 12px corners, settling to 1.0 / 0px over ~60vh, headline and one pill on top. Newsletter headers, event pages, Wunderbar, CTA bands. Never the landing hero.
 - **MetaSidebar** (Pentagram): About page. `Founded · Members · Meets · E-Board · National chapter · Advisors`.
@@ -108,5 +110,5 @@ Next.js 15 App Router · Sanity v3 (studio at `/studio`) · GSAP + ScrollTrigger
 - At most one mono row outside the spec sheet and footer
 - White ground; cream on reading surfaces only
 - All eight nav items on desktop, `[ Menu ]` on mobile, Wunderbar present
-- Canvas stops after the hero; reduced-motion path exercised
+- Canvas stops after the hero; WebGL-unavailable path exercised
 - `SOURCES.json` and `QA-REPORT.json` filled in honestly
