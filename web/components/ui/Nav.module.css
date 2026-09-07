@@ -1,147 +1,23 @@
-/*
- * Two states, one DOM, one set of measurements.
- *
- * TRANSPARENT, while the hero is still on screen: no background, no border,
- * no blur, no white-at-0.9. `background: transparent` and a transparent border
- * that reserves the same 1px the solid state paints, so the bar never changes
- * height and nothing below it jumps.
- *
- * SOLID, from the moment the hero has scrolled past the top edge: white
- * ground, 1px var(--line) bottom border, ink links, maroon wordmark. Reverses
- * on the way back up.
- *
- * The crossfade is 240ms on colour, background-color and border-color only, on
- * the house easing. No slide, no blur, no re-mount.
- */
-.nav {
-  --nav-fg: var(--paper);
-  position: fixed;
-  inset: 0 0 auto 0;
-  z-index: 50;
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: var(--space-6);
-  padding: var(--space-3) var(--pad-x);
-  color: var(--nav-fg);
-  background: transparent;
-  border-bottom: 1px solid transparent;
-  transition: color 240ms var(--ease), background-color 240ms var(--ease),
-    border-color 240ms var(--ease);
-}
-
-.solid {
-  --nav-fg: var(--ink);
-  background: var(--page);
-  border-bottom-color: var(--line);
-}
-
-.brand {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: var(--text-body);
-  /* White over the photograph, maroon once it locks into the solid bar. One
-     element, one colour transition, no second copy of the wordmark. */
-  color: var(--nav-fg);
-  transition: color 240ms var(--ease);
-}
-
-.solid .brand,
-.sheet .brand { color: var(--maroon); }
-
-.links {
-  display: none;
-  gap: var(--space-5);
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: var(--text-body);
-  color: var(--nav-fg);
-}
-
-.right {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-}
-
-.bracket {
-  background: none;
-  border: 0;
-  padding: 0;
-  cursor: pointer;
-  font-family: var(--font-mono);
-  font-size: var(--text-mono);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--nav-fg);
-  transition: color 240ms var(--ease);
-}
-
-.bracket:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-
-.pillSlot { display: none; }
-
-@media (min-width: 1100px) {
-  .links { display: flex; justify-content: center; }
-  .pillSlot { display: inline-flex; }
-  .bracket { display: none; }
-  .sheet .bracket { display: inline-block; }
-}
-
-/* Full-screen white sheet. Links in Archivo 700 at the H2 size. */
-.sheet {
-  --nav-fg: var(--ink);
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-  background: var(--page);
-  color: var(--nav-fg);
-  padding: var(--space-3) var(--pad-x) var(--space-8);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-8);
-  overflow-y: auto;
-}
-
-.sheetTop {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-4);
-}
-
-.sheetLinks {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-
-.sheetLinks a {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: var(--text-h2);
-  line-height: 1.08;
-  letter-spacing: -0.02em;
-}
-
-.sheetFoot {
-  margin-top: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-5);
-}
-
-.sheetSocials {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-5);
-  font-family: var(--font-body);
-  font-size: var(--text-body);
-}
-
-/* Applied to <body> while the sheet is open. */
-.locked { overflow: hidden; }
+.nav { position: sticky; top: 0; z-index: 50; background: var(--page); border-bottom: 1px solid var(--line); }
+.inner { max-width: var(--container); margin: auto; padding: 0 var(--pad-x); min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.brand { display: inline-flex; align-items: center; gap: 10px; color: var(--maroon); font-family: var(--font-display); font-size: 19px; font-weight: 750; letter-spacing: -.045em; white-space: nowrap; }
+.location { font-weight: 450; }
+.links { display: flex; gap: 32px; font-family: var(--font-display); font-size: 13px; font-weight: 550; }
+.links a { padding-block: 12px; transition: color 180ms; }
+.links a:hover { color: var(--maroon); }
+.right { display: flex; align-items: center; }
+.menuButton, .close { min-width: 44px; min-height: 44px; border: 0; background: transparent; color: var(--ink); font: 500 14px var(--font-display); cursor: pointer; padding: 8px 0 8px 12px; }
+.menuButton { display: none; }
+.menuButton span, .close span { margin-left: 12px; font-size: 22px; }
+.sheet { position: fixed; inset: 0; margin: 0; padding: 0 24px 32px; width: 100%; height: 100dvh; max-width: none; max-height: none; border: 0; background: var(--page); color: var(--ink); }
+.sheet[open] { display: flex; flex-direction: column; }
+.sheet::backdrop { background: var(--page); }
+.sheetTop { display: flex; align-items: center; justify-content: space-between; min-height: 76px; gap: 12px; }
+.sheetLinks { margin-block: 40px; }
+.sheetLinks a { display: flex; align-items: center; gap: 16px; padding-block: 20px; border-top: 1px solid var(--line); font: 600 clamp(26px, 6vw, 42px)/1.15 var(--font-display); letter-spacing: -.04em; }
+.sheetLinks a > span:last-child { margin-left: auto; font-size: 24px; }
+.number { font: 12px var(--font-mono, monospace); color: var(--ink-soft); letter-spacing: 0; }
+.sheetFoot { margin-top: auto; }
+.socials { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 32px; font: 14px var(--font-display); overflow-wrap: anywhere; }
+@media (max-width: 899px) { .links, .join { display: none; } .menuButton { display: block; } }
+@media (max-width: 420px) { .brand { font-size: 17px; } .inner { gap: 12px; min-height: 68px; } }

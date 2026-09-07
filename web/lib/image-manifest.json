@@ -1,0 +1,304 @@
+{
+  "/images/bootcamp-jeopardy.webp": {
+    "width": 2400,
+    "height": 1500,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1600
+    ]
+  },
+  "/images/candids/corridor-portrait.webp": {
+    "width": 1200,
+    "height": 1200,
+    "widths": [
+      320,
+      480,
+      768,
+      1200
+    ]
+  },
+  "/images/candids/elevator-lobby.webp": {
+    "width": 900,
+    "height": 1200,
+    "widths": [
+      320,
+      480,
+      768,
+      900
+    ]
+  },
+  "/images/candids/game-night-chess.webp": {
+    "width": 1200,
+    "height": 797,
+    "widths": [
+      320,
+      480,
+      768,
+      1200
+    ]
+  },
+  "/images/candids/ideathon-room.webp": {
+    "width": 1200,
+    "height": 800,
+    "widths": [
+      320,
+      480,
+      768,
+      1200
+    ]
+  },
+  "/images/candids/lab-typing.webp": {
+    "width": 800,
+    "height": 1200,
+    "widths": [
+      320,
+      480,
+      768,
+      800
+    ]
+  },
+  "/images/candids/lab-workstation.webp": {
+    "width": 800,
+    "height": 1200,
+    "widths": [
+      320,
+      480,
+      768,
+      800
+    ]
+  },
+  "/images/candids/playful-boxing.webp": {
+    "width": 900,
+    "height": 1200,
+    "widths": [
+      320,
+      480,
+      768,
+      900
+    ]
+  },
+  "/images/candids/red-chair.webp": {
+    "width": 800,
+    "height": 1200,
+    "widths": [
+      320,
+      480,
+      768,
+      800
+    ]
+  },
+  "/images/candids/staircase-group.webp": {
+    "width": 1600,
+    "height": 2400,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1600
+    ]
+  },
+  "/images/candids/staircase-landing.webp": {
+    "width": 900,
+    "height": 1200,
+    "widths": [
+      320,
+      480,
+      768,
+      900
+    ]
+  },
+  "/images/candids/stairway-talk.webp": {
+    "width": 900,
+    "height": 1200,
+    "widths": [
+      320,
+      480,
+      768,
+      900
+    ]
+  },
+  "/images/candids/summit-couches.webp": {
+    "width": 1200,
+    "height": 800,
+    "widths": [
+      320,
+      480,
+      768,
+      1200
+    ]
+  },
+  "/images/candids/summit-dining.webp": {
+    "width": 1600,
+    "height": 1067,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1600
+    ]
+  },
+  "/images/candids/summit-duolingo.webp": {
+    "width": 1200,
+    "height": 800,
+    "widths": [
+      320,
+      480,
+      768,
+      1200
+    ]
+  },
+  "/images/candids/window-trio.webp": {
+    "width": 900,
+    "height": 1200,
+    "widths": [
+      320,
+      480,
+      768,
+      900
+    ]
+  },
+  "/images/colorstack-umn-mark-192.webp": {
+    "width": 192,
+    "height": 192,
+    "widths": [
+      192
+    ]
+  },
+  "/images/game-night-chess.webp": {
+    "width": 1440,
+    "height": 956,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1440
+    ]
+  },
+  "/images/game-night-signage.webp": {
+    "width": 1440,
+    "height": 956,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1440
+    ]
+  },
+  "/images/ideathon-presenting.webp": {
+    "width": 2400,
+    "height": 1500,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1600
+    ]
+  },
+  "/images/ideathon.webp": {
+    "width": 2400,
+    "height": 1600,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1600
+    ]
+  },
+  "/images/presidents-circle.webp": {
+    "width": 1400,
+    "height": 1750,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1400
+    ]
+  },
+  "/images/red-scarf-portrait.webp": {
+    "width": 1400,
+    "height": 1750,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1400
+    ]
+  },
+  "/images/staircase-fists.webp": {
+    "width": 1400,
+    "height": 1750,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1400
+    ]
+  },
+  "/images/summit-group-1600.webp": {
+    "width": 1600,
+    "height": 1200,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1600
+    ]
+  },
+  "/images/summit-group.webp": {
+    "width": 2400,
+    "height": 1800,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1600
+    ]
+  },
+  "/images/summit-portrait.webp": {
+    "width": 1400,
+    "height": 1750,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1400
+    ]
+  },
+  "/images/summit-recruiter.webp": {
+    "width": 2400,
+    "height": 1500,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1600
+    ]
+  },
+  "/images/summit-signage.webp": {
+    "width": 2000,
+    "height": 1500,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1600
+    ]
+  }
+}

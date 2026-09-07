@@ -1,9 +1,19 @@
 {
-  "_comment": "One entry per photo shipped. Filled by whoever adds the photo. Required for every build (docs/06). Alt text here is byte-identical to the alt text the page renders. Two batches: the first six were supplied by the chapter e-board on 2026-08-12 and their provenance is carried across from src/data/landing.ts; the twenty added on 2026-09-06 came from a supply of sixty masters on 2026-09-05, triaged in assets-src/photo-triage.md. Photographs marked \"Stacked Up Summit\" are professional work credited to Chloe Jackman Photography in the master filenames, held back until the chapter confirmed on 2026-09-06 that they had been legally downloaded and could be published here. Photographs marked \"board photoshoot at Northrop\" are a styled editorial shoot of two to three board members at Northrop Auditorium, NOT snapshots of a meeting; see notAudited below, because the section they mostly fill is headlined \"This is what a Tuesday looks like\".",
+  "_comment": "Chapter photography provenance. The first six photographs were supplied by the chapter e-board on 2026-08-12; the second batch came from sixty masters supplied on 2026-09-05. The original triage and masters remain in Git history at f680563 under assets-src/. Stacked Up Summit professional photographs are credited to Chloe Jackman Photography and were approved by the chapter for website use on 2026-09-06. Northrop photographs are a styled board photoshoot, not snapshots of a meeting. Source-level credits and permissions also apply to the generated responsive variants.",
+  "responsiveImages": {
+    "generator": "scripts/build-images.mjs",
+    "manifest": "lib/image-manifest.json",
+    "output": "public/images/responsive/",
+    "formats": ["avif", "webp"],
+    "widths": [320, 480, 768, 1200, 1600],
+    "policy": "Keep original aspect ratio and stop at source width. Browser sizes/srcset selects one suitable asset; no upscaling or runtime optimization server. Run npm run images:build after changing a source photo.",
+    "audit": "Official chapter GopherLink photo page and LinkedIn were reviewed; the chapter-supplied collection offers appropriate, approved imagery at higher source quality. No unrelated stock or generated member photography was added.",
+    "reviewedSources": ["https://gopherlink.umn.edu/4739/photos/", "https://www.linkedin.com/company/colorstackumn"]
+  },
   "photos": [
     {
       "file": "public/images/summit-group.webp",
-      "usedFor": "hero",
+      "usedFor": "chapter photo collection; replaced in the landing hero by staircase-group.webp on 2026-09-07",
       "suppliedBy": "chapter e-board",
       "suppliedOn": "2026-08-12",
       "event": "national student conference",
@@ -124,13 +134,15 @@
     },
     {
       "file": "public/images/candids/staircase-group.webp",
-      "usedFor": "In the Room gallery (FloatingCards)",
+      "sourceFile": "2C3A0395.jpg (supplied by the user in the repository root)",
+      "conversion": "Replaced with the user-selected 4480x6720 portrait on 2026-09-07. Encoded as 1600x2400 WebP with responsive AVIF/WebP variants; full composition retained, no upscaling.",
+      "usedFor": "landing hero, September 2026 polish",
       "suppliedBy": "chapter e-board",
       "suppliedOn": "2026-09-05",
       "event": "board photoshoot at Northrop",
       "posedOrCandid": "candid",
       "permission": "chapter-supplied for website use; Stacked Up Summit set legally downloaded, confirmed 2026-09-06",
-      "alt": "Nine people sitting and standing together on a grand stone staircase, several of them smiling"
+      "alt": "ColorStack UMN members seated together on a marble staircase"
     },
     {
       "file": "public/images/candids/ideathon-room.webp",
@@ -246,6 +258,8 @@
     },
     {
       "file": "public/images/candids/summit-dining.webp",
+      "restoredMaster": "f680563:assets-src/photos/UMNSTACKEDUP/MOD&AYUBStacked-Up-Summit-D1-Chloe-Jackman-Photography-2025-1628.jpg",
+      "restoration": "Re-encoded from approved 5529x3686 original at 1600 pixels wide on 2026-09-07, replacing the 1200-pixel derivative. No upscaling.",
       "usedFor": "In the Room gallery (FloatingCards)",
       "suppliedBy": "chapter e-board",
       "suppliedOn": "2026-09-05",
@@ -277,8 +291,8 @@
     }
   ],
   "notAudited": [
-    "public/images/colorstack-umn-logo.png, summit-group-800.webp and summit-group-1600.webp were copied across with the rest of the existing set but nothing on the landing page references them.",
-    "The eleven \"board photoshoot at Northrop\" photographs are a styled editorial shoot, not meeting-night candids. They currently supply most of the In the Room gallery, whose headline is \"This is what a Tuesday looks like.\" That is a stretch and the e-board should either bless it or supply real meeting photographs with broader member representation. Raised as open question 3 in assets-src/photo-triage.md.",
+    "The summit-group-1600.webp photograph is retained for the page's social sharing metadata.",
+    "The board photoshoot at Northrop photographs are an editorial shoot, not meeting-night candids. The gallery is now titled 'A few moments, together.' to describe the mixed campus and conference collection accurately.",
     "Individuals are named in several master filenames in assets-src/photos/UMNSTACKEDUP/. No name appears in any alt text or in this file, but these are prominent, repeated, close-up appearances of a small number of people and the chapter should be sure each of them agreed to be on the public site."
   ]
 }

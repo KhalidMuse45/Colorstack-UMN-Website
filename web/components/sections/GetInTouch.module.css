@@ -1,116 +1,15 @@
-.wrap {
-  display: grid;
-  gap: var(--space-10);
-  justify-items: start;
-}
-
-/*
- * FIX-2 section 6: two columns, the copy on the left and the puzzle on the
- * right. One column until there is room for the 560px puzzle plus a readable
- * measure beside it.
- */
-.play {
-  display: grid;
-  gap: var(--space-8);
-  align-items: start;
-  width: 100%;
-}
-
-@media (min-width: 980px) {
-  .play {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 560px);
-    gap: var(--space-10);
-  }
-}
-
-.intro {
-  max-width: 46ch;
-}
-
-/* The Lora italic line under the paragraph. FIX-2 section 6. */
-.aside {
-  font-style: italic;
-  color: var(--ink-soft);
-  margin-bottom: 0;
-}
-
-/*
- * The invitation sits directly beneath the puzzle and is never gated by it:
- * no completion check, no disabled state, nothing that reads as a reward.
- */
-.invite {
-  display: grid;
-  gap: var(--space-5);
-  justify-items: start;
-  width: 100%;
-}
-
-.body {
-  margin: 0;
-}
-
-.form {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: var(--space-4);
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  font-family: var(--font-body);
-  font-size: var(--text-body);
-  color: var(--ink);
-}
-
-.field input {
-  min-width: min(78vw, 320px);
-  min-height: 44px;
-  padding: 0 var(--space-4);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-pill);
-  background: var(--paper);
-  font-family: var(--font-body);
-  font-size: var(--text-body);
-  color: var(--ink);
-}
-
-.field input:hover {
-  border-color: var(--ink);
-}
-
-.submit {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  padding: 0 26px;
-  border: 0;
-  border-radius: var(--radius-pill);
-  background: var(--gold);
-  color: var(--ink);
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: var(--text-body);
-  cursor: pointer;
-  transition: background-color 200ms var(--ease);
-}
-
-.submit:hover {
-  background: var(--gold-dark);
-}
-
-.submit:focus-visible {
-  outline: 2px solid var(--gold);
-  outline-offset: 2px;
-}
-
-.reach {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-5);
-  font-family: var(--font-body);
-  font-size: var(--text-body);
-  color: var(--ink);
-}
+.section { background: var(--surface-warm); }
+.wrap { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr); align-items: end; gap: clamp(48px, 9vw, 128px); }
+.intro h2 { max-width: 12ch; font-size: clamp(40px, 4.7vw, 64px); line-height: 1.06; }
+.body { max-width: 43ch; margin-top: 24px; color: var(--ink-soft); }
+.join { display: inline-flex; align-items: center; justify-content: space-between; gap: 44px; min-height: 52px; margin-top: 12px; padding: 12px 24px; border-radius: 3px; background: var(--maroon); color: var(--paper); font-weight: 650; transition: background-color 180ms ease; }
+.join:hover { background: var(--maroon-deep); }
+.reach { padding-top: 24px; border-top: 1px solid var(--line); }
+.reachTitle { font-weight: 600; margin-bottom: 14px; }
+.email { display: inline-block; margin-bottom: 18px; font-size: clamp(20px, 2vw, 26px); letter-spacing: -.035em; font-weight: 600; color: var(--maroon); }
+.email:hover { text-decoration: underline; text-underline-offset: 5px; }
+.reach > p:not(:first-child) { color: var(--ink-soft); font-size: 14px; max-width: 36ch; }
+.socials { display: flex; flex-wrap: wrap; gap: 24px; margin-top: 24px; font-size: 14px; }
+.socials a { display: inline-flex; gap: 12px; align-items: center; min-height: 44px; }
+.socials a:hover { color: var(--maroon); }
+@media (max-width: 767px) { .wrap { grid-template-columns: 1fr; gap: 48px; } .intro h2 { max-width: 15ch; } }

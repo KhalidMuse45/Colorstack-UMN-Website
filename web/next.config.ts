@@ -8,9 +8,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   output: 'export',
   /**
-   * The repository root has its own lockfile for the Astro site, so Next
-   * guesses the root is one level up and traces the wrong file tree. This app
-   * is self-contained in web/.
+   * Keep build tracing inside the self-contained web/ app.
    */
   outputFileTracingRoot: path.resolve(process.cwd()),
   images: {

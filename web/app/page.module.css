@@ -1,75 +1,54 @@
-/*
- * Section layout for the landing page.
- *
- * Everything here uses the shared tokens: `.container` for width, `--section-y`
- * for rhythm, `--stack` for the 16px under a heading or a paragraph, `--text-*`
- * for every size, `--radius-card` or 0 for every corner. There are no one-off
- * margins and no local max-widths in this file, and none should be added.
- *
- * The mission section has no rules at all any more: it is an H2, two
- * paragraphs and the rotator, which is a component that carries its own row
- * (components/motion/TextLoop.module.css). The globals say the rest.
- */
-
-/* ── What We Do ──────────────────────────────────────────────────────────
-   Pentagram rhythm: full-bleed 16:9 photo, then title left and body right.
-   The photo frame itself is the shared `.frame .frame-wide` from globals. */
-
-.programs {
-  display: grid;
-  gap: var(--section-y);
-}
-
-.programRow {
-  display: grid;
-  gap: var(--space-5);
-  margin-top: var(--space-5);
-}
-
-@media (min-width: 900px) {
-  .programRow {
-    grid-template-columns: minmax(0, 4fr) minmax(0, 6fr);
-    gap: var(--space-10);
-    align-items: start;
-  }
-}
-
-.programRow h3,
-.programRow p { margin: 0; }
-
-/* ── In the Room ─────────────────────────────────────────────────────────
-   The gallery owns its own layout in whimsy/FloatingCards.module.css. What is
-   left here is the two-column shell around it: the canvas in the first
-   column, the marginalia note and the glyph stickers in the second. */
-
-.roomLayout {
-  display: grid;
-  gap: var(--space-5);
-  align-items: start;
-}
-
-@media (min-width: 1200px) {
-  /* The second column IS the gutter the marginalia note lives in. */
-  .roomLayout {
-    grid-template-columns: minmax(0, 1fr) 22ch;
-    gap: var(--space-10);
-  }
-}
-
-.gutter {
-  position: relative;
-  padding-top: var(--space-10);
-  min-height: 1px;
-}
-
-.sticker1 {
-  position: absolute;
-  top: 0;
-  right: var(--space-4);
-}
-
-.sticker2 {
-  position: absolute;
-  bottom: var(--space-10);
-  right: var(--space-10);
+.mission { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(40px, 8vw, 120px); border-top: 1px solid var(--line); }
+.mission h2 { max-width: 15ch; }
+.missionBody { padding-top: 32px; color: var(--ink-soft); }
+.missionBody p { max-width: 48ch; }
+.missionSignoff { padding-top: 18px; color: var(--ink); font-size: var(--text-lede); font-weight: 600; }
+.missionSignoff span { text-decoration: underline; text-decoration-color: var(--gold); text-decoration-thickness: 4px; text-underline-offset: 7px; }
+.programsSection { padding-top: 24px; }
+.sectionHead { margin-bottom: 48px; }
+.programs { display: grid; gap: clamp(48px, 7vw, 96px); }
+.program { min-width: 0; }
+.programImage { margin: 0; overflow: hidden; aspect-ratio: 1.5; background: var(--surface-warm); }
+.programImage img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.programCopy { position: relative; padding-top: 23px; }
+.programNumber { display: block; margin-bottom: 12px; font-family: var(--font-mono); font-size: 12px; color: var(--maroon); }
+.programCopy h3 { margin-bottom: 14px; }
+.programCopy p { max-width: 46ch; color: var(--ink-soft); margin-bottom: 0; }
+.featuredProgram { display: grid; grid-template-columns: minmax(0, .75fr) minmax(0, 1.25fr); align-items: center; gap: 72px; }
+.featuredProgram .programImage { grid-column: 2; grid-row: 1; }
+.featuredProgram .programCopy { grid-column: 1; grid-row: 1; padding-top: 0; }
+.programPair { display: grid; grid-template-columns: 1fr 1fr; align-items: start; gap: clamp(28px, 6vw, 88px); }
+.programPair .program:last-child { padding-top: 100px; }
+.programPair .program:last-child .programImage { aspect-ratio: 1.2; }
+.quote { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding-block: clamp(36px, 5vw, 64px); }
+.finalProgram { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); align-items: center; gap: clamp(40px, 7vw, 96px); }
+.finalProgram .programCopy { padding-top: 0; }
+.stats { padding-bottom: clamp(56px, 8vw, 104px); }
+.community { background: var(--maroon); color: var(--paper); }
+.communityGrid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr); align-items: center; gap: clamp(40px, 8vw, 120px); }
+.communityCopy h2 { max-width: 18ch; color: var(--paper); margin-bottom: 28px; }
+.communityCopy p { max-width: 51ch; }
+.communityCopy > p:not(:first-child) { opacity: .88; }
+.communityCopy > p:first-child { color: var(--gold); }
+.communityLink { display: inline-flex; align-items: center; gap: 32px; margin-top: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--gold); font-weight: 600; }
+.communityLink:hover { color: var(--gold); }
+.communityPhoto { width: 100%; max-width: 360px; aspect-ratio: 4 / 5; margin: 0 0 0 auto; background: var(--maroon-deep); overflow: hidden; }
+.communityPhoto img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.room { padding-bottom: 48px; }
+.roomIntro { display: grid; grid-template-columns: 1.3fr 1fr; gap: 64px; align-items: end; margin-bottom: 24px; }
+.roomIntro h2 { max-width: 18ch; margin-bottom: 0; }
+.roomIntro > p { max-width: 33ch; margin: 0 0 4px auto; color: var(--ink-soft); }
+@media (max-width: 767px) {
+  .mission, .featuredProgram, .finalProgram, .communityGrid, .roomIntro { grid-template-columns: 1fr; gap: 28px; }
+  .mission h2 { max-width: 19ch; }
+  .missionBody { padding: 0; }
+  .sectionHead { margin-bottom: 30px; }
+  .featuredProgram .programImage, .featuredProgram .programCopy { grid-column: auto; grid-row: auto; }
+  .programPair { grid-template-columns: 1fr; gap: 44px; }
+  .programPair .program:last-child { padding-top: 0; }
+  .programPair .program:last-child .programImage { aspect-ratio: 1.5; }
+  .featuredProgram .programCopy, .finalProgram .programCopy { padding-top: 0; }
+  .communityPhoto { max-width: 300px; margin: 12px 0 0 auto; }
+  .communityGrid { gap: 24px; }
+  .roomIntro > p { max-width: 40ch; margin: 0; }
 }
