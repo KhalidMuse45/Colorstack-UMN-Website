@@ -1,18 +1,12 @@
-<!-- One slice per branch: revamp/<slice-name>. Full rules: CONTRIBUTING.md -->
+## What changed
 
-## Before you open a PR
+Describe the change and why it is needed. Add screenshots for visible UI changes.
 
-- [ ] `npm run build` — clean
-- [ ] `npm run check` — 0 errors, 0 warnings
-- [ ] `git config core.hooksPath .githooks` is set and the pre-commit hook ran
+## Validation
 
-## What the hook enforces (double-check the diff)
+Run from `web/`:
 
-- [ ] No literal hex values outside `src/styles/{colors,typography,spacing,styles}.css` — `var(--token)` or nothing
-- [ ] No suppressed focus outlines — every interactive element keeps the visible 2px gold ring at 2px offset
-- [ ] No gradients, radial gradients, or `backdrop-filter`
-- [ ] "ColorStack" — capital C, capital S, always
-
-## Ledger
-
-- [ ] Work logged in `docs/CONTENT-NEEDED.md` — deviations with justification, missing data under `## Blocked`
+- [ ] `npm run lint`
+- [ ] `npm run build`
+- [ ] Checked affected UI at desktop and mobile sizes
+- [ ] Checked keyboard navigation and reduced motion, when relevant
