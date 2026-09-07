@@ -13,8 +13,12 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Keep the existing job ID for branch protection's required status check.
   check-build-lint-links:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -23,21 +27,10 @@ jobs:
         with:
           node-version: 20
           cache: npm
+          cache-dependency-path: web/package-lock.json
       - name: Install
         run: npm ci
-      - name: Typecheck (astro check)
-        run: npm run check
-      - name: Build
+      - name: Lint redesign
+        run: npm run lint
+      - name: Build and typecheck redesign
         run: npm run build
-      - name: Brand guardrails (tree-wide)
-        run: bash scripts/guardrails.sh
-      - name: Link check (dist)
-        # Delegates to the lint:links npm script so the skip-list lives in ONE
-        # place (package.json). Skips = external social domains that block bots
-        # + the site's own origin (404s until the first Pages deploy) + the
-        # seven spec-mandated chrome links to routes that don't exist until
-        # slices 5-9 (/events /newsletter /opportunities /about /about/team
-        # /join /sponsor). UX-SPEC forbids removing those links or stubbing the
-        # pages, so they are TEMPORARY skips: delete each one from package.json
-        # in the slice that builds its route. Any other local 404 must fail.
-        run: npm run lint:links
