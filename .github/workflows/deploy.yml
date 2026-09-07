@@ -16,6 +16,9 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -24,16 +27,19 @@ jobs:
         with:
           node-version: 20
           cache: npm
+          cache-dependency-path: web/package-lock.json
       - name: Install
         run: npm ci
       - name: Build
         run: npm run build
+      - name: Preserve custom domain
+        run: cp ../public/CNAME out/CNAME
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
+          path: ./web/out
   deploy:
     needs: build
     runs-on: ubuntu-latest
