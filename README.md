@@ -38,8 +38,11 @@ Run from `web/`:
 | `npm run dev -- --port 3399` | Local development |
 | `npm run lint` | ESLint and current design guardrails |
 | `npm run build` | Typecheck and export the site to `web/out/` |
+| `npm run images:build` | Generate responsive AVIF/WebP files after adding or changing photos |
 
 Use the development command locally. The build fetches Google Fonts, so it needs internet access.
+
+Keep original website photos in `web/public/images/`, then run `npm run images:build` and commit the generated `responsive/` files and `web/lib/image-manifest.json`. Use `ResponsiveImage` for page images so static hosting serves the right size. Chapter photography sources and credits are recorded in `web/SOURCES.json`.
 
 ## Contribute and deploy
 

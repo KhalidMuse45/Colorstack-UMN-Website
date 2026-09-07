@@ -4,10 +4,10 @@
   gap: var(--space-4);
   min-height: 44px;
   padding: 0 22px 0 26px;
-  border-radius: var(--radius-pill);
+  border-radius: 3px;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: var(--text-body);
+  font-size: 14px;
   text-decoration: none;
   transition: background-color 200ms, color 200ms, border-color 200ms;
 }

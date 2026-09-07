@@ -43,6 +43,7 @@ export interface Photo {
   /** Path under /public. WebP placeholders until the chapter supplies real photos. */
   src: string;
   alt: string;
+  caption?: string;
   width: number;
   height: number;
   /** CSS object-position. Tuned per photo in the reference; do not "tidy" these. */
@@ -122,6 +123,14 @@ const CHAPTER_EMAIL = 'colorstk@umn.edu';
  * future slot that needs one.
  */
 export const photos = {
+  staircaseGroup: {
+    src: '/images/candids/staircase-group.webp',
+    alt: 'ColorStack UMN members seated together on a marble staircase',
+    width: 1600,
+    height: 2400,
+    objectPosition: 'center',
+    caption: 'ColorStack UMN, together at Walter.',
+  },
   summitGroup: {
     src: '/images/summit-group.webp',
     alt: 'ColorStack UMN members gathered around a table at a national student conference, name badges on, smiling for a group photo',
@@ -270,20 +279,10 @@ export const photos = {
  * they do: replace the file, update the dimensions, keep the alt truthful.
  */
 export const candids: Photo[] = [
-  /**
-   * NOT A CANDID. `assets-src/photo-triage.md` calls this "by far the largest
-   * and most genuinely candid group shot in the set", and both halves of that
-   * sentence are true: it is unposed, and it is a group shot. Nine people
-   * assembled on a staircase for the camera is the one thing the gallery brief
-   * rules out by name, so the flag stays off and the photograph keeps earning
-   * its place in the hero and About slots instead.
-   */
+  /** User-selected board portrait; intentionally not marked as a candid. */
   {
+    ...photos.staircaseGroup,
     id: 'staircase-group',
-    src: '/images/candids/staircase-group.webp',
-    alt: 'Nine people sitting and standing together on a grand stone staircase, several of them smiling',
-    width: 800,
-    height: 1200,
   },
   /** Work in progress, nobody looking at the lens. The clearest candid here. */
   {
@@ -416,8 +415,8 @@ export const candids: Photo[] = [
     id: 'summit-dining',
     src: '/images/candids/summit-dining.webp',
     alt: 'Three students at a dining table wearing Stacked Up Summit lanyards, talking over food',
-    width: 1200,
-    height: 800,
+    width: 1600,
+    height: 1067,
     candid: true,
   },
   /**
@@ -446,7 +445,7 @@ export const hero = {
     { href: MAILING_LIST, label: 'Join the List', external: true },
     { href: '#what-we-do', label: 'See What We Do' },
   ] as Cta[],
-  photo: photos.summitGroup as Photo,
+  photo: photos.staircaseGroup as Photo,
 };
 
 /* ── 2. Stat band ──────────────────────────────────────────────────────── */
@@ -564,7 +563,7 @@ export const community = {
  */
 export const inTheRoom = {
   label: 'In the room',
-  headline: 'This is what a Tuesday looks like.',
+  headline: 'A few moments, together.',
 };
 
 /* ── 7. Voices ─────────────────────────────────────────────────────────── */

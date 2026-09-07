@@ -1,93 +1,32 @@
-import RoomPuzzle from '@/components/whimsy/RoomPuzzle';
-import CopyEmail from '@/components/ui/CopyEmail';
 import type { Landing } from '@/lib/landing';
 import styles from './GetInTouch.module.css';
 
 type Props = {
   headline: string;
   body: string;
-  sentence: string;
   mailingListUrl: string;
   ctaLabel: string;
-  fieldLabel: string;
-  placeholder: string;
   email: string;
   channels: Landing['channels'];
-  /** Gutter index number, assigned by the page. */
-  index: string;
 };
 
-/*
- * The two lines of copy beside the puzzle, quoted from FIX-2 section 6. They
- * are about the puzzle rather than about the chapter, so they sit with the
- * component that owns it; everything the chapter says is still a prop out of
- * content/landing.ts.
- */
-const PUZZLE_LEAD = 'Slide a tile into the open space. Put the sentence back together.';
-const PUZZLE_ASIDE = 'No rush. Some things are worth figuring out just because.';
-
-/**
- * The play beat and then the invitation. docs/02: "The invitation never waits
- * on the puzzle."
- *
- * Two columns: the heading and its two lines on the left, the puzzle on the
- * right. Directly beneath, unblocked by anything the puzzle does, the mailing
- * list field, the chapter inbox and the socials.
- *
- * The form is a plain GET to the Logicform endpoint in a new tab, with the
- * field named `email`, which is the same shape the Astro site has been posting
- * with. No JavaScript is involved in submitting it, so it works whatever else
- * on the page did not load.
- */
-export default function GetInTouch({
-  headline,
-  body,
-  sentence,
-  mailingListUrl,
-  ctaLabel,
-  fieldLabel,
-  placeholder,
-  email,
-  channels,
-  index,
-}: Props) {
+/** A direct invitation. The hosted signup form owns validation and submissions. */
+export default function GetInTouch({ headline, body, mailingListUrl, ctaLabel, email, channels }: Props) {
   const socials = channels.filter((c) => c.label === 'Instagram' || c.label === 'LinkedIn');
-
   return (
-    <section className="section container" id="get-in-touch" data-index={index}>
-      <div className={styles.wrap}>
-        <div className={styles.play}>
-          {/* Archivo 800 at 40px is the global h2; nothing is overridden here. */}
-          <div className={styles.intro}>
-            <h2>{headline}</h2>
-            <p>{PUZZLE_LEAD}</p>
-            <p className={styles.aside}>{PUZZLE_ASIDE}</p>
-          </div>
-
-          <RoomPuzzle sentence={sentence} />
-        </div>
-
-        <div className={styles.invite}>
+    <section className={`section ${styles.section}`} id="join" aria-labelledby="join-heading">
+      <div className={`container ${styles.wrap}`}>
+        <div className={styles.intro}>
+          <p className="eyebrow">05 / Your next chapter</p>
+          <h2 id="join-heading">{headline}</h2>
           <p className={styles.body}>{body}</p>
-
-          <form className={styles.form} action={mailingListUrl} method="get" target="_blank">
-            <label className={styles.field}>
-              {fieldLabel}
-              <input type="email" name="email" placeholder={placeholder} required autoComplete="email" />
-            </label>
-            <button type="submit" className={styles.submit}>
-              {ctaLabel}
-            </button>
-          </form>
-
-          <div className={styles.reach}>
-            <CopyEmail email={email} />
-            {socials.map((c) => (
-              <a key={c.href} className="link" href={c.href} target="_blank" rel="noopener">
-                {c.label}
-              </a>
-            ))}
-          </div>
+          <a className={styles.join} href={mailingListUrl} target="_blank" rel="noopener noreferrer">{ctaLabel}<span aria-hidden="true">↗</span></a>
+        </div>
+        <div className={styles.reach} id="get-in-touch">
+          <p className={styles.reachTitle}>Start a conversation.</p>
+          <a className={styles.email} href={`mailto:${email}`}>{email}</a>
+          <p>Questions about joining, partnering, or speaking at a meeting? Get in touch.</p>
+          <div className={styles.socials}>{socials.map((c) => <a key={c.href} href={c.href} target="_blank" rel="noopener noreferrer">{c.label} <span aria-hidden="true">↗</span></a>)}</div>
         </div>
       </div>
     </section>
