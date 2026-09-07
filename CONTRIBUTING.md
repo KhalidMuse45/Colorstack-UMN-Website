@@ -21,7 +21,7 @@ On Windows, run lint in Git Bash. Check your change in the browser at desktop an
 
 Lint checks ESLint, token colors, visible focus outlines, ColorStack casing, and em dashes in chapter content. Use `web/lib/tokens.ts` and `web/app/globals.css` for palette values. Use confirmed chapter information for names, statistics, and quotes.
 
-No Git hook installation is required. If an older clone still uses the retired root hook, check `git config --local --get core.hooksPath`. If it points to this repository's `.githooks`, remove that local setting with `git config --local --unset core.hooksPath`. CI runs the current checks.
+No Git hook installation is required. CI runs the current checks on every pull request.
 
 ## Submit your change
 

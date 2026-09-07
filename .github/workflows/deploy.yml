@@ -32,8 +32,6 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
-      - name: Preserve custom domain
-        run: cp ../public/CNAME out/CNAME
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
