@@ -1,61 +1,54 @@
 # ColorStack UMN
 
-The official website for the University of Minnesota chapter of ColorStack, a community
-dedicated to increasing the number of Black, Latinx, and Indigenous technologists who
-graduate and launch rewarding technical careers.
+Website for the University of Minnesota chapter of ColorStack, built with Next.js, React, and TypeScript.
 
-## Live site
+## Get started
 
-The site builds to static HTML and deploys to GitHub Pages on every push to `main`. The
-intended address is `colorstackumn.org`, set as `site` in `astro.config.mjs` and as the
-custom domain in `public/CNAME`. Known limitation: that domain is not yet connected in the
-repository's GitHub Pages settings, so it does not resolve. Until someone with admin access
-configures it there and points DNS at GitHub, the deployed build is only reachable at the
-repository's default `github.io` address.
-
-## Local development
-
-Requires Node `^20.19.0` or `>=22.12.0`.
+Install Node.js 22.12+ and Git. On Windows, use **Git Bash** so the lint script works.
 
 ```bash
-git clone https://github.com/KhalidMuse45/Colorstack-UMN-Website.git colorstack-umn-website
-cd colorstack-umn-website
-npm install
-git config core.hooksPath .githooks
-npm run dev
+git clone https://github.com/KhalidMuse45/Colorstack-UMN-Website.git colorstack-umn
+cd colorstack-umn/web
+npm ci
+npm run dev -- --port 3399
 ```
 
-`npm run dev` serves the site at http://localhost:4321.
+Open **http://localhost:3399**. Changes reload automatically. No environment variables, API keys, or CMS account are needed.
 
-The `core.hooksPath` line has to be run once per clone. It enables the pre-commit checks
-described in [CONTRIBUTING.md](CONTRIBUTING.md).
+For an existing clone, commit or stash your work, switch to `main`, and run `git pull --ff-only`. Then run `npm ci` and the development command from `web/`.
 
-| Script | What it does |
+## Where to work
+
+The current app lives in **`web/`**. Run npm commands there; the root package belongs to the retired Astro app.
+
+| Path | What to edit |
 | --- | --- |
-| `npm run dev` | Development server with live reload |
-| `npm run build` | Static build into `dist/` |
-| `npm run preview` | Serves the built `dist/` locally |
-| `npm run check` | `astro check`, type and template diagnostics |
-| `npm run lint` | Brand and accessibility guardrails, `scripts/guardrails.sh` |
-| `npm run lint:links` | Link check across `dist/`, run a build first |
+| `web/app/` | Pages, layout, and global styles |
+| `web/components/` | UI and animations |
+| `web/content/landing.ts` | Homepage copy, links, and chapter content |
+| `web/lib/` | Shared helpers and design tokens |
+| `web/public/images/` | Website images |
 
-## Roadmap
+The root `src/`, `design/`, and handoff files are legacy/reference material, not the deployed app.
 
-Built: `/`, `/about` and `/join`, plus `/motion-lab`, an internal component gallery that is
-`noindex` and is not linked from the site.
+## Commands
 
-Not built yet: `/events`, `/newsletter`, `/opportunities`, `/about/team` and `/sponsor`.
-The navigation links to all five today, so those links 404.
+Run from `web/`:
 
-All five are already specified in `design/UX-SPEC.md` section 5, so the hold-up is content
-rather than engineering. They need the chapter to supply an event schedule, newsletter
-issues, an opportunities list, team names and roles, and sponsor details. This site does
-not publish invented data, so the routes stay unbuilt until that material exists.
+| Command | Purpose |
+| --- | --- |
+| `npm run dev -- --port 3399` | Local development |
+| `npm run lint` | ESLint and current design guardrails |
+| `npm run build` | Typecheck and export the site to `web/out/` |
 
-## Contributing
+Use the development command locally. `next start` / `npm start` cannot serve this app's static export. The build fetches Google Fonts, so it needs internet access.
 
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+## Contribute and deploy
+
+Create a branch, make your changes, run lint and build, then open a PR into `main`. See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+GitHub Actions checks the app and deploys `web/out/` to GitHub Pages after changes merge into `main`. The configured custom domain is [colorstackumn.org](https://colorstackumn.org). Its domain file lives at `public/CNAME`.
 
 ## License
 
-© 2025 ColorStack, University of Minnesota Chapter. All rights reserved.
+Copyright 2025 ColorStack, University of Minnesota Chapter. All rights reserved.
