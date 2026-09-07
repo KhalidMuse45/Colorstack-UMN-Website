@@ -1,11 +1,8 @@
-.astro/
 browseruse.md
 .DS_Store
 .logs/
-design.new/
+.astro/
 dist/
 node_modules/
-
-# Playwright MCP scratch output (screenshots, console logs, snapshots)
 .playwright-mcp/
-.claude/worktrees/
+.claude/

@@ -19,7 +19,7 @@ For an existing clone, commit or stash your work, switch to `main`, and run `git
 
 ## Where to work
 
-The current app lives in **`web/`**. Run npm commands there; the root package belongs to the retired Astro app.
+The app lives in **`web/`**. Run all npm commands there.
 
 | Path | What to edit |
 | --- | --- |
@@ -28,8 +28,6 @@ The current app lives in **`web/`**. Run npm commands there; the root package be
 | `web/content/landing.ts` | Homepage copy, links, and chapter content |
 | `web/lib/` | Shared helpers and design tokens |
 | `web/public/images/` | Website images |
-
-The root `src/`, `design/`, and handoff files are legacy/reference material, not the deployed app.
 
 ## Commands
 
@@ -41,13 +39,13 @@ Run from `web/`:
 | `npm run lint` | ESLint and current design guardrails |
 | `npm run build` | Typecheck and export the site to `web/out/` |
 
-Use the development command locally. `next start` / `npm start` cannot serve this app's static export. The build fetches Google Fonts, so it needs internet access.
+Use the development command locally. The build fetches Google Fonts, so it needs internet access.
 
 ## Contribute and deploy
 
 Create a branch, make your changes, run lint and build, then open a PR into `main`. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
-GitHub Actions checks the app and deploys `web/out/` to GitHub Pages after changes merge into `main`. The configured custom domain is [colorstackumn.org](https://colorstackumn.org). Its domain file lives at `public/CNAME`.
+GitHub Actions checks the app and deploys `web/out/` to GitHub Pages after changes merge into `main`. The configured custom domain is [colorstackumn.org](https://colorstackumn.org).
 
 ## License
 

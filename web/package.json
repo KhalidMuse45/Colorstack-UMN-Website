@@ -2,29 +2,9 @@
   "name": "colorstack-umn-web",
   "private": true,
   "version": "0.0.1",
-  "_comment": [
-    "Dependency decisions, recorded so the next pass does not relitigate them.",
-    "",
-    "React 19, not the handoff's 18.3. Next 15 App Router expects React 19 and",
-    "@react-three/fiber v8 does not support React 19, so the pinned pair in",
-    "handoff/next/package.json cannot install together. Moved to the supported",
-    "combination: react 19 + @react-three/fiber 9 + @react-three/drei 10.",
-    "",
-    "The Sanity group (sanity, next-sanity, @sanity/*, @portabletext/react) is",
-    "deliberately absent. There is no Sanity project yet, so nothing would be",
-    "fetched and /studio would be an empty route. lib/landing.ts holds the swap",
-    "point and the same return shape.",
-    "",
-    "framer-motion is deliberately absent. Its only sanctioned use is CardDeck",
-    "(docs/03 performance rules), which is not in this pass.",
-    "",
-    "@eslint/eslintrc is plumbing: eslint 9 flat config loading the eslintrc-",
-    "format eslint-config-next presets through FlatCompat."
-  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
     "lint": "eslint . && sh scripts/guardrails.sh"
   },
   "dependencies": {

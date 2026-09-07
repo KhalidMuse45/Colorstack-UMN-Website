@@ -1,6 +1,5 @@
 #!/bin/sh
-# Four checks, and only four. See handoff/docs/01-BRAND-RULES.md,
-# "Guardrails that survive":
+# Current project guardrails:
 #
 #   1. no literal hex outside lib/tokens.ts and app/globals.css
 #   2. no `outline: none`
@@ -21,16 +20,9 @@ cd "$(dirname "$0")/.." || exit 1
 #
 # A CHECK THAT CANNOT FAIL IS NOT A CHECK.
 #
-# The handoff script used a bare `git ls-files`, which lists only files git
-# already tracks. Every file in this directory was brand new and untracked when
-# the app was first built, so that command returned nothing, the loop below
-# scanned nothing, and the script exited 0 having checked precisely zero lines.
-# The repository has been burned by exactly this before, from a worktree under
-# the wrong bash; see scripts/guardrails.sh at the repository root.
-#
-# So: list tracked AND untracked-but-not-ignored files, and then refuse to
+# List tracked and untracked-but-not-ignored files in web/, then refuse to
 # report success on an implausibly small scan.
-files=$(git ls-files --cached --others --exclude-standard 2>/dev/null |
+files=$(git ls-files --cached --others --exclude-standard -- . 2>/dev/null |
   grep -Ev '^(node_modules/|\.next/|public/|scripts/)')
 
 count=$(printf '%s\n' "$files" | grep -c . || true)
