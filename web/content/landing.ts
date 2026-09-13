@@ -460,8 +460,8 @@ export const hero = {
  * launch. Do not edit these without a chapter source.
  */
 export const stats: Stat[] = [
-  { value: '100+', label: 'Members in the chapter' },
-  { value: '10+', label: 'Internship and full-time offers' },
+  { value: '180+', label: 'Members in the chapter' },
+  { value: '50+', label: 'Internship and full-time offers' },
 ];
 
 export const statsAside =
