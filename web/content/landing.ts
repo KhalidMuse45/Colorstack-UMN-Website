@@ -526,6 +526,57 @@ export const programs: Program[] = [
   },
 ];
 
+/* ── 4b. Meet the board ────────────────────────────────────────────────── */
+
+/**
+ * The board roster for the "Meet the board" section.
+ *
+ * PROVIDER NOTE: the names are taken verbatim from the supplied headshot
+ * filenames in `Headshots/`, which the e-board used to deliver them. The
+ * `role` and `bio` strings are LOREM IPSUM PLACEHOLDERS and must be replaced
+ * with confirmed roles before this section is treated as fact. Nothing here
+ * is an invented claim about a person; the placeholder nature is deliberate
+ * and visible in the copy. Portraits were normalised to square 800x800 WebP
+ * in `public/images/board/` by the image build.
+ *
+ * `accent` drives the offset colour panel behind each portrait, echoing the
+ * layered collage in the design reference. Keep it within the brand tokens.
+ */
+export type BoardAccent = 'maroon' | 'gold' | 'rose' | 'teal' | 'pink';
+
+export interface BoardMember {
+  id: string;
+  name: string;
+  /** PLACEHOLDER. Lorem ipsum until the e-board confirms real roles. */
+  role: string;
+  /** PLACEHOLDER. Lorem ipsum. */
+  bio: string;
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  accent: BoardAccent;
+}
+
+export const board: BoardMember[] = [
+  { id: 'abdirahman-omer', name: 'Abdirahman Omer', role: 'Lorem ipsum dolor sit amet', bio: 'Consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.', src: '/images/board/board-abdirahman-omer.webp', alt: 'Portrait of Abdirahman Omer', width: 800, height: 800, accent: 'maroon' },
+  { id: 'abdullahi-abdi', name: 'Abdullahi Abdi', role: 'Consectetur adipiscing elit', bio: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.', src: '/images/board/board-abdullahi-abdi.webp', alt: 'Portrait of Abdullahi Abdi', width: 800, height: 800, accent: 'gold' },
+  { id: 'abdullahi-jamas', name: 'Abdullahi Jamas', role: 'Sed do eiusmod tempor', bio: 'Duis aute irure dolor in reprehenderit in voluptate velit esse.', src: '/images/board/board-abdullahi-jamas.webp', alt: 'Portrait of Abdullahi Jamas', width: 800, height: 800, accent: 'rose' },
+  { id: 'adna', name: 'Adna', role: 'Incididunt ut labore et dolore', bio: 'Excepteur sint occaecat cupidatat non proident, sunt in culpa.', src: '/images/board/board-adna.webp', alt: 'Portrait of Adna', width: 800, height: 800, accent: 'teal' },
+  { id: 'aisha-abdullahi', name: 'Aisha Abdullahi', role: 'Magna aliqua ut enim', bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', src: '/images/board/board-aisha-abdullahi.webp', alt: 'Portrait of Aisha Abdullahi', width: 800, height: 800, accent: 'pink' },
+  { id: 'arsema', name: 'Arsema', role: 'Ad minim veniam quis nostrud', bio: 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', src: '/images/board/board-arsema.webp', alt: 'Portrait of Arsema', width: 800, height: 800, accent: 'maroon' },
+  { id: 'hangatu', name: 'Hangatu', role: 'Exercitation ullamco laboris', bio: 'Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea.', src: '/images/board/board-hangatu.webp', alt: 'Portrait of Hangatu', width: 800, height: 800, accent: 'gold' },
+  { id: 'kananisa', name: 'Kananisa', role: 'Nisi ut aliquip ex ea commodo', bio: 'Duis aute irure dolor in reprehenderit in voluptate velit.', src: '/images/board/board-kananisa.webp', alt: 'Portrait of Kananisa', width: 800, height: 800, accent: 'rose' },
+  { id: 'khalid-muse', name: 'Khalid Muse', role: 'Duis aute irure dolor', bio: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco.', src: '/images/board/board-khalid-muse.webp', alt: 'Portrait of Khalid Muse', width: 1600, height: 1600, accent: 'teal' },
+  { id: 'mohammed-amin', name: 'Mohammed Amin', role: 'In reprehenderit voluptate velit', bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do.', src: '/images/board/board-mohammed-amin.webp', alt: 'Portrait of Mohammed Amin', width: 1600, height: 1600, accent: 'pink' },
+  { id: 'rahma', name: 'Rahma', role: 'Esse cillum dolore eu fugiat', bio: 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui.', src: '/images/board/board-rahma.webp', alt: 'Portrait of Rahma', width: 1600, height: 1600, accent: 'maroon' },
+  { id: 'salah', name: 'Salah', role: 'Nulla pariatur excepteur sint', bio: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem.', src: '/images/board/board-salah.webp', alt: 'Portrait of Salah', width: 800, height: 800, accent: 'gold' },
+  { id: 'salman-fiqi', name: 'Salman Fiqi', role: 'Occaecat cupidatat non proident', bio: 'Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut.', src: '/images/board/board-salman-fiqi.webp', alt: 'Portrait of Salman Fiqi', width: 1600, height: 1600, accent: 'rose' },
+  { id: 'salwa', name: 'Salwa', role: 'Sunt in culpa qui officia', bio: 'Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet.', src: '/images/board/board-salwa.webp', alt: 'Portrait of Salwa', width: 800, height: 800, accent: 'teal' },
+  { id: 'sarrah-abdullahi', name: 'Sarrah Abdullahi', role: 'Deserunt mollit anim id est', bio: 'Ut enim ad minima veniam, quis nostrum exercitationem ullam.', src: '/images/board/board-sarrah-abdullahi.webp', alt: 'Portrait of Sarrah Abdullahi', width: 800, height: 800, accent: 'pink' },
+  { id: 'selamawit', name: 'Selamawit', role: 'Laborum sed ut perspiciatis', bio: 'At vero eos et accusamus et iusto odio dignissimos ducimus.', src: '/images/board/board-selamawit.webp', alt: 'Portrait of Selamawit', width: 800, height: 800, accent: 'maroon' },
+];
+
 /* ── 5. Who we show up for ─────────────────────────────────────────────── */
 
 export const community = {

@@ -1,0 +1,161 @@
+.board {
+  position: relative;
+  overflow: hidden;
+  background: var(--board-bg);
+  color: var(--paper);
+  padding-block: var(--section-y);
+}
+
+.board::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(70% 55% at 50% -10%, rgba(198, 136, 127, 0.22), transparent 72%);
+  pointer-events: none;
+}
+
+.board > * {
+  position: relative;
+}
+
+.board :global(.eyebrow) {
+  color: var(--gold);
+}
+
+.head {
+  position: relative;
+  margin-bottom: clamp(28px, 4vw, 48px);
+}
+
+.board h2 {
+  max-width: 18ch;
+  color: var(--paper);
+}
+
+.lede {
+  max-width: 52ch;
+  margin-bottom: 0;
+  color: var(--rose);
+}
+
+/* ── Intro deck ─────────────────────────────────────────────────────────── */
+
+.intro {
+  position: relative;
+}
+
+.stage {
+  position: relative;
+  height: clamp(320px, 46vw, 520px);
+  max-width: var(--container);
+  margin-inline: auto;
+}
+
+.deckCard {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: clamp(160px, 33vw, 286px);
+  aspect-ratio: 1;
+  margin: 0;
+  transform: translate(-50%, -50%) translate(var(--x, 0), var(--y, 0)) rotate(var(--r, 0deg)) scale(var(--s, 1));
+  transition: transform 620ms var(--ease), opacity 520ms var(--ease);
+  will-change: transform, opacity;
+}
+
+.cardPanel {
+  position: absolute;
+  inset: 0;
+  transform: translate(14px, 14px) rotate(2.5deg);
+  background: currentColor;
+  opacity: 0.9;
+}
+
+.deckPhoto {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+}
+
+.caption {
+  max-width: var(--container);
+  margin: clamp(20px, 3vw, 36px) auto 0;
+  padding-inline: var(--pad-x);
+  text-align: center;
+}
+
+.captionInner {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0 auto;
+  animation: captionIn 420ms var(--ease) both;
+}
+
+.captionName {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 3vw, 34px);
+  font-weight: 750;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+
+.captionRole {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.progress {
+  position: relative;
+  width: min(320px, 62%);
+  height: 2px;
+  margin: 22px auto 0;
+  background: rgba(255, 255, 255, 0.16);
+  overflow: hidden;
+}
+
+.progressFill {
+  display: block;
+  height: 100%;
+  background: var(--gold);
+  transition: width 480ms var(--ease);
+}
+
+/* ── Portrait wall ──────────────────────────────────────────────────────── */
+
+.wallIn {
+  animation: wallIn 700ms var(--ease) both;
+}
+
+/* ── Accent panels ──────────────────────────────────────────────────────── */
+
+.accentMaroon { color: var(--maroon); }
+.accentGold { color: var(--gold); }
+.accentRose { color: var(--rose); }
+.accentTeal { color: var(--teal); }
+.accentPink { color: var(--pink); }
+
+/* ── Motion ─────────────────────────────────────────────────────────────── */
+
+@keyframes captionIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes wallIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 640px) {
+  .stage {
+    height: clamp(300px, 78vw, 400px);
+  }
+}

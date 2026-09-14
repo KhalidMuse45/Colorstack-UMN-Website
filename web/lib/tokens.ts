@@ -21,6 +21,7 @@ export const tokens = {
   stackYellow: '#FCB432',
   teal: '#2E9E91',
   pink: '#F0426B',
+  boardBg: '#141011',
 } as const;
 
 export type TokenName = keyof typeof tokens;

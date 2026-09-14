@@ -4,6 +4,7 @@
   --gold: #FFCC33; --gold-dark: #FFB71E; --gold-soft: #FFDE7A;
   --page: #FFFFFF; --paper: #FFFFFF; --surface-warm: #F7F5F1; --cream: var(--surface-warm);
   --ink: #221E20; --ink-soft: #655E60; --line: #E6E1DE; --rose: #C6887F;
+  --teal: #2E9E91; --pink: #F0426B; --board-bg: #141011;
   --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
   --space-5: 24px; --space-6: 32px; --space-8: 48px; --space-10: 64px;
   --space-12: 96px; --space-16: 128px;
@@ -48,6 +49,10 @@ button, a, input { -webkit-tap-highlight-color: transparent; }
 .frame-wide { aspect-ratio: 16 / 9; }
 .frame-portrait { aspect-ratio: 4 / 5; }
 .frame-square { aspect-ratio: 1; }
+/* Scroll reveal. The hidden state only applies once the inline head script has
+   marked the document, so a no-JS reader sees every section. */
+.reveal-ready [data-reveal] { opacity: 0; transform: translateY(26px); transition: opacity .7s var(--ease), transform .7s var(--ease); will-change: opacity, transform; }
+.reveal-ready [data-reveal].is-visible { opacity: 1; transform: none; will-change: auto; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }

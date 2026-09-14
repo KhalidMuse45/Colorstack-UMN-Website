@@ -8,8 +8,12 @@
 .sectionHead { margin-bottom: 48px; }
 .programs { display: grid; gap: clamp(48px, 7vw, 96px); }
 .program { min-width: 0; }
-.programImage { margin: 0; overflow: hidden; aspect-ratio: 1.5; background: var(--surface-warm); }
-.programImage img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.programImage { margin: 0; overflow: hidden; aspect-ratio: 1.5; background: var(--surface-warm); transition: transform .5s var(--ease), box-shadow .5s var(--ease); }
+.programImage img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .7s var(--ease); }
+.program:hover .programImage,
+.program:focus-within .programImage { transform: translateY(-8px); box-shadow: 0 30px 60px -34px rgba(34, 30, 32, .55); }
+.program:hover .programImage img,
+.program:focus-within .programImage img { transform: scale(1.05); }
 .programCopy { position: relative; padding-top: 23px; }
 .programNumber { display: block; margin-bottom: 12px; font-family: var(--font-mono); font-size: 12px; color: var(--maroon); }
 .programCopy h3 { margin-bottom: 14px; }
@@ -32,8 +36,10 @@
 .communityCopy > p:first-child { color: var(--gold); }
 .communityLink { display: inline-flex; align-items: center; gap: 32px; margin-top: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--gold); font-weight: 600; }
 .communityLink:hover { color: var(--gold); }
-.communityPhoto { width: 100%; max-width: 360px; aspect-ratio: 4 / 5; margin: 0 0 0 auto; background: var(--maroon-deep); overflow: hidden; }
-.communityPhoto img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.communityPhoto { width: 100%; max-width: 360px; aspect-ratio: 4 / 5; margin: 0 0 0 auto; background: var(--maroon-deep); overflow: hidden; transition: transform .5s var(--ease), box-shadow .5s var(--ease); }
+.communityPhoto img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .7s var(--ease); }
+.communityPhoto:hover { transform: translateY(-8px); box-shadow: 0 34px 64px -34px rgba(0, 0, 0, .6); }
+.communityPhoto:hover img { transform: scale(1.05); }
 .room { padding-bottom: 48px; }
 .roomIntro { display: grid; grid-template-columns: 1.3fr 1fr; gap: 64px; align-items: end; margin-bottom: 24px; }
 .roomIntro h2 { max-width: 18ch; margin-bottom: 0; }
