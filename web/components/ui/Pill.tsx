@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
+import Arrow from './Arrow';
 import styles from './Pill.module.css';
 
 type Props = {
@@ -16,7 +17,7 @@ export default function Pill({ href, children, tone = 'gold', index, external }:
   const inner = (
     <>
       <span>{children}</span>
-      {index && <span className={styles.index}>↗ {index}</span>}
+      {index && <span className={styles.index}><Arrow /> {index}</span>}
     </>
   );
   return external ? (

@@ -1,4 +1,5 @@
 import ResponsiveImage from '@/components/ui/ResponsiveImage';
+import Arrow from '@/components/ui/Arrow';
 import styles from './Hero.module.css';
 
 export type HeroProps = {
@@ -25,9 +26,9 @@ export default function Hero({ wordmark, eyebrow, lede, primary, photo, caption 
           <p className={styles.lede}>{lede}</p>
           <div className={styles.actions}>
             <a className={styles.primary} href={primary.href} target={primary.external ? '_blank' : undefined} rel={primary.external ? 'noopener noreferrer' : undefined}>
-              {primary.label}<span aria-hidden="true">↗</span>
+              {primary.label}<Arrow />
             </a>
-            <a className={styles.secondary} href="#what-we-do">Meet the chapter <span aria-hidden="true">↓</span></a>
+            <a className={styles.secondary} href="#what-we-do">Meet the chapter <Arrow direction="down" /></a>
           </div>
         </div>
         <figure className={styles.media}>

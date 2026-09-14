@@ -1,4 +1,5 @@
 import ResponsiveImage from '@/components/ui/ResponsiveImage';
+import Arrow from '@/components/ui/Arrow';
 import Hero from '@/components/hero/Hero';
 import PullQuote from '@/components/editorial/PullQuote';
 import SpecSheet from '@/components/editorial/SpecSheet';
@@ -44,7 +45,7 @@ export default async function Page() {
       <div className={`container ${styles.stats}`} data-reveal><SpecSheet stats={d.stats} aside={d.statsAside} /></div>
       <section className={`section ${styles.community}`} id="community" aria-labelledby="community-heading">
         <div className={`container ${styles.communityGrid}`}>
-          <div className={styles.communityCopy} data-reveal><p className="eyebrow">03 / A place to belong</p><h2 id="community-heading">{d.communityHeadline}</h2>{d.communityBody.map((p) => <p key={p}>{p}</p>)}<a href="#join" className={styles.communityLink}>Find your people <span aria-hidden="true">↗</span></a></div>
+          <div className={styles.communityCopy} data-reveal><p className="eyebrow">03 / A place to belong</p><h2 id="community-heading">{d.communityHeadline}</h2>{d.communityBody.map((p) => <p key={p}>{p}</p>)}<a href="#join" className={styles.communityLink}>Find your people <Arrow /></a></div>
           {portrait && <figure className={styles.communityPhoto} data-reveal><ResponsiveImage src={portrait.src} alt={portrait.alt} width={portrait.width} height={portrait.height} sizes="(max-width: 767px) 78vw, (max-width: 1319px) 30vw, 360px" /></figure>}
         </div>
       </section>
