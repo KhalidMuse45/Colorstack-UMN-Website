@@ -49,6 +49,8 @@ button, a, input { -webkit-tap-highlight-color: transparent; }
 .frame-wide { aspect-ratio: 16 / 9; }
 .frame-portrait { aspect-ratio: 4 / 5; }
 .frame-square { aspect-ratio: 1; }
+/* SVG link arrows. Replaces unicode arrows, which iOS renders as colour emoji. */
+.arrow-icon { display: inline-block; flex: none; width: .9em; height: .9em; vertical-align: -.08em; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 /* Scroll reveal. The hidden state only applies once the inline head script has
    marked the document, so a no-JS reader sees every section. */
 .reveal-ready [data-reveal] { opacity: 0; transform: translateY(26px); transition: opacity .7s var(--ease), transform .7s var(--ease); will-change: opacity, transform; }

@@ -13,13 +13,13 @@
   "photos": [
     {
       "file": "public/images/board/board-khalid-muse.webp",
-      "sourceFile": "headshot photo.jpeg",
-      "conversion": "Converted to lossless 400x400 WebP at the supplied dimensions, with responsive AVIF/WebP variants; full composition retained.",
+      "sourceFile": "Headshots/2Headshot-Khalid-Muse-1.webp",
+      "conversion": "Copied the 1600x2400 WebP portrait from the repository source, retaining its matching responsive AVIF/WebP variants and full composition.",
       "usedFor": "Khalid Muse portrait in Meet the board",
-      "suppliedBy": "user",
+      "suppliedBy": "repository contributor",
       "suppliedOn": "2026-09-14",
       "posedOrCandid": "posed",
-      "permission": "user-supplied for website use",
+      "permission": "user-selected for website use",
       "alt": "Portrait of Khalid Muse"
     },
     {

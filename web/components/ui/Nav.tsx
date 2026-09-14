@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { primaryNav, joinCta, socialNav, contactEmail } from '@/lib/nav';
+import Arrow from './Arrow';
 import Pill from './Pill';
 import styles from './Nav.module.css';
 
@@ -41,7 +42,7 @@ export default function Nav() {
           {primaryNav.map(i => <a key={i.href} href={i.href}>{i.label}</a>)}
         </nav>
         <div className={styles.right}>
-          <span className={styles.join}><Pill href={joinCta.href} external tone="maroon">Join the community <span aria-hidden="true">↗</span></Pill></span>
+          <span className={styles.join}><Pill href={joinCta.href} external tone="maroon">Join the community <Arrow /></Pill></span>
           <button ref={opener} className={styles.menuButton} type="button" onClick={() => setOpen(true)} aria-haspopup="dialog" aria-expanded={open} aria-controls="mobile-navigation">Menu <span aria-hidden="true">+</span></button>
         </div>
       </div>
@@ -58,12 +59,12 @@ export default function Nav() {
           <button type="button" className={styles.close} onClick={() => setOpen(false)}>Close <span aria-hidden="true">×</span></button>
         </div>
         <nav className={styles.sheetLinks} aria-label="Mobile primary">
-          {primaryNav.map((i, index) => <a key={i.href} href={i.href} onClick={() => setOpen(false)}><span className={styles.number}>0{index + 1}</span>{i.label}<span aria-hidden="true">↗</span></a>)}
+          {primaryNav.map((i, index) => <a key={i.href} href={i.href} onClick={() => setOpen(false)}><span className={styles.number}>0{index + 1}</span>{i.label}<Arrow /></a>)}
         </nav>
         <div className={styles.sheetFoot}>
-          <Pill href={joinCta.href} external tone="maroon">Join the community ↗</Pill>
+          <Pill href={joinCta.href} external tone="maroon">Join the community <Arrow /></Pill>
           <div className={styles.socials}>
-            {socialNav.map(s => <a href={s.href} key={s.href} target="_blank" rel="noopener noreferrer">{s.label} ↗</a>)}
+            {socialNav.map(s => <a href={s.href} key={s.href} target="_blank" rel="noopener noreferrer">{s.label} <Arrow /></a>)}
             <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
           </div>
         </div>
