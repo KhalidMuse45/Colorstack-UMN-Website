@@ -1,4 +1,166 @@
 {
+  "/images/board/board-abdirahman-omer.webp": {
+    "width": 799,
+    "height": 799,
+    "widths": [
+      320,
+      480,
+      768,
+      799
+    ]
+  },
+  "/images/board/board-abdullahi-abdi.webp": {
+    "width": 800,
+    "height": 800,
+    "widths": [
+      320,
+      480,
+      768,
+      800
+    ]
+  },
+  "/images/board/board-abdullahi-jamas.webp": {
+    "width": 800,
+    "height": 800,
+    "widths": [
+      320,
+      480,
+      768,
+      800
+    ]
+  },
+  "/images/board/board-adna.webp": {
+    "width": 800,
+    "height": 800,
+    "widths": [
+      320,
+      480,
+      768,
+      800
+    ]
+  },
+  "/images/board/board-aisha-abdullahi.webp": {
+    "width": 800,
+    "height": 800,
+    "widths": [
+      320,
+      480,
+      768,
+      800
+    ]
+  },
+  "/images/board/board-arsema.webp": {
+    "width": 800,
+    "height": 800,
+    "widths": [
+      320,
+      480,
+      768,
+      800
+    ]
+  },
+  "/images/board/board-hangatu.webp": {
+    "width": 800,
+    "height": 800,
+    "widths": [
+      320,
+      480,
+      768,
+      800
+    ]
+  },
+  "/images/board/board-kananisa.webp": {
+    "width": 800,
+    "height": 800,
+    "widths": [
+      320,
+      480,
+      768,
+      800
+    ]
+  },
+  "/images/board/board-khalid-muse.webp": {
+    "width": 1600,
+    "height": 1600,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1600
+    ]
+  },
+  "/images/board/board-mohammed-amin.webp": {
+    "width": 1600,
+    "height": 1600,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1600
+    ]
+  },
+  "/images/board/board-rahma.webp": {
+    "width": 1600,
+    "height": 1600,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1600
+    ]
+  },
+  "/images/board/board-salah.webp": {
+    "width": 584,
+    "height": 584,
+    "widths": [
+      320,
+      480,
+      584
+    ]
+  },
+  "/images/board/board-salman-fiqi.webp": {
+    "width": 1600,
+    "height": 1600,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1600
+    ]
+  },
+  "/images/board/board-salwa.webp": {
+    "width": 800,
+    "height": 800,
+    "widths": [
+      320,
+      480,
+      768,
+      800
+    ]
+  },
+  "/images/board/board-sarrah-abdullahi.webp": {
+    "width": 800,
+    "height": 800,
+    "widths": [
+      320,
+      480,
+      768,
+      800
+    ]
+  },
+  "/images/board/board-selamawit.webp": {
+    "width": 640,
+    "height": 640,
+    "widths": [
+      320,
+      480,
+      640
+    ]
+  },
   "/images/bootcamp-jeopardy.webp": {
     "width": 2400,
     "height": 1500,

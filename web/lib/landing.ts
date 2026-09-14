@@ -18,6 +18,7 @@
  */
 import {
   MAILING_LIST,
+  board,
   candids,
   community,
   contact,
@@ -32,6 +33,7 @@ import {
   testimonials as testimonialsContent,
   voices,
   whatWeDo,
+  type BoardMember,
   type Channel,
 } from '@/content/landing';
 
@@ -97,6 +99,13 @@ export type Landing = {
    * filter one layer further out; until then it is the `.filter` below.
    */
   candids: Photo[];
+
+  /**
+   * "Meet the board". The roster rendered by the layered stack intro and the
+   * carousel that follows it. Names come from the supplied headshot filenames;
+   * role and bio are lorem ipsum placeholders pending confirmed chapter info.
+   */
+  board: BoardMember[];
 
   voicesHeadline: string;
   testimonials: { quote: string; name: string; role?: string }[];
@@ -183,6 +192,8 @@ export async function getLanding(): Promise<Landing> {
      * of the GROQ query and nothing downstream notices.
      */
     candids: candids.filter((p) => p.candid === true),
+
+    board: [...board],
 
     voicesHeadline: voices.headline,
     // Empty on purpose. See the comment on `testimonials` in content/landing.ts.

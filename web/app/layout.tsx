@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Archivo, Lora } from 'next/font/google';
 import Nav from '@/components/ui/Nav';
 import Footer from '@/components/ui/Footer';
+import ScrollReveal from '@/components/motion/ScrollReveal';
 import './globals.css';
 
 // Preload only the Latin font used by the first-screen navigation and heading.
@@ -12,17 +13,20 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://colorstackumn.org'),
   title: 'ColorStack UMN',
   description: 'A home for Black and Latinx computer science students at the University of Minnesota.',
+  icons: { icon: '/images/colorstack-umn-mark-192.webp' },
   openGraph: { title: 'ColorStack UMN', description: 'Find your people. Build what comes next.', images: [{ url: '/images/summit-group-1600.webp', width: 1600, height: 1200 }] },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${display.variable} ${body.variable}`}>
+    <html lang="en" className={`${display.variable} ${body.variable}`} suppressHydrationWarning>
       <body>
+        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('reveal-ready');" }} />
         <a className="skip-link" href="#main-content">Skip to content</a>
         <Nav />
         {children}
         <Footer />
+        <ScrollReveal />
       </body>
     </html>
   );

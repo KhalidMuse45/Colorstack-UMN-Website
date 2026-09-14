@@ -28,8 +28,8 @@ for (const file of files) {
     await mkdir(dirname(base), { recursive: true });
     const pipeline = sharp(input).rotate().resize({ width, withoutEnlargement: true });
     await Promise.all([
-      pipeline.clone().webp({ quality: 80, effort: 5 }).toFile(`${base}.webp`),
-      pipeline.clone().avif({ quality: 53, effort: 4 }).toFile(`${base}.avif`),
+      pipeline.clone().webp({ quality: 84, effort: 5 }).toFile(`${base}.webp`),
+      pipeline.clone().avif({ quality: 62, effort: 4 }).toFile(`${base}.avif`),
     ]);
     totalBytes += (await stat(`${base}.webp`)).size + (await stat(`${base}.avif`)).size;
     count += 2;
