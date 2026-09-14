@@ -12,6 +12,17 @@
   },
   "photos": [
     {
+      "file": "public/images/board/board-khalid-muse.webp",
+      "sourceFile": "headshot photo.jpeg",
+      "conversion": "Converted to lossless 400x400 WebP at the supplied dimensions, with responsive AVIF/WebP variants; full composition retained.",
+      "usedFor": "Khalid Muse portrait in Meet the board",
+      "suppliedBy": "user",
+      "suppliedOn": "2026-09-14",
+      "posedOrCandid": "posed",
+      "permission": "user-supplied for website use",
+      "alt": "Portrait of Khalid Muse"
+    },
+    {
       "file": "public/images/summit-group.webp",
       "usedFor": "chapter photo collection; replaced in the landing hero by staircase-group.webp on 2026-09-07",
       "suppliedBy": "chapter e-board",

@@ -80,14 +80,11 @@
     ]
   },
   "/images/board/board-khalid-muse.webp": {
-    "width": 1600,
-    "height": 1600,
+    "width": 400,
+    "height": 400,
     "widths": [
       320,
-      480,
-      768,
-      1200,
-      1600
+      400
     ]
   },
   "/images/board/board-mohammed-amin.webp": {
