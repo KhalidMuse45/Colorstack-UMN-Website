@@ -23,7 +23,6 @@ export default function FloatingCards({ photos }: { photos: FloatingCardsPhoto[]
   const [paused, setPaused] = useState(false);
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
-  const [hovered, setHovered] = useState<number | null>(null);
   const [focused, setFocused] = useState<number | null>(null);
   const [open, setOpen] = useState<number | null>(null);
   const urls = useMemo(() => photos.slice(0, 16).map((p) => imageUrl(p.src, 480)), [photos]);
@@ -61,7 +60,7 @@ export default function FloatingCards({ photos }: { photos: FloatingCardsPhoto[]
         detailUrls,
         onReady: () => { if (!cancelled) setReady(true); },
         onError: () => { if (!cancelled) setFailed(true); },
-        onHover: setHovered, onFocus: setFocused,
+        onFocus: setFocused,
       });
       engine.current = instance;
     }).catch(() => { if (!cancelled) setFailed(true); });
@@ -84,7 +83,6 @@ export default function FloatingCards({ photos }: { photos: FloatingCardsPhoto[]
   }, [open]);
 
   const photo = open === null ? null : photos[open];
-  const captionPhoto = focused ?? hovered;
   return (
     <div ref={root} className={styles.root}>
       <div className={styles.toolbar}>
@@ -111,15 +109,14 @@ export default function FloatingCards({ photos }: { photos: FloatingCardsPhoto[]
         )}
       </div>
       <div className={styles.footnote}>
-        <p>{sphereVisible ? (captionPhoto !== null ? photos[captionPhoto]?.alt : 'Drag to turn. Select a photo to look closer.') : 'Select a photo to look closer.'}</p>
+        <p>{sphereVisible ? 'Drag to turn. Select a photo to look closer.' : 'Select a photo to look closer.'}</p>
         {sphereVisible && focused !== null && <button type="button" onClick={() => engine.current?.clearFocus()}>Close photo</button>}
       </div>
-      <dialog ref={dialog} className={styles.dialog} onClose={() => setOpen(null)} onClick={(event) => { if (event.target === event.currentTarget) setOpen(null); }} aria-labelledby={`${id}-caption`}>
+      <dialog ref={dialog} className={styles.dialog} onClose={() => setOpen(null)} onClick={(event) => { if (event.target === event.currentTarget) setOpen(null); }} >
         {photo && <div className={styles.dialogContent}>
           <button type="button" className={styles.close} onClick={() => setOpen(null)} autoFocus>Close photo</button>
           <figure>
             <ResponsiveImage src={photo.src} alt={photo.alt} width={photo.width} height={photo.height} sizes="(max-width: 900px) 90vw, 1000px" loading="eager" className={styles.fullPhoto} />
-            <figcaption id={`${id}-caption`}>{photo.alt}</figcaption>
           </figure>
         </div>}
       </dialog>
