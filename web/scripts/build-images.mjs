@@ -1,14 +1,26 @@
 /** Pre-render responsive assets for static hosting; no image server required. */
 import sharp from 'sharp';
-import { mkdir, readdir, stat, writeFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const sourceDir = fileURLToPath(new URL('../public/images/', import.meta.url));
+const sourceDir = fileURLToPath(new URL('../images/', import.meta.url));
 const widths = [320, 480, 768, 1200, 1600];
-const files = (await readdir(sourceDir, { recursive: true }))
-  .filter((file) => /\.(webp|jpe?g|png)$/i.test(file) && !file.startsWith('responsive'))
-  .sort();
+let files = [];
+try {
+  files = (await readdir(sourceDir, { recursive: true }))
+    .filter((file) => /\.(webp|jpe?g|png)$/i.test(file) && !file.startsWith('responsive'))
+    .sort();
+} catch {
+  files = [];
+}
+// Source images are not committed (they live on the CDN). Refuse to overwrite
+// the shipped manifest with an empty one when a clone has no sources.
+if (files.length === 0) {
+  console.warn('No source images under web/images/; leaving the existing manifest untouched.');
+  process.exit(0);
+}
 const manifest = {};
 let totalBytes = 0;
 let count = 0;
@@ -17,6 +29,8 @@ let count = 0;
 for (const file of files) {
   const input = join(sourceDir, file);
   const metadata = await sharp(input).metadata();
+  // Content hash busts the long-lived CDN cache when a source image changes.
+  const hash = createHash('sha256').update(await readFile(input)).digest('hex').slice(0, 12);
   const rotated = [5, 6, 7, 8].includes(metadata.orientation);
   const sourceWidth = rotated ? metadata.height : metadata.width;
   const sourceHeight = rotated ? metadata.width : metadata.height;
@@ -35,7 +49,7 @@ for (const file of files) {
     count += 2;
   }
   manifest[`/images/${file.replaceAll('\\', '/')}`] = {
-    width: sourceWidth, height: sourceHeight, widths: available,
+    width: sourceWidth, height: sourceHeight, widths: available, hash,
   };
 }
 

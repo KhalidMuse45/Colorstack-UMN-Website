@@ -12,11 +12,12 @@ const nextConfig: NextConfig = {
    */
   outputFileTracingRoot: path.resolve(process.cwd()),
   images: {
-    // GitHub Pages cannot run the Next.js image optimization server.
+    // Static export: no Next.js image optimization server.
     unoptimized: true,
-    // Every image on the landing page is a local WebP under public/images.
-    // Sanity's CDN gets added to remotePatterns when the studio exists.
     formats: ['image/webp'],
+    // Source photos live in web/images/ and are served from the R2 bucket
+    // behind this custom domain. Sanity's CDN gets added when the studio exists.
+    remotePatterns: [{ protocol: 'https', hostname: 'cdn.colorstackumn.org' }],
   },
 };
 

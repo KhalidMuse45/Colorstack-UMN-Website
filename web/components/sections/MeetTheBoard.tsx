@@ -107,7 +107,7 @@ export default function MeetTheBoard({ members }: { members: BoardMember[] }) {
       <ul className="sr-only">
         {members.map((member) => (
           <li key={member.id}>
-            {member.name}. {member.role}.
+            {member.name}. {member.role}. {member.year}, {member.major}. {member.petPeeve}
           </li>
         ))}
       </ul>
@@ -141,6 +141,8 @@ export default function MeetTheBoard({ members }: { members: BoardMember[] }) {
             <p key={front} className={styles.captionInner}>
               <span className={styles.captionName}>{current.name}</span>
               <span className={styles.captionRole}>{current.role}</span>
+              <span className={styles.captionMeta}>{current.year}, {current.major}</span>
+              <span className={styles.captionBio}>{current.petPeeve}</span>
             </p>
             <div className={styles.progress} role="presentation">
               <span className={styles.progressFill} style={{ width: `${((front + 1) / total) * 100}%` }} />

@@ -6,6 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "images:build": "node scripts/build-images.mjs",
+    "images:upload": "node scripts/upload-images.mjs",
+    "deploy": "npm run images:build && npm run images:upload && npm run build && wrangler pages deploy out --project-name colorstackumn --branch main",
     "lint": "eslint . && sh scripts/guardrails.sh"
   },
   "dependencies": {
@@ -23,6 +25,7 @@
     "eslint": "^9.36.0",
     "eslint-config-next": "^15.5.4",
     "sharp": "0.35.4",
-    "typescript": "^5.9.0"
+    "typescript": "^5.9.0",
+    "wrangler": "^4.143.0"
   }
 }

@@ -25,8 +25,9 @@ export default function FloatingCards({ photos }: { photos: FloatingCardsPhoto[]
   const [failed, setFailed] = useState(false);
   const [focused, setFocused] = useState<number | null>(null);
   const [open, setOpen] = useState<number | null>(null);
-  const urls = useMemo(() => photos.slice(0, 16).map((p) => imageUrl(p.src, 480)), [photos]);
-  const detailUrls = useMemo(() => photos.slice(0, 16).map((p) => imageUrl(p.src, 1200)), [photos]);
+  // The sphere carries the whole gallery, highlights included.
+  const urls = useMemo(() => photos.map((p) => imageUrl(p.src, 480)), [photos]);
+  const detailUrls = useMemo(() => photos.map((p) => imageUrl(p.src, 1200)), [photos]);
   const sphereVisible = ready && !gallery && !reducedMotion && !failed;
   const fullGallery = gallery || reducedMotion === true || failed;
   const galleryPhotos = fullGallery ? photos : photos.slice(0, 4);

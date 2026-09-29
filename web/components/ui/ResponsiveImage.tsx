@@ -18,7 +18,7 @@ export default function ResponsiveImage({
   return (
     <picture style={{ display: 'contents' }}>
       {avif && <source type="image/avif" srcSet={avif} sizes={sizes} />}
-      {/* These sources are optimized at build time for GitHub Pages static hosting. */}
+      {/* These sources are pre-built and served from the Cloudflare CDN. */}
       <img
         {...props}
         src={imageUrl(src, Math.min(width, 1200))}

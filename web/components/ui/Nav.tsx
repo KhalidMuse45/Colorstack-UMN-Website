@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { primaryNav, joinCta, socialNav, contactEmail } from '@/lib/nav';
+import { ASSETS_BASE } from '@/lib/image';
 import Arrow from './Arrow';
 import Pill from './Pill';
 import styles from './Nav.module.css';
@@ -35,7 +36,7 @@ export default function Nav() {
     <header className={styles.nav}>
       <div className={styles.inner}>
         <Link href="/" className={styles.brand} aria-label="ColorStack UMN, home">
-          <Image src="/images/colorstack-umn-mark-192.webp" alt="" width={30} height={30} />
+          <Image src={`${ASSETS_BASE}/images/colorstack-umn-mark-192.webp`} alt="" width={30} height={30} />
           <span>ColorStack <span className={styles.location}>UMN</span></span>
         </Link>
         <nav className={styles.links} aria-label="Primary">

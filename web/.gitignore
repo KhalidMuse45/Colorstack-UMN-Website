@@ -6,3 +6,10 @@ next-env.d.ts
 .env*.local
 .eslintcache
 .vercel
+
+# Source images are served from the Cloudflare R2 CDN; not committed.
+/images/
+
+# Wrangler local env and image upload state
+.dev.vars*
+.r2-state.json

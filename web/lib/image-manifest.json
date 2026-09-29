@@ -7,7 +7,8 @@
       480,
       768,
       799
-    ]
+    ],
+    "hash": "b8e580375c64"
   },
   "/images/board/board-abdullahi-abdi.webp": {
     "width": 800,
@@ -17,7 +18,8 @@
       480,
       768,
       800
-    ]
+    ],
+    "hash": "0b24275588ee"
   },
   "/images/board/board-abdullahi-jamas.webp": {
     "width": 800,
@@ -27,7 +29,8 @@
       480,
       768,
       800
-    ]
+    ],
+    "hash": "fba082f714c9"
   },
   "/images/board/board-adna.webp": {
     "width": 800,
@@ -37,17 +40,20 @@
       480,
       768,
       800
-    ]
+    ],
+    "hash": "f17529ba942d"
   },
   "/images/board/board-aisha-abdullahi.webp": {
-    "width": 800,
-    "height": 800,
+    "width": 2432,
+    "height": 3648,
     "widths": [
       320,
       480,
       768,
-      800
-    ]
+      1200,
+      1600
+    ],
+    "hash": "65d5789a5c37"
   },
   "/images/board/board-arsema.webp": {
     "width": 800,
@@ -57,17 +63,20 @@
       480,
       768,
       800
-    ]
+    ],
+    "hash": "9e4c451c824f"
   },
   "/images/board/board-hangatu.webp": {
-    "width": 800,
-    "height": 800,
+    "width": 2432,
+    "height": 3101,
     "widths": [
       320,
       480,
       768,
-      800
-    ]
+      1200,
+      1600
+    ],
+    "hash": "30a7ee8ccca8"
   },
   "/images/board/board-kananisa.webp": {
     "width": 800,
@@ -77,7 +86,8 @@
       480,
       768,
       800
-    ]
+    ],
+    "hash": "1615adc04fd6"
   },
   "/images/board/board-khalid-muse.webp": {
     "width": 1600,
@@ -88,7 +98,8 @@
       768,
       1200,
       1600
-    ]
+    ],
+    "hash": "20e30c30cc76"
   },
   "/images/board/board-mohammed-amin.webp": {
     "width": 1600,
@@ -99,7 +110,8 @@
       768,
       1200,
       1600
-    ]
+    ],
+    "hash": "025b92043a56"
   },
   "/images/board/board-rahma.webp": {
     "width": 1600,
@@ -110,7 +122,8 @@
       768,
       1200,
       1600
-    ]
+    ],
+    "hash": "463fe86e97a0"
   },
   "/images/board/board-salah.webp": {
     "width": 584,
@@ -119,7 +132,8 @@
       320,
       480,
       584
-    ]
+    ],
+    "hash": "f821fe9635c2"
   },
   "/images/board/board-salman-fiqi.webp": {
     "width": 1600,
@@ -130,17 +144,20 @@
       768,
       1200,
       1600
-    ]
+    ],
+    "hash": "d8197b0472df"
   },
   "/images/board/board-salwa.webp": {
-    "width": 800,
-    "height": 800,
+    "width": 1333,
+    "height": 1700,
     "widths": [
       320,
       480,
       768,
-      800
-    ]
+      1200,
+      1333
+    ],
+    "hash": "2abde85b726b"
   },
   "/images/board/board-sarrah-abdullahi.webp": {
     "width": 800,
@@ -150,7 +167,8 @@
       480,
       768,
       800
-    ]
+    ],
+    "hash": "35bcefa6f58b"
   },
   "/images/board/board-selamawit.webp": {
     "width": 640,
@@ -159,7 +177,8 @@
       320,
       480,
       640
-    ]
+    ],
+    "hash": "6fdac5f90bfc"
   },
   "/images/bootcamp-jeopardy.webp": {
     "width": 2400,
@@ -170,7 +189,8 @@
       768,
       1200,
       1600
-    ]
+    ],
+    "hash": "51c1f932bd54"
   },
   "/images/candids/corridor-portrait.webp": {
     "width": 1200,
@@ -180,7 +200,8 @@
       480,
       768,
       1200
-    ]
+    ],
+    "hash": "f494d1645c6a"
   },
   "/images/candids/elevator-lobby.webp": {
     "width": 900,
@@ -190,7 +211,8 @@
       480,
       768,
       900
-    ]
+    ],
+    "hash": "122bbc8a24ba"
   },
   "/images/candids/game-night-chess.webp": {
     "width": 1200,
@@ -200,7 +222,8 @@
       480,
       768,
       1200
-    ]
+    ],
+    "hash": "c1e72b903770"
   },
   "/images/candids/ideathon-room.webp": {
     "width": 1200,
@@ -210,7 +233,8 @@
       480,
       768,
       1200
-    ]
+    ],
+    "hash": "00b8c75f95ba"
   },
   "/images/candids/lab-typing.webp": {
     "width": 800,
@@ -220,7 +244,8 @@
       480,
       768,
       800
-    ]
+    ],
+    "hash": "7fccd8035bd4"
   },
   "/images/candids/lab-workstation.webp": {
     "width": 800,
@@ -230,7 +255,8 @@
       480,
       768,
       800
-    ]
+    ],
+    "hash": "94c5ece0b16b"
   },
   "/images/candids/playful-boxing.webp": {
     "width": 900,
@@ -240,7 +266,8 @@
       480,
       768,
       900
-    ]
+    ],
+    "hash": "76b35457ec32"
   },
   "/images/candids/red-chair.webp": {
     "width": 800,
@@ -250,18 +277,20 @@
       480,
       768,
       800
-    ]
+    ],
+    "hash": "4f2a08717ed4"
   },
   "/images/candids/staircase-group.webp": {
-    "width": 1600,
-    "height": 2400,
+    "width": 2400,
+    "height": 3600,
     "widths": [
       320,
       480,
       768,
       1200,
       1600
-    ]
+    ],
+    "hash": "893b3a4a1c05"
   },
   "/images/candids/staircase-landing.webp": {
     "width": 900,
@@ -271,7 +300,8 @@
       480,
       768,
       900
-    ]
+    ],
+    "hash": "f54bdd77abad"
   },
   "/images/candids/stairway-talk.webp": {
     "width": 900,
@@ -281,7 +311,8 @@
       480,
       768,
       900
-    ]
+    ],
+    "hash": "840e90e62656"
   },
   "/images/candids/summit-couches.webp": {
     "width": 1200,
@@ -291,7 +322,8 @@
       480,
       768,
       1200
-    ]
+    ],
+    "hash": "bbb930ae24ef"
   },
   "/images/candids/summit-dining.webp": {
     "width": 1600,
@@ -302,7 +334,8 @@
       768,
       1200,
       1600
-    ]
+    ],
+    "hash": "21c2fffcb748"
   },
   "/images/candids/summit-duolingo.webp": {
     "width": 1200,
@@ -312,7 +345,8 @@
       480,
       768,
       1200
-    ]
+    ],
+    "hash": "bd46a2169d55"
   },
   "/images/candids/window-trio.webp": {
     "width": 900,
@@ -322,14 +356,16 @@
       480,
       768,
       900
-    ]
+    ],
+    "hash": "8ba01ae171dc"
   },
   "/images/colorstack-umn-mark-192.webp": {
     "width": 192,
     "height": 192,
     "widths": [
       192
-    ]
+    ],
+    "hash": "e9730a6b1f20"
   },
   "/images/game-night-chess.webp": {
     "width": 1440,
@@ -340,7 +376,8 @@
       768,
       1200,
       1440
-    ]
+    ],
+    "hash": "f6746dfe396e"
   },
   "/images/game-night-signage.webp": {
     "width": 1440,
@@ -351,7 +388,284 @@
       768,
       1200,
       1440
-    ]
+    ],
+    "hash": "abacec8db1e5"
+  },
+  "/images/highlights/highlight-01.webp": {
+    "width": 1333,
+    "height": 2000,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1333
+    ],
+    "hash": "edfcb18105dd"
+  },
+  "/images/highlights/highlight-02.webp": {
+    "width": 2000,
+    "height": 1333,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1600
+    ],
+    "hash": "8551a598c18d"
+  },
+  "/images/highlights/highlight-03.webp": {
+    "width": 1500,
+    "height": 2000,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1500
+    ],
+    "hash": "76c7419e1bff"
+  },
+  "/images/highlights/highlight-04.webp": {
+    "width": 1333,
+    "height": 2000,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1333
+    ],
+    "hash": "3eac7c8b8708"
+  },
+  "/images/highlights/highlight-05.webp": {
+    "width": 1333,
+    "height": 2000,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1333
+    ],
+    "hash": "6ab908253582"
+  },
+  "/images/highlights/highlight-06.webp": {
+    "width": 1333,
+    "height": 2000,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1333
+    ],
+    "hash": "6986d9e4507b"
+  },
+  "/images/highlights/highlight-07.webp": {
+    "width": 1500,
+    "height": 2000,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1500
+    ],
+    "hash": "91cfb4ac10d7"
+  },
+  "/images/highlights/highlight-08.webp": {
+    "width": 2000,
+    "height": 1333,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1600
+    ],
+    "hash": "12025ca785d0"
+  },
+  "/images/highlights/highlight-09.webp": {
+    "width": 2000,
+    "height": 1211,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1600
+    ],
+    "hash": "7d796efc2ad9"
+  },
+  "/images/highlights/highlight-10.webp": {
+    "width": 1333,
+    "height": 2000,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1333
+    ],
+    "hash": "2a0d14558e5f"
+  },
+  "/images/highlights/highlight-11.webp": {
+    "width": 1333,
+    "height": 2000,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1333
+    ],
+    "hash": "624d76435140"
+  },
+  "/images/highlights/highlight-12.webp": {
+    "width": 2000,
+    "height": 1303,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1600
+    ],
+    "hash": "98473706daa3"
+  },
+  "/images/highlights/highlight-13.webp": {
+    "width": 1333,
+    "height": 2000,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1333
+    ],
+    "hash": "4f412b9b7924"
+  },
+  "/images/highlights/highlight-14.webp": {
+    "width": 1333,
+    "height": 2000,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1333
+    ],
+    "hash": "99e333cd47dd"
+  },
+  "/images/highlights/highlight-15.webp": {
+    "width": 1500,
+    "height": 2000,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1500
+    ],
+    "hash": "15ccbec9b1f8"
+  },
+  "/images/highlights/highlight-16.webp": {
+    "width": 1333,
+    "height": 2000,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1333
+    ],
+    "hash": "61a3dd111414"
+  },
+  "/images/highlights/highlight-17.webp": {
+    "width": 1333,
+    "height": 2000,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1333
+    ],
+    "hash": "b48ea99eaf8c"
+  },
+  "/images/highlights/highlight-18.webp": {
+    "width": 1333,
+    "height": 2000,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1333
+    ],
+    "hash": "9dcb4853944e"
+  },
+  "/images/highlights/highlight-19.webp": {
+    "width": 1333,
+    "height": 2000,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1333
+    ],
+    "hash": "b7d4dd3670f8"
+  },
+  "/images/highlights/highlight-20.webp": {
+    "width": 1500,
+    "height": 2000,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1500
+    ],
+    "hash": "52293d693305"
+  },
+  "/images/highlights/highlight-21.webp": {
+    "width": 1333,
+    "height": 2000,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1333
+    ],
+    "hash": "ce80380ea2f3"
+  },
+  "/images/highlights/highlight-22.webp": {
+    "width": 2000,
+    "height": 1333,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1600
+    ],
+    "hash": "2c0330c4fe38"
+  },
+  "/images/highlights/highlight-23.webp": {
+    "width": 1333,
+    "height": 2000,
+    "widths": [
+      320,
+      480,
+      768,
+      1200,
+      1333
+    ],
+    "hash": "d3ea8d0bde0b"
   },
   "/images/ideathon-presenting.webp": {
     "width": 2400,
@@ -362,7 +676,8 @@
       768,
       1200,
       1600
-    ]
+    ],
+    "hash": "30f03589d307"
   },
   "/images/ideathon.webp": {
     "width": 2400,
@@ -373,7 +688,8 @@
       768,
       1200,
       1600
-    ]
+    ],
+    "hash": "f76480af4193"
   },
   "/images/presidents-circle.webp": {
     "width": 1400,
@@ -384,7 +700,8 @@
       768,
       1200,
       1400
-    ]
+    ],
+    "hash": "4f10822aabd0"
   },
   "/images/red-scarf-portrait.webp": {
     "width": 1400,
@@ -395,7 +712,8 @@
       768,
       1200,
       1400
-    ]
+    ],
+    "hash": "f3eb4216b8a9"
   },
   "/images/staircase-fists.webp": {
     "width": 1400,
@@ -406,7 +724,8 @@
       768,
       1200,
       1400
-    ]
+    ],
+    "hash": "e1e4b12cfb22"
   },
   "/images/summit-group-1600.webp": {
     "width": 1600,
@@ -417,7 +736,8 @@
       768,
       1200,
       1600
-    ]
+    ],
+    "hash": "a266bf8ea8ac"
   },
   "/images/summit-group.webp": {
     "width": 2400,
@@ -428,7 +748,8 @@
       768,
       1200,
       1600
-    ]
+    ],
+    "hash": "132972bb01a8"
   },
   "/images/summit-portrait.webp": {
     "width": 1400,
@@ -439,7 +760,8 @@
       768,
       1200,
       1400
-    ]
+    ],
+    "hash": "33bcbdc21ea6"
   },
   "/images/summit-recruiter.webp": {
     "width": 2400,
@@ -450,7 +772,8 @@
       768,
       1200,
       1600
-    ]
+    ],
+    "hash": "88511dd0abde"
   },
   "/images/summit-signage.webp": {
     "width": 2000,
@@ -461,6 +784,7 @@
       768,
       1200,
       1600
-    ]
+    ],
+    "hash": "6a410d278f89"
   }
 }

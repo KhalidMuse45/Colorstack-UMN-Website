@@ -70,6 +70,8 @@ export default function TeamWall({ members }: { members: BoardMember[] }) {
         <span className={styles.info}>
           <span className={styles.name}>{member.name}</span>
           <span className={styles.role}>{member.role}</span>
+          <span className={styles.meta}>{member.year}, {member.major}</span>
+          <span className={styles.bio}>{member.petPeeve}</span>
         </span>
       )}
     </>

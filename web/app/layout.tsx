@@ -3,6 +3,7 @@ import { Archivo, Lora } from 'next/font/google';
 import Nav from '@/components/ui/Nav';
 import Footer from '@/components/ui/Footer';
 import ScrollReveal from '@/components/motion/ScrollReveal';
+import { ASSETS_BASE } from '@/lib/image';
 import './globals.css';
 
 // Preload only the Latin font used by the first-screen navigation and heading.
@@ -13,8 +14,8 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://colorstackumn.org'),
   title: 'ColorStack UMN',
   description: 'A home for Black and Latinx computer science students at the University of Minnesota.',
-  icons: { icon: '/images/colorstack-umn-mark-192.webp' },
-  openGraph: { title: 'ColorStack UMN', description: 'Find your people. Build what comes next.', images: [{ url: '/images/summit-group-1600.webp', width: 1600, height: 1200 }] },
+  icons: { icon: `${ASSETS_BASE}/images/colorstack-umn-mark-192.webp` },
+  openGraph: { title: 'ColorStack UMN', description: 'Find your people. Build what comes next.', images: [{ url: `${ASSETS_BASE}/images/responsive/red-scarf-portrait-1200.webp`, width: 1200, height: 1500, alt: 'ColorStack UMN member wearing the chapter red scarf' }] },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

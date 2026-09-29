@@ -126,8 +126,8 @@ export const photos = {
   staircaseGroup: {
     src: '/images/candids/staircase-group.webp',
     alt: 'ColorStack UMN members seated together on a marble staircase',
-    width: 1600,
-    height: 2400,
+    width: 2400,
+    height: 3600,
     objectPosition: 'center',
     caption: 'ColorStack UMN, together at Walter.',
   },
@@ -278,7 +278,42 @@ export const photos = {
  * supply real meeting-night photographs to swap in. Nothing else changes when
  * they do: replace the file, update the dimensions, keep the alt truthful.
  */
+/* ── Chapter highlights ────────────────────────────────────────────────── */
+
+/**
+ * Event highlights supplied by the e-board on 2026-09-29, shot across campus
+ * days and conference nights and converted to 2000px-max WebP by the image
+ * build with no crop. Prepended to the gallery so the floating cloud leads
+ * with these moments.
+ */
+const highlights: Photo[] = [
+  { id: 'highlight-01', src: '/images/highlights/highlight-01.webp', alt: 'Two students standing outside a campus building at golden hour', width: 1333, height: 2000, candid: true },
+  { id: 'highlight-02', src: '/images/highlights/highlight-02.webp', alt: 'A student walking up the stone steps of a campus building', width: 2000, height: 1333, candid: true },
+  { id: 'highlight-03', src: '/images/highlights/highlight-03.webp', alt: 'Three students standing together beneath a campus colonnade at dusk', width: 1500, height: 2000, candid: true },
+  { id: 'highlight-04', src: '/images/highlights/highlight-04.webp', alt: 'Four students gathered and talking outside a columned entrance', width: 1333, height: 2000, candid: true },
+  { id: 'highlight-05', src: '/images/highlights/highlight-05.webp', alt: 'Three students posing together in a bright campus lobby', width: 1333, height: 2000, candid: true },
+  { id: 'highlight-06', src: '/images/highlights/highlight-06.webp', alt: 'Six students lined up along a sunlit colonnade', width: 1333, height: 2000, candid: true },
+  { id: 'highlight-07', src: '/images/highlights/highlight-07.webp', alt: 'Seven students standing together in a bright campus corridor', width: 1500, height: 2000, candid: true },
+  { id: 'highlight-08', src: '/images/highlights/highlight-08.webp', alt: 'Two students standing in a glass-walled campus hallway', width: 2000, height: 1333, candid: true },
+  { id: 'highlight-09', src: '/images/highlights/highlight-09.webp', alt: 'A large group of chapter members posed in a grand lobby beneath chandeliers', width: 2000, height: 1211, candid: true },
+  { id: 'highlight-10', src: '/images/highlights/highlight-10.webp', alt: 'Two students standing on a staircase, mid-conversation', width: 1333, height: 2000, candid: true },
+  { id: 'highlight-11', src: '/images/highlights/highlight-11.webp', alt: 'Two students standing side by side in a hallway', width: 1333, height: 2000, candid: true },
+  { id: 'highlight-12', src: '/images/highlights/highlight-12.webp', alt: 'Chapter members gathered on a wide marble staircase', width: 2000, height: 1303, candid: true },
+  { id: 'highlight-13', src: '/images/highlights/highlight-13.webp', alt: 'A large group of students seated together on a grand staircase', width: 1333, height: 2000, candid: true },
+  { id: 'highlight-14', src: '/images/highlights/highlight-14.webp', alt: 'Two students outdoors, one holding a vintage camera', width: 1333, height: 2000, candid: true },
+  { id: 'highlight-15', src: '/images/highlights/highlight-15.webp', alt: 'Two students outdoors with a camera on a campus walkway', width: 1500, height: 2000, candid: true },
+  { id: 'highlight-16', src: '/images/highlights/highlight-16.webp', alt: 'Three students walking down a hallway carrying notebooks and laptops', width: 1333, height: 2000, candid: true },
+  { id: 'highlight-17', src: '/images/highlights/highlight-17.webp', alt: 'Two students walking together through a building hallway', width: 1333, height: 2000, candid: true },
+  { id: 'highlight-18', src: '/images/highlights/highlight-18.webp', alt: 'Two students standing and smiling beside a stone column outdoors', width: 1333, height: 2000, candid: true },
+  { id: 'highlight-19', src: '/images/highlights/highlight-19.webp', alt: 'Two students at a table playfully holding fanned cash and wearing sunglasses', width: 1333, height: 2000, candid: true },
+  { id: 'highlight-20', src: '/images/highlights/highlight-20.webp', alt: 'A student on a library staircase with another standing below, both in red scarves', width: 1500, height: 2000, candid: true },
+  { id: 'highlight-21', src: '/images/highlights/highlight-21.webp', alt: 'Students reading together in a library, wearing red chapter scarves', width: 1333, height: 2000, candid: true },
+  { id: 'highlight-22', src: '/images/highlights/highlight-22.webp', alt: 'Students at a library table with books and fanned cash, one in sunglasses', width: 2000, height: 1333, candid: true },
+  { id: 'highlight-23', src: '/images/highlights/highlight-23.webp', alt: 'Students writing at a study table under a lamp, wearing red chapter scarves', width: 1333, height: 2000, candid: true },
+];
+
 export const candids: Photo[] = [
+  ...highlights,
   /** User-selected board portrait; intentionally not marked as a candid. */
   {
     ...photos.staircaseGroup,
@@ -547,10 +582,14 @@ export type BoardAccent = 'maroon' | 'gold' | 'rose' | 'teal' | 'pink';
 export interface BoardMember {
   id: string;
   name: string;
-  /** PLACEHOLDER. Lorem ipsum until the e-board confirms real roles. */
+  /** Committee or office the member holds. */
   role: string;
-  /** PLACEHOLDER. Lorem ipsum. */
-  bio: string;
+  /** Class year, shown under the role. */
+  year: string;
+  /** Major or majors, shown beside the class year. */
+  major: string;
+  /** Pet peeve, shown under the class year and major. */
+  petPeeve: string;
   src: string;
   alt: string;
   width: number;
@@ -559,22 +598,22 @@ export interface BoardMember {
 }
 
 export const board: BoardMember[] = [
-  { id: 'abdirahman-omer', name: 'Abdirahman Omer', role: 'Secretary', bio: 'Consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.', src: '/images/board/board-abdirahman-omer.webp', alt: 'Portrait of Abdirahman Omer', width: 800, height: 800, accent: 'maroon' },
-  { id: 'abdullahi-abdi', name: 'Abdullahi Abdi', role: 'Academic & Professional Development', bio: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.', src: '/images/board/board-abdullahi-abdi.webp', alt: 'Portrait of Abdullahi Abdi', width: 800, height: 800, accent: 'gold' },
-  { id: 'abdullahi-jamas', name: 'Abdullahi Jama', role: 'Treasurer', bio: 'Duis aute irure dolor in reprehenderit in voluptate velit esse.', src: '/images/board/board-abdullahi-jamas.webp', alt: 'Portrait of Abdullahi Jamas', width: 800, height: 800, accent: 'rose' },
-  { id: 'adna', name: 'Adna Wardere', role: 'Outreach', bio: 'Excepteur sint occaecat cupidatat non proident, sunt in culpa.', src: '/images/board/board-adna.webp', alt: 'Portrait of Adna', width: 800, height: 800, accent: 'teal' },
-  { id: 'aisha-abdullahi', name: 'Aisha Abdullahi', role: 'Public Relations', bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', src: '/images/board/board-aisha-abdullahi.webp', alt: 'Portrait of Aisha Abdullahi', width: 800, height: 800, accent: 'pink' },
-  { id: 'arsema', name: 'Arsema Haile', role: 'Secretary', bio: 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', src: '/images/board/board-arsema.webp', alt: 'Portrait of Arsema', width: 800, height: 800, accent: 'maroon' },
-  { id: 'hangatu', name: 'Hangatu Abdo', role: 'Event Coordinator', bio: 'Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea.', src: '/images/board/board-hangatu.webp', alt: 'Portrait of Hangatu', width: 800, height: 800, accent: 'gold' },
-  { id: 'kananisa', name: 'Kananisa Sero', role: 'Vice President', bio: 'Duis aute irure dolor in reprehenderit in voluptate velit.', src: '/images/board/board-kananisa.webp', alt: 'Portrait of Kananisa', width: 800, height: 800, accent: 'rose' },
-  { id: 'khalid-muse', name: 'Khalid Muse', role: 'President', bio: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco.', src: '/images/board/board-khalid-muse.webp', alt: 'Portrait of Khalid Muse', width: 1600, height: 2400, accent: 'teal' },
-  { id: 'mohammed-amin', name: 'Mohammed Amin', role: 'Academic & Professional Development', bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do.', src: '/images/board/board-mohammed-amin.webp', alt: 'Portrait of Mohammed Amin', width: 1600, height: 1600, accent: 'pink' },
-  { id: 'rahma', name: 'Rahma Mohamud', role: 'Public Relations', bio: 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui.', src: '/images/board/board-rahma.webp', alt: 'Portrait of Rahma', width: 1600, height: 1600, accent: 'maroon' },
-  { id: 'salah', name: 'Salaahudiin Abdi', role: 'Outreach', bio: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem.', src: '/images/board/board-salah.webp', alt: 'Portrait of Salah', width: 800, height: 800, accent: 'gold' },
-  { id: 'salman-fiqi', name: 'Salman Fiqi', role: 'Vice President', bio: 'Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut.', src: '/images/board/board-salman-fiqi.webp', alt: 'Portrait of Salman Fiqi', width: 1600, height: 1600, accent: 'rose' },
-  { id: 'salwa', name: 'Salwa Elmi', role: 'Outreach', bio: 'Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet.', src: '/images/board/board-salwa.webp', alt: 'Portrait of Salwa', width: 800, height: 800, accent: 'teal' },
-  { id: 'sarrah-abdullahi', name: 'Sarrah Abdullahi', role: 'Treasuer', bio: 'Ut enim ad minima veniam, quis nostrum exercitationem ullam.', src: '/images/board/board-sarrah-abdullahi.webp', alt: 'Portrait of Sarrah Abdullahi', width: 800, height: 800, accent: 'pink' },
-  { id: 'selamawit', name: 'Selamawit Eshetu', role: 'Event Coordinator', bio: 'At vero eos et accusamus et iusto odio dignissimos ducimus.', src: '/images/board/board-selamawit.webp', alt: 'Portrait of Selamawit', width: 800, height: 800, accent: 'maroon' },
+  { id: 'abdirahman-omer', name: 'Abdirahman Omer', role: 'Secretary', year: 'Junior', major: 'CS', petPeeve: 'Pet peeve: people who walk slowly and take up the whole sidewalk.', src: '/images/board/board-abdirahman-omer.webp', alt: 'Portrait of Abdirahman Omer', width: 800, height: 800, accent: 'maroon' },
+  { id: 'abdullahi-abdi', name: 'Abdullahi Abdi', role: 'Academic & Professional Development', year: 'Senior', major: 'CS & Economics', petPeeve: 'Pet peeves: spoilers, movies and even experiences.', src: '/images/board/board-abdullahi-abdi.webp', alt: 'Portrait of Abdullahi Abdi', width: 800, height: 800, accent: 'gold' },
+  { id: 'abdullahi-jamas', name: 'Abdullahi Jama', role: 'Treasurer', year: 'Senior', major: 'CS', petPeeve: 'Pet peeve: curiosity baiters.', src: '/images/board/board-abdullahi-jamas.webp', alt: 'Portrait of Abdullahi Jamas', width: 800, height: 800, accent: 'rose' },
+  { id: 'adna', name: 'Adna Wardere', role: 'Outreach', year: 'Senior', major: 'CS', petPeeve: 'Pet peeve: sticky surfaces.', src: '/images/board/board-adna.webp', alt: 'Portrait of Adna', width: 800, height: 800, accent: 'teal' },
+  { id: 'aisha-abdullahi', name: 'Aisha Abdullahi', role: 'Public Relations', year: 'Junior', major: 'CS', petPeeve: 'Pet peeve: close minded people.', src: '/images/board/board-aisha-abdullahi.webp', alt: 'Portrait of Aisha Abdullahi', width: 800, height: 1200, accent: 'pink' },
+  { id: 'arsema', name: 'Arsema Haile', role: 'Secretary', year: 'Junior', major: 'CS', petPeeve: 'Pet peeve: people who drive slow, especially in the faster lane.', src: '/images/board/board-arsema.webp', alt: 'Portrait of Arsema', width: 800, height: 800, accent: 'maroon' },
+  { id: 'hangatu', name: 'Hangatu Abdo', role: 'Event Coordinator', year: 'Junior', major: 'CS', petPeeve: 'Pet peeve: people who interrupt others.', src: '/images/board/board-hangatu.webp', alt: 'Portrait of Hangatu', width: 800, height: 1200, accent: 'gold' },
+  { id: 'kananisa', name: 'Kananisa Sero', role: 'Vice President', year: 'Senior', major: 'CS', petPeeve: "Pet peeve: people who don't include others.", src: '/images/board/board-kananisa.webp', alt: 'Portrait of Kananisa', width: 800, height: 800, accent: 'rose' },
+  { id: 'khalid-muse', name: 'Khalid Muse', role: 'President', year: 'Senior', major: 'CS', petPeeve: 'Pet peeve: ragebaiting.', src: '/images/board/board-khalid-muse.webp', alt: 'Portrait of Khalid Muse', width: 1600, height: 2400, accent: 'teal' },
+  { id: 'mohammed-amin', name: 'Mohammed Amin Ahmed', role: 'Academic & Professional Development', year: 'Junior', major: 'CS and Math', petPeeve: 'Pet peeve: impatience and entitlement combined.', src: '/images/board/board-mohammed-amin.webp', alt: 'Portrait of Mohammed Amin Ahmed', width: 1600, height: 1600, accent: 'pink' },
+  { id: 'rahma', name: 'Rahma Mohamud', role: 'Public Relations', year: 'Sophomore', major: 'MIS', petPeeve: 'Pet peeve: people who take themselves too seriously.', src: '/images/board/board-rahma.webp', alt: 'Portrait of Rahma', width: 1600, height: 1600, accent: 'maroon' },
+  { id: 'salah', name: 'Salaahudiin Abdi', role: 'Outreach', year: 'Senior', major: 'CS', petPeeve: "Pet peeve: people who say \"I'm almost there\" when they haven't left the house.", src: '/images/board/board-salah.webp', alt: 'Portrait of Salah', width: 800, height: 800, accent: 'gold' },
+  { id: 'salman-fiqi', name: 'Salman Fiqi', role: 'Vice President', year: 'Senior', major: 'CS', petPeeve: 'Pet peeve: people who take everything seriously.', src: '/images/board/board-salman-fiqi.webp', alt: 'Portrait of Salman Fiqi', width: 1600, height: 1600, accent: 'rose' },
+  { id: 'salwa', name: 'Salwa Elmi', role: 'Outreach', year: 'Junior', major: 'Data Science', petPeeve: 'Pet peeve: people unwilling to try new things.', src: '/images/board/board-salwa.webp', alt: 'Portrait of Salwa Elmi', width: 1333, height: 2000, accent: 'teal' },
+  { id: 'sarrah-abdullahi', name: 'Sarrah Abdullahi', role: 'Treasurer', year: 'Junior', major: 'Data Science', petPeeve: "Pet peeve: when people don't say thank you.", src: '/images/board/board-sarrah-abdullahi.webp', alt: 'Portrait of Sarrah Abdullahi', width: 800, height: 800, accent: 'pink' },
+  { id: 'selamawit', name: 'Selamawit Eshetu', role: 'Event Coordinator', year: 'Junior', major: 'CS', petPeeve: 'Pet peeve: people who chew really loud.', src: '/images/board/board-selamawit.webp', alt: 'Portrait of Selamawit', width: 800, height: 800, accent: 'maroon' },
 ];
 
 /* ── 5. Who we show up for ─────────────────────────────────────────────── */

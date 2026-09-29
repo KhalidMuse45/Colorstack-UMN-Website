@@ -112,6 +112,25 @@
   color: var(--gold);
 }
 
+.captionMeta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--paper);
+  opacity: 0.68;
+}
+
+.captionBio {
+  max-width: 46ch;
+  margin-inline: auto;
+  font-family: var(--font-body);
+  font-size: clamp(13px, 1.4vw, 15px);
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--paper);
+  opacity: 0.82;
+}
+
 .progress {
   position: relative;
   width: min(320px, 62%);
