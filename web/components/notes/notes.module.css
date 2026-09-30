@@ -1,0 +1,49 @@
+/*
+ * Sticky notes, from the Pencil components "Get in Touch Note", "Start a
+ * Conversation Note" and the join-form notes. A cream sheet, a strip of gold
+ * tape, and one or two coloured sheets tucked behind at an angle.
+ */
+.stack { position: relative; }
+.sheet { position: absolute; inset: 0; border-radius: 2px; transform-origin: top left; }
+.rose { background: var(--rose); }
+.maroon { background: var(--maroon); box-shadow: 0 10px 24px rgba(26, 8, 16, .15); }
+
+.note {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-radius: 2px;
+  background: var(--note);
+  color: var(--ink);
+  box-shadow: var(--note-shadow);
+  transform-origin: top left;
+}
+.tape {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  width: 100px;
+  height: 29px;
+  margin-left: -50px;
+  background: var(--tape);
+  transform: rotate(3deg);
+  pointer-events: none;
+}
+
+/* Mono micro-label: "GET IN TOUCH", "EMAIL THE BOARD", "INSTAGRAM". */
+.label { margin: 0; font: 600 11px/1.3 var(--font-note); letter-spacing: .13em; text-transform: uppercase; color: var(--maroon); }
+.microLabel { margin: 0; font: 500 9.5px/1.3 var(--font-note); letter-spacing: .13em; text-transform: uppercase; color: var(--ink-soft); }
+
+/* Handwritten sign-off. */
+.scrawl { font-family: var(--font-scrawl); font-size: 24px; line-height: 1.2; color: var(--maroon); letter-spacing: 0; }
+
+/* Link rows with a maroon icon tile. */
+.rows { display: flex; flex-direction: column; }
+.row { display: flex; align-items: center; gap: 12px; min-height: 52px; padding-block: 11px; border-top: 1px solid var(--note-line); color: var(--ink); }
+.row:last-child { border-bottom: 0; }
+a.row:hover .rowValue { color: var(--maroon); }
+a.row:hover .rowArrow { transform: translate(2px, -2px); }
+.tile { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 3px; background: var(--maroon); color: var(--on-dark); flex: none; }
+.rowText { display: flex; flex-direction: column; gap: 1px; flex: 1; min-width: 0; }
+.rowValue { font-size: 15px; font-weight: 600; letter-spacing: -.013em; line-height: 1.3; transition: color 180ms; overflow-wrap: anywhere; }
+.rowArrow { color: var(--maroon); transition: transform 180ms var(--ease); }
