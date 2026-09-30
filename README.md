@@ -47,6 +47,26 @@ Keep original website photos in `web/images/` (not committed), then run `npm run
 
 Deploys need Cloudflare auth: run `npx wrangler login` once, or set `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`.
 
+## Join signups
+
+The join form posts to `/api/join`, a Pages Function that stores each signup in the `JOIN_SUBMISSIONS` KV namespace (one key per email). The binding lives in `web/wrangler.toml`, which is the source of truth for the Pages project's functions and is applied on deploy.
+
+Two optional secrets turn on an email safety net so no signup is lost silently:
+
+| Secret | Purpose | Default |
+| --- | --- | --- |
+| `RESEND_API_KEY` | Sends a notification email per signup. Without it, signups are still stored and no email is sent. | — |
+| `SIGNUP_NOTIFY_TO` | Notification recipient. | `colorstk@umn.edu` |
+| `SIGNUP_NOTIFY_FROM` | Notification sender (must be a Resend-verified sender). | `Chapter Notes <onboarding@resend.dev>` |
+
+Set them for the Pages project:
+
+```bash
+npx wrangler pages secret put RESEND_API_KEY --project-name colorstackumn
+```
+
+Read stored signups with `npx wrangler kv key list --binding JOIN_SUBMISSIONS` (add `--remote`), then `npx wrangler kv key get`.
+
 ## Contribute and deploy
 
 Create a branch, make your changes, run lint and build, then open a PR into `main`. See [CONTRIBUTING.md](CONTRIBUTING.md).
