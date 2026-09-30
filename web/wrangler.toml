@@ -1,0 +1,10 @@
+# Cloudflare Pages project configuration (source of truth for functions).
+# Deploy with: npx wrangler pages deploy out --branch main
+name = "colorstackumn"
+compatibility_date = "2026-09-29"
+pages_build_output_dir = "out"
+
+# Stores join-form signups from functions/api/join.ts, one key per email.
+[[kv_namespaces]]
+binding = "JOIN_SUBMISSIONS"
+id = "cc5b1dcd046044b994581f44bec44ee7"
