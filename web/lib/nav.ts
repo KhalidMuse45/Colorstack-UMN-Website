@@ -1,5 +1,6 @@
 /** Site navigation. Single source of truth for Nav, SideNav, the mobile menu and the footer. */
-import { MAILING_LIST, channels, contact, hero } from '@/content/landing';
+import { channels, contact } from '@/content/landing';
+import { JOIN_PATH } from '@/content/join';
 
 export type NavItem = { label: string; href: string; note?: string };
 
@@ -8,19 +9,18 @@ export const primaryNav: NavItem[] = [
   { label: 'What we do', href: '/#what-we-do' },
   { label: 'Meet the board', href: '/#meet-the-board' },
   { label: 'Our people', href: '/#in-the-room' },
+  { label: 'Get in touch', href: '/#get-in-touch' },
 ];
 
 /**
- * Changed from the handoff's `process.env.NEXT_PUBLIC_MAILING_LIST_URL ?? '#join'`.
- * That fallback ships a nav pill that goes nowhere whenever the variable is
- * unset, which is every local build. The endpoint is already a single constant
- * in the content file, shared by the hero pill, this pill and the form, so it
- * cannot drift. Label comes from the same place the hero CTA does.
+ * Top-right CTA. Opens the chapter's own join form (`join-form.html`) instead
+ * of the hosted Logicform, so signups stay on the site and end on the
+ * "You're on the list" confirmation.
  */
-export const joinCta = { label: hero.ctas[0].label, href: MAILING_LIST, external: true };
+export const joinCta = { label: 'Join the community', href: JOIN_PATH };
 
 export const footerNav: NavItem[] = [
-  { label: 'Get involved', href: '/#join' },
+  { label: 'Get involved', href: JOIN_PATH },
   { label: 'Partner with us', href: `mailto:${contact.email}` },
 ];
 

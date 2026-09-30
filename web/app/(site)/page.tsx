@@ -7,6 +7,7 @@ import GetInTouch from '@/components/sections/GetInTouch';
 import MeetTheBoard from '@/components/sections/MeetTheBoard';
 import FloatingCards from '@/components/whimsy/FloatingCards';
 import { getLanding, type Landing } from '@/lib/landing';
+import { JOIN_PATH } from '@/content/join';
 import styles from './page.module.css';
 
 function Program({ program, index, className = '' }: { program: Landing['programs'][number]; index: number; className?: string }) {
@@ -28,7 +29,7 @@ export default async function Page() {
   const portrait = d.communityRoll[0];
   return (
     <main id="main-content">
-      <Hero wordmark={d.heroWordmark} eyebrow={d.heroEyebrow} lede={d.heroLede} primary={{ label: d.heroPrimaryCta, href: d.mailingListUrl, external: true }} photo={d.heroPhoto} caption={d.heroPhoto.caption} />
+      <Hero wordmark={d.heroWordmark} eyebrow={d.heroEyebrow} lede={d.heroLede} primary={{ label: d.heroPrimaryCta, href: JOIN_PATH }} photo={d.heroPhoto} caption={d.heroPhoto.caption} />
       <section className={`section container ${styles.mission}`} id="about" aria-labelledby="mission-heading">
         <div data-reveal><p className="eyebrow">01 / Our purpose</p><h2 id="mission-heading">{d.missionHeadline}</h2></div>
         <div className={styles.missionBody} data-reveal>{d.missionBody.map((p) => <p key={p}>{p}</p>)}<p className={styles.missionSignoff}>Building a space for <span>you.</span></p></div>
@@ -54,7 +55,7 @@ export default async function Page() {
         <div data-reveal><FloatingCards photos={d.candids} /></div>
       </section>
       <MeetTheBoard members={d.board} />
-      <div data-reveal><GetInTouch headline={d.getInTouchHeadline} body={d.getInTouchBody} mailingListUrl={d.mailingListUrl} ctaLabel={d.heroPrimaryCta} email={d.contactEmail} channels={d.channels} /></div>
+      <div data-reveal><GetInTouch headline={d.getInTouchHeadline} body={d.getInTouchBody} joinHref={JOIN_PATH} ctaLabel={d.heroPrimaryCta} email={d.contactEmail} channels={d.channels} /></div>
     </main>
   );
 }

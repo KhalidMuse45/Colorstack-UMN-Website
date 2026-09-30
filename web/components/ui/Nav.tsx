@@ -43,7 +43,7 @@ export default function Nav() {
           {primaryNav.map(i => <a key={i.href} href={i.href}>{i.label}</a>)}
         </nav>
         <div className={styles.right}>
-          <span className={styles.join}><Pill href={joinCta.href} external tone="maroon">Join the community <Arrow /></Pill></span>
+          <span className={styles.join}><Pill href={joinCta.href} tone="maroon">{joinCta.label} <Arrow /></Pill></span>
           <button ref={opener} className={styles.menuButton} type="button" onClick={() => setOpen(true)} aria-haspopup="dialog" aria-expanded={open} aria-controls="mobile-navigation">Menu <span aria-hidden="true">+</span></button>
         </div>
       </div>
@@ -63,7 +63,7 @@ export default function Nav() {
           {primaryNav.map((i, index) => <a key={i.href} href={i.href} onClick={() => setOpen(false)}><span className={styles.number}>0{index + 1}</span>{i.label}<Arrow /></a>)}
         </nav>
         <div className={styles.sheetFoot}>
-          <Pill href={joinCta.href} external tone="maroon">Join the community <Arrow /></Pill>
+          <Pill href={joinCta.href} tone="maroon">{joinCta.label} <Arrow /></Pill>
           <div className={styles.socials}>
             {socialNav.map(s => <a href={s.href} key={s.href} target="_blank" rel="noopener noreferrer">{s.label} <Arrow /></a>)}
             <a href={`mailto:${contactEmail}`}>{contactEmail}</a>

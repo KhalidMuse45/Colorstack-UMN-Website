@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 
 /**
  * Progressive-enhancement scroll reveal.
@@ -9,10 +10,16 @@ import { useEffect } from 'react';
  * is added by an inline script in the layout before first paint, so a reader
  * without JavaScript still sees every section. This component only promotes
  * elements marked `data-reveal` to `.is-visible` as they enter the viewport.
+ *
+ * It lives in the root layout, which stays mounted across client-side
+ * navigation, so it re-scans on every route change. Otherwise a page reached
+ * through a <Link> (home → join form) keeps its sections hidden.
  */
 export default function ScrollReveal() {
+  const pathname = usePathname();
+
   useEffect(() => {
-    const nodes = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'));
+    const nodes = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]:not(.is-visible)'));
 
     if (typeof IntersectionObserver === 'undefined') {
       nodes.forEach((node) => node.classList.add('is-visible'));
@@ -32,7 +39,7 @@ export default function ScrollReveal() {
 
     nodes.forEach((node) => observer.observe(node));
     return () => observer.disconnect();
-  }, []);
+  }, [pathname]);
 
   return null;
 }
