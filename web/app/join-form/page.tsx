@@ -36,7 +36,7 @@ export default function JoinFormPage() {
                 <div className={styles.stepTop}><span>0{i + 1}</span><span className={styles.stepIcon}><Icon name={s.icon} size={19} /></span></div>
                 <h3>{s.title}</h3>
                 <p>{s.body}</p>
-                {s.cta && <a className={styles.outline} href={instagram} target="_blank" rel="noopener noreferrer">{s.cta} <Arrow /></a>}
+                {s.cta && <a className={styles.outline} href={instagram} target="_blank" rel="noopener noreferrer"><Icon name="instagram" size={16} />{s.cta}<Arrow /></a>}
                 <p className={`${n.scrawl} ${styles.stepNote}`}>{s.note}</p>
               </li>
             ))}
@@ -50,7 +50,7 @@ export default function JoinFormPage() {
               <h2 id="board-heading" className={`${styles.bigTitle} ${styles.onDark}`}>{board.title}</h2>
               <p className={styles.boardBody}>{board.body}</p>
               <div className={styles.actions}>
-                <a className={styles.goldButton} href="#join-form-title">{board.cta}</a>
+                <a className={styles.goldButton} href="#join">{board.cta}<Icon name="arrow-up" size={16} /></a>
                 <span className={styles.status}>{board.status}</span>
               </div>
             </div>

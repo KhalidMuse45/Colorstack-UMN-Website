@@ -68,7 +68,7 @@ export default function JoinHero({ photo, email, instagram }: { photo: Photo; em
 
       <header className={styles.nav}>
         <Link href="/" className={styles.brand} aria-label="ColorStack UMN, home">ColorStack <span>UMN</span></Link>
-        <Link href="/" className={styles.back}>{hero.back} <Arrow /></Link>
+        <Link href="/" className={styles.back}><Icon name="arrow-left" size={16} />{hero.back}</Link>
       </header>
 
       <div className={styles.inner}>

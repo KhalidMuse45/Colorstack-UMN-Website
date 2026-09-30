@@ -56,9 +56,9 @@ export const joinSteps = {
   title: "Here's what happens next.",
   aside: ['No hoops, no interview.', "Just a seat that's already yours."],
   steps: [
-    { title: "You're on the list", body: "A confirmation lands in your UMN inbox right away, with what's coming up next.", note: 'check your inbox!', icon: 'mail' as const },
-    { title: 'Chapter Notes arrives', body: 'Our monthly newsletter: event invites, internship deadlines, and wins from members.', note: 'once a month, promise', icon: 'news' as const },
-    { title: 'Pull up to an event', body: 'Come to our next event, and bring a friend. Follow our Instagram so you never miss one.', note: "we'll save you a seat", icon: 'people' as const, cta: 'Follow @colorstackumn' },
+    { title: "You're on the list", body: "A confirmation lands in your UMN inbox right away, with what's coming up next.", note: 'check your inbox!', icon: 'mail-check' as const },
+    { title: 'Chapter Notes arrives', body: 'Our monthly newsletter: event invites, internship deadlines, and wins from members.', note: 'once a month, promise', icon: 'newspaper' as const },
+    { title: 'Pull up to an event', body: 'Come to our next event, and bring a friend. Follow our Instagram so you never miss one.', note: "we'll save you a seat", icon: 'party' as const, cta: 'Follow @colorstackumn' },
   ],
 };
 

@@ -23,7 +23,7 @@
 .boardGrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 430px); align-items: center; gap: clamp(48px, 7vw, 96px); }
 .boardBody { max-width: 480px; margin: 24px 0 36px; font-size: 17px; line-height: 1.6; color: rgba(247, 245, 241, .7); }
 .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 20px; }
-.goldButton { display: inline-flex; align-items: center; min-height: 54px; padding: 16px 32px; border-radius: 3px; background: var(--gold); color: var(--ink); font-weight: 700; transition: background-color 180ms; }
+.goldButton { display: inline-flex; align-items: center; gap: 10px; min-height: 54px; padding: 16px 32px; border-radius: 3px; background: var(--gold); color: var(--ink); font-weight: 700; transition: background-color 180ms; }
 .goldButton:hover { background: var(--gold-dark); }
 .status { font: 400 11px var(--font-note); letter-spacing: .11em; text-transform: uppercase; color: var(--on-dark-mute); }
 .rolesStack { margin: 12px 20px 40px 8px; }
